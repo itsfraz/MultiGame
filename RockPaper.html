@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock-Paper-Scissors | Modern Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff2d75;
+            --light: #ffffff;
+            --dark: #1a1a2e;
+            --success: #00c853;
+            --danger: #ff1744;
+            --warning: #ffab00;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(to right, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleGlow 3s infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+            100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(106, 17, 203, 0.8); }
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            min-width: 120px;
+            transition: var(--transition);
+        }
+
+        .score-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .score-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .score-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .game-area {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .player-section, .computer-section {
+            flex: 1;
+            min-width: 250px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .choice-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-10px) scale(1.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .choice-btn:hover::before {
+            opacity: 1;
+        }
+
+        .choice-btn i {
+            font-size: 3rem;
+            color: white;
+        }
+
+        .choice-btn.rock i { color: #ff9a9e; }
+        .choice-btn.paper i { color: #a1c4fd; }
+        .choice-btn.scissors i { color: #ffecd2; }
+
+        .hand-display {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hand-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .hand-icon {
+            font-size: 6rem;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .result-area {
+            margin: 30px 0;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            padding: 15px 30px;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: var(--transition);
+        }
+
+        .result-text.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .result-text.win {
+            color: var(--success);
+            text-shadow: 0 0 15px var(--success);
+            animation: pulse 1.5s infinite;
+        }
+
+        .result-text.lose {
+            color: var(--danger);
+            text-shadow: 0 0 15px var(--danger);
+            animation: shake 0.5s;
+        }
+
+        .result-text.draw {
+            color: var(--warning);
+            text-shadow: 0 0 15px var(--warning);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin: 0 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.restart {
+            background: linear-gradient(to right, var(--accent), #ff6b6b);
+        }
+
+        .game-mode {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            box-shadow: 0 0 15px rgba(106, 17, 203, 0.5);
+        }
+
+        /* Animations */
+        @keyframes fistBump {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+            100% { transform: translateY(0); }
+        }
+
+        .fist-bump {
+            animation: fistBump 0.5s ease-in-out;
+        }
+
+        @keyframes shakeHand {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shakeHand 0.5s ease-in-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .player-section, .computer-section {
+                width: 100%;
+                margin-bottom: 30px;
+            }
+            
+            .choices {
+                justify-content: center;
+            }
+            
+            .choice-btn {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .choice-btn i {
+                font-size: 2.5rem;
+            }
+            
+            .hand-display {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .hand-icon {
+                font-size: 5rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .score-value {
+                font-size: 1.8rem;
+            }
+            
+            .result-text {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 20px 15px;
+            }
+            
+            .choice-btn {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .choice-btn i {
+                font-size: 2rem;
+            }
+            
+            .hand-display {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .hand-icon {
+                font-size: 4rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .score-card {
+                min-width: 90px;
+                padding: 10px;
+            }
+            
+            .score-value {
+                font-size: 1.5rem;
+            }
+            
+            .result-text {
+                font-size: 1.6rem;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1><i class="fas fa-hand-rock"></i> Rock-Paper-Scissors <i class="fas fa-hand-scissors"></i></h1>
+        </header>
+        
+        <div class="scoreboard">
+            <div class="score-card">
+                <div class="score-title">PLAYER</div>
+                <div class="score-value" id="player-score">0</div>
+            </div>
+            <div class="score-card">
+                <div class="score-title">ROUNDS</div>
+                <div class="score-value" id="rounds-played">0</div>
+            </div>
+            <div class="score-card">
+                <div class="score-title">COMPUTER</div>
+                <div class="score-value" id="computer-score">0</div>
+            </div>
+        </div>
+        
+        <div class="game-mode">
+            <div class="mode-btn active" data-mode="infinite">Infinite Play</div>
+            <div class="mode-btn" data-mode="best5">Best of 5</div>
+            <div class="mode-btn" data-mode="best10">Best of 10</div>
+        </div>
+        
+        <div class="game-area">
+            <div class="player-section">
+                <h2 class="section-title">Your Choice</h2>
+                <div class="choices">
+                    <div class="choice-btn rock" data-choice="rock">
+                        <i class="fas fa-hand-rock"></i>
+                    </div>
+                    <div class="choice-btn paper" data-choice="paper">
+                        <i class="fas fa-hand-paper"></i>
+                    </div>
+                    <div class="choice-btn scissors" data-choice="scissors">
+                        <i class="fas fa-hand-scissors"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="computer-section">
+                <h2 class="section-title">Computer</h2>
+                <div class="hand-display">
+                    <i class="fas fa-question hand-icon" id="computer-hand"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-area">
+            <div class="result-text" id="result-text">Choose your weapon!</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn restart" id="restart-btn">
+                <i class="fas fa-redo"></i> Restart Game
+            </button>
+            <button class="btn" id="sound-toggle">
+                <i class="fas fa-volume-up"></i> Sound On
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Game state
+            const gameState = {
+                playerScore: 0,
+                computerScore: 0,
+                roundsPlayed: 0,
+                gameMode: 'infinite',
+                gameActive: true,
+                soundEnabled: true
+            };
+
+            // DOM Elements
+            const playerScoreEl = document.getElementById('player-score');
+            const computerScoreEl = document.getElementById('computer-score');
+            const roundsPlayedEl = document.getElementById('rounds-played');
+            const resultTextEl = document.getElementById('result-text');
+            const computerHandEl = document.getElementById('computer-hand');
+            const choiceButtons = document.querySelectorAll('.choice-btn');
+            const restartBtn = document.getElementById('restart-btn');
+            const soundToggleBtn = document.getElementById('sound-toggle');
+            const modeButtons = document.querySelectorAll('.mode-btn');
+
+            // Sound effects
+            const sounds = {
+                tap: new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFfHd5eXl8f4GDhYeJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/'),
+                reveal: new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFfHd5eXl8f4GDhYeJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/'),
+                win: new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFfHd5eXl8f4GDhYeJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/'),
+                lose: new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFfHd5eXl8f4GDhYeJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/')
+            };
+
+            // Play sound effect
+            function playSound(sound) {
+                if (gameState.soundEnabled && sounds[sound]) {
+                    sounds[sound].currentTime = 0;
+                    sounds[sound].play().catch(e => console.log("Sound play error:", e));
+                }
+            }
+
+            // Update scoreboard
+            function updateScoreboard() {
+                playerScoreEl.textContent = gameState.playerScore;
+                computerScoreEl.textContent = gameState.computerScore;
+                roundsPlayedEl.textContent = gameState.roundsPlayed;
+            }
+
+            // Get computer choice
+            function getComputerChoice() {
+                const choices = ['rock', 'paper', 'scissors'];
+                return choices[Math.floor(Math.random() * choices.length)];
+            }
+
+            // Get icon for choice
+            function getIcon(choice) {
+                switch(choice) {
+                    case 'rock': return 'fa-hand-rock';
+                    case 'paper': return 'fa-hand-paper';
+                    case 'scissors': return 'fa-hand-scissors';
+                    default: return 'fa-question';
+                }
+            }
+
+            // Determine winner
+            function determineWinner(playerChoice, computerChoice) {
+                if (playerChoice === computerChoice) {
+                    return 'draw';
+                }
+                
+                if (
+                    (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                    (playerChoice === 'paper' && computerChoice === 'rock') ||
+                    (playerChoice === 'scissors' && computerChoice === 'paper')
+                ) {
+                    return 'win';
+                }
+                
+                return 'lose';
+            }
+
+            // Display result
+            function displayResult(result, playerChoice, computerChoice) {
+                // Update computer hand
+                computerHandEl.className = `fas ${getIcon(computerChoice)} hand-icon`;
+                
+                // Show result text
+                resultTextEl.classList.remove('win', 'lose', 'draw');
+                resultTextEl.classList.add(result);
+                
+                switch(result) {
+                    case 'win':
+                        resultTextEl.textContent = 'You Win!';
+                        playSound('win');
+                        break;
+                    case 'lose':
+                        resultTextEl.textContent = 'You Lose!';
+                        playSound('lose');
+                        break;
+                    case 'draw':
+                        resultTextEl.textContent = "It's a Draw!";
+                        break;
+                }
+                
+                resultTextEl.classList.add('show');
+                
+                // Add shake effect to losing hand
+                if (result === 'win') {
+                    computerHandEl.classList.add('shake');
+                    setTimeout(() => computerHandEl.classList.remove('shake'), 500);
+                } else if (result === 'lose') {
+                    document.querySelector('.hand-display').classList.add('shake');
+                    setTimeout(() => document.querySelector('.hand-display').classList.remove('shake'), 500);
+                }
+            }
+
+            // Play a round
+            function playRound(playerChoice) {
+                if (!gameState.gameActive) return;
+                
+                playSound('tap');
+                
+                // Disable buttons during animation
+                choiceButtons.forEach(btn => btn.style.pointerEvents = 'none');
+                
+                // Show loading animation
+                computerHandEl.className = 'fas fa-spinner fa-spin hand-icon';
+                
+                // Fist bump animation
+                const playerHand = document.querySelector('.hand-display');
+                playerHand.classList.add('fist-bump');
+                computerHandEl.parentElement.classList.add('fist-bump');
+                
+                // After animation, reveal choices
+                setTimeout(() => {
+                    playerHand.classList.remove('fist-bump');
+                    computerHandEl.parentElement.classList.remove('fist-bump');
+                    
+                    // Get computer choice
+                    const computerChoice = getComputerChoice();
+                    
+                    // Reveal choices
+                    playSound('reveal');
+                    computerHandEl.className = `fas ${getIcon(computerChoice)} hand-icon`;
+                    
+                    // Determine winner
+                    const result = determineWinner(playerChoice, computerChoice);
+                    
+                    // Update scores
+                    gameState.roundsPlayed++;
+                    
+                    if (result === 'win') {
+                        gameState.playerScore++;
+                    } else if (result === 'lose') {
+                        gameState.computerScore++;
+                    }
+                    
+                    updateScoreboard();
+                    
+                    // Display result
+                    displayResult(result, playerChoice, computerChoice);
+                    
+                    // Check if game should end
+                    checkGameEnd();
+                    
+                    // Re-enable buttons
+                    setTimeout(() => {
+                        choiceButtons.forEach(btn => btn.style.pointerEvents = 'auto');
+                    }, 1000);
+                }, 1000);
+            }
+
+            // Check if game should end
+            function checkGameEnd() {
+                if (gameState.gameMode === 'infinite') return;
+                
+                const targetRounds = gameState.gameMode === 'best5' ? 5 : 10;
+                const roundsNeeded = Math.ceil(targetRounds / 2);
+                
+                if (gameState.playerScore >= roundsNeeded || gameState.computerScore >= roundsNeeded) {
+                    gameState.gameActive = false;
+                    
+                    // Final result
+                    setTimeout(() => {
+                        resultTextEl.classList.remove('win', 'lose', 'draw');
+                        if (gameState.playerScore > gameState.computerScore) {
+                            resultTextEl.textContent = `You Won the ${gameState.gameMode === 'best5' ? 'Best of 5' : 'Best of 10'}!`;
+                            resultTextEl.classList.add('win');
+                        } else {
+                            resultTextEl.textContent = `Computer Won the ${gameState.gameMode === 'best5' ? 'Best of 5' : 'Best of 10'}!`;
+                            resultTextEl.classList.add('lose');
+                        }
+                        resultTextEl.classList.add('show');
+                    }, 1500);
+                }
+            }
+
+            // Restart game
+            function restartGame() {
+                gameState.playerScore = 0;
+                gameState.computerScore = 0;
+                gameState.roundsPlayed = 0;
+                gameState.gameActive = true;
+                
+                updateScoreboard();
+                
+                // Reset hands
+                computerHandEl.className = 'fas fa-question hand-icon';
+                resultTextEl.textContent = 'Choose your weapon!';
+                resultTextEl.classList.remove('show', 'win', 'lose', 'draw');
+                
+                // Re-enable buttons
+                choiceButtons.forEach(btn => btn.style.pointerEvents = 'auto');
+            }
+
+            // Toggle sound
+            function toggleSound() {
+                gameState.soundEnabled = !gameState.soundEnabled;
+                soundToggleBtn.innerHTML = gameState.soundEnabled ? 
+                    '<i class="fas fa-volume-up"></i> Sound On' : 
+                    '<i class="fas fa-volume-mute"></i> Sound Off';
+            }
+
+            // Set game mode
+            function setGameMode(mode) {
+                gameState.gameMode = mode;
+                modeButtons.forEach(btn => {
+                    if (btn.dataset.mode === mode) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                restartGame();
+            }
+
+            // Event listeners
+            choiceButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    playRound(button.dataset.choice);
+                });
+            });
+            
+            restartBtn.addEventListener('click', restartGame);
+            
+            soundToggleBtn.addEventListener('click', toggleSound);
+            
+            modeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    setGameMode(button.dataset.mode);
+                });
+            });
+
+            // Initialize game
+            updateScoreboard();
+        });
+    </script>
+</body>
+</html>
