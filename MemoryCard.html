@@ -4,426 +4,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memory Card Flip Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    heading: ['Outfit', 'sans-serif'],
+                },
+                extend: {
+                    colors: {
+                        primary: '#6c5ce7',
+                        secondary: '#a29bfe',
+                        accent: '#fd79a8',
+                        dark: '#1e202a',
+                        darker: '#181a20',
+                        light: '#fff',
+                        surface: '#2b2e3b',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-            overflow: hidden;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            padding: 20px 0;
-            color: white;
-        }
-
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        /* Level Selection Screen */
-        #level-screen {
-            padding: 30px;
-            text-align: center;
-        }
-
-        .level-options {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 25px;
-            margin: 40px 0;
-        }
-
-        .level-card {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 15px;
-            padding: 30px 20px;
-            width: 220px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .level-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .level-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: white;
-        }
-
-        .level-card p {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 20px;
-        }
-
-        .grid-info {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .info-item {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        /* Game Screen */
-        #game-screen {
-            display: none;
-            padding: 20px;
-        }
-
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            margin-bottom: 25px;
-            color: white;
-        }
-
-        .stats {
-            display: flex;
-            gap: 25px;
-        }
-
-        .stat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-        }
-
-        button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .game-board {
-            display: grid;
-            gap: 15px;
-            margin: 0 auto;
-            max-width: 900px;
-        }
-
-        .card {
-            aspect-ratio: 3/4;
-            perspective: 1000px;
-            cursor: pointer;
-        }
-
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-
+        /* 3D Flip Card Utilities */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        .card.flipped .card-inner,
         .card.matched .card-inner {
             transform: rotateY(180deg);
         }
-
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-front {
-            background: linear-gradient(45deg, #3498db, #8e44ad);
-            transform: rotateY(180deg);
-            font-size: 3rem;
-        }
-
-        .card-back {
-            background: linear-gradient(45deg, #2c3e50, #4a6491);
-            border: 3px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .card-back::before {
-            content: "?";
-            font-size: 3rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* Win Screen */
-        #win-screen {
-            display: none;
-            text-align: center;
-            padding: 40px 20px;
-            color: white;
-        }
-
-        .win-content {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            padding: 40px 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .win-content h2 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #ffd700;
-        }
-
-        .win-stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 30px 0;
-        }
-
-        .win-stat {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            min-width: 150px;
-        }
-
-        .win-stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
+        
         .confetti {
             position: absolute;
             width: 10px;
             height: 10px;
             background-color: #f00;
             animation: confetti-fall 5s linear forwards;
+            pointer-events: none;
         }
-
+        
         @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .level-options {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .game-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .stats {
-                width: 100%;
-                justify-content: space-around;
-            }
-            
-            .win-stats {
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .level-card {
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .card-front {
-                font-size: 2rem;
-            }
-            
-            .card-back::before {
-                font-size: 2rem;
-            }
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Memory Card Flip</h1>
-            <p class="subtitle">Match pairs of cards to win!</p>
+<body class="bg-[#13151b] text-white min-h-screen flex items-center justify-center p-4 font-sans overflow-x-hidden selection:bg-primary selection:text-white">
+
+    <div class="w-full max-w-5xl bg-surface/30 backdrop-blur-xl rounded-3xl p-6 md:p-10 shadow-2xl border border-white/5 relative z-10 flex flex-col items-center min-h-[600px] justify-center">
+        
+        <!-- Header -->
+        <header class="text-center mb-8 w-full">
+            <h1 class="text-4xl md:text-5xl font-extrabold font-heading bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mb-2 drop-shadow-lg">
+                Memory Card Flip
+            </h1>
+            <p class="text-gray-400 text-lg">Match pairs of cards to win!</p>
+            <a href="index.html" class="inline-flex items-center gap-2 mt-4 text-sm text-gray-500 hover:text-white transition-colors">
+                <i class="fas fa-arrow-left"></i> Back to Hub
+            </a>
         </header>
 
         <!-- Level Selection Screen -->
-        <div id="level-screen">
-            <h2>Choose Difficulty</h2>
-            <div class="level-options">
-                <div class="level-card" data-level="easy">
-                    <h3>Easy</h3>
-                    <p>4×4 Grid (8 Pairs)</p>
-                    <div class="grid-info">
-                        <div class="info-item">8 Cards</div>
-                        <div class="info-item">Animals</div>
+        <div id="level-screen" class="w-full animate-fade-in">
+            <h2 class="text-2xl font-bold text-center mb-10 text-white/90">Choose Difficulty</h2>
+            <div class="flex flex-wrap justify-center gap-6">
+                <!-- Easy -->
+                <div class="level-card group w-64 bg-white/5 hover:bg-white/10 p-8 rounded-2xl border border-white/5 hover:border-blue-400/50 cursor-pointer transition-all duration-300 hover:-translate-y-2 shadow-lg" data-level="easy">
+                    <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <span class="text-3xl">🧩</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Easy</h3>
+                    <p class="text-gray-400 mb-6 text-sm">4×4 Grid (8 Pairs)</p>
+                    <div class="flex gap-2 justify-center text-xs font-medium text-gray-300">
+                        <span class="bg-black/30 px-3 py-1 rounded-full">8 Cards</span>
+                        <span class="bg-black/30 px-3 py-1 rounded-full">Animals</span>
                     </div>
                 </div>
-                <div class="level-card" data-level="medium">
-                    <h3>Medium</h3>
-                    <p>5×4 Grid (10 Pairs)</p>
-                    <div class="grid-info">
-                        <div class="info-item">10 Cards</div>
-                        <div class="info-item">Fruits</div>
+
+                <!-- Medium -->
+                <div class="level-card group w-64 bg-white/5 hover:bg-white/10 p-8 rounded-2xl border border-white/5 hover:border-purple-400/50 cursor-pointer transition-all duration-300 hover:-translate-y-2 shadow-lg" data-level="medium">
+                    <div class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <span class="text-3xl">🍓</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Medium</h3>
+                    <p class="text-gray-400 mb-6 text-sm">5×4 Grid (10 Pairs)</p>
+                    <div class="flex gap-2 justify-center text-xs font-medium text-gray-300">
+                        <span class="bg-black/30 px-3 py-1 rounded-full">10 Cards</span>
+                        <span class="bg-black/30 px-3 py-1 rounded-full">Fruits</span>
                     </div>
                 </div>
-                <div class="level-card" data-level="hard">
-                    <h3>Hard</h3>
-                    <p>6×6 Grid (18 Pairs)</p>
-                    <div class="grid-info">
-                        <div class="info-item">18 Cards</div>
-                        <div class="info-item">Emojis</div>
+
+                <!-- Hard -->
+                <div class="level-card group w-64 bg-white/5 hover:bg-white/10 p-8 rounded-2xl border border-white/5 hover:border-pink-400/50 cursor-pointer transition-all duration-300 hover:-translate-y-2 shadow-lg" data-level="hard">
+                    <div class="w-16 h-16 rounded-full bg-pink-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <span class="text-3xl">👻</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Hard</h3>
+                    <p class="text-gray-400 mb-6 text-sm">6×6 Grid (18 Pairs)</p>
+                    <div class="flex gap-2 justify-center text-xs font-medium text-gray-300">
+                        <span class="bg-black/30 px-3 py-1 rounded-full">18 Cards</span>
+                        <span class="bg-black/30 px-3 py-1 rounded-full">Emojis</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Game Screen -->
-        <div id="game-screen">
-            <div class="game-header">
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-value" id="moves">0</div>
-                        <div class="stat-label">MOVES</div>
+        <div id="game-screen" class="hidden w-full max-w-4xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center bg-black/20 p-4 rounded-xl mb-8 border border-white/5">
+                <div class="flex gap-8 mb-4 md:mb-0">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-400" id="moves">0</div>
+                        <div class="text-xs text-gray-400 font-bold tracking-wider">MOVES</div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-value" id="timer">00:00</div>
-                        <div class="stat-label">TIME</div>
+                    <div class="text-center border-l border-white/10 pl-8">
+                        <div class="text-2xl font-bold text-purple-400" id="timer">00:00</div>
+                        <div class="text-xs text-gray-400 font-bold tracking-wider">TIME</div>
                     </div>
                 </div>
-                <div class="controls">
-                    <button id="restart-btn">
+                <div class="flex gap-3">
+                    <button id="restart-btn" class="px-5 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-bold transition-colors flex items-center gap-2">
                         <i class="fas fa-redo"></i> Restart
                     </button>
-                    <button id="back-btn">
+                    <button id="back-btn" class="px-5 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm font-bold transition-colors flex items-center gap-2">
                         <i class="fas fa-arrow-left"></i> Levels
                     </button>
                 </div>
             </div>
-            <div class="game-board" id="game-board"></div>
+            
+            <div class="grid gap-4 mx-auto w-full" id="game-board">
+                <!-- Cards will be injected here -->
+            </div>
         </div>
 
         <!-- Win Screen -->
-        <div id="win-screen">
-            <div class="win-content">
-                <h2>Congratulations!</h2>
-                <p>You've matched all the cards!</p>
-                <div class="win-stats">
-                    <div class="win-stat">
-                        <div class="win-stat-value" id="win-moves">0</div>
-                        <div>Moves</div>
+        <div id="win-screen" class="hidden text-center py-10 w-full max-w-lg mx-auto animate-fade-in">
+            <div class="bg-white/5 border border-white/10 p-10 rounded-3xl backdrop-blur-md shadow-2xl">
+                <div class="text-6xl mb-6">🎉</div>
+                <h2 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-4 font-heading">Congratulations!</h2>
+                <p class="text-gray-300 mb-8 text-lg">You've matched all the cards!</p>
+                
+                <div class="flex justify-center gap-8 mb-8 bg-black/20 p-6 rounded-2xl">
+                    <div>
+                        <div class="text-3xl font-bold text-white mb-1" id="win-moves">0</div>
+                        <div class="text-xs text-gray-400 font-bold uppercase">Moves</div>
                     </div>
-                    <div class="win-stat">
-                        <div class="win-stat-value" id="win-time">00:00</div>
-                        <div>Time</div>
+                    <div class="w-px bg-white/10"></div>
+                    <div>
+                        <div class="text-3xl font-bold text-white mb-1" id="win-time">00:00</div>
+                        <div class="text-xs text-gray-400 font-bold uppercase">Time</div>
                     </div>
                 </div>
-                <button id="play-again-btn">
+                
+                <button id="play-again-btn" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all flex items-center justify-center gap-2 mx-auto">
                     <i class="fas fa-play"></i> Play Again
                 </button>
             </div>
         </div>
+
+    </div>
+
+    <!-- Background decoration -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px]"></div>
     </div>
 
     <script>
@@ -492,11 +243,13 @@
             // Set up the game board
             setupGameBoard();
             
-            // Show game screen
+            // Show game screen with transition
             levelScreen.style.display = 'none';
+            gameScreen.classList.remove('hidden');
             gameScreen.style.display = 'block';
-            winScreen.style.display = 'none';
-            
+            winScreen.style.display = 'none'; // Ensure win screen is hidden
+            winScreen.classList.add('hidden');
+
             // Start timer
             startTimer();
         }
@@ -525,29 +278,32 @@
             switch(gameState.level) {
                 case 'easy':
                     columns = 4;
-                    rows = 4;
+                    // rows = 4;
+                    gameBoard.className = 'grid gap-4 mx-auto w-full grid-cols-4 max-w-md';
                     break;
                 case 'medium':
                     columns = 5;
-                    rows = 4;
+                    // rows = 4;
+                    gameBoard.className = 'grid gap-3 mx-auto w-full grid-cols-5 max-w-2xl';
                     break;
                 case 'hard':
                     columns = 6;
-                    rows = 6;
+                    // rows = 6;
+                    gameBoard.className = 'grid gap-2 mx-auto w-full grid-cols-6 max-w-3xl';
                     break;
             }
-            
-            // Set grid layout
-            gameBoard.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
             
             // Create card elements
             cards.forEach((card, index) => {
                 const cardElement = document.createElement('div');
-                cardElement.className = 'card';
+                // Use Tailwind classes for layout + Custom classes for 3D flip
+                cardElement.className = 'card aspect-[3/4] perspective-1000 cursor-pointer group relative';
                 cardElement.innerHTML = `
-                    <div class="card-inner">
-                        <div class="card-front">${card}</div>
-                        <div class="card-back"></div>
+                    <div class="card-inner relative w-full h-full duration-500 transform-style-3d transition-transform group-hover:scale-[1.02]">
+                        <div class="card-front absolute inset-0 backface-hidden rounded-xl flex items-center justify-center text-4xl lg:text-5xl bg-gradient-to-br from-blue-500 to-purple-600 border border-white/20 shadow-xl rotate-y-180 z-10">${card}</div>
+                        <div class="card-back absolute inset-0 backface-hidden rounded-xl flex items-center justify-center bg-gradient-to-br from-[#2c3e50] to-[#34495e] border-2 border-white/10 text-white/20 shadow-xl">
+                            <span class="text-4xl">?</span>
+                        </div>
                     </div>
                 `;
                 cardElement.addEventListener('click', () => flipCard(cardElement, card));
@@ -588,6 +344,11 @@
                     setTimeout(() => {
                         card1.element.classList.add('matched');
                         card2.element.classList.add('matched');
+                        
+                        // Optional: Add visual flare to matched cards
+                        card1.element.querySelector('.card-front').classList.add('ring-4', 'ring-green-400');
+                        card2.element.querySelector('.card-front').classList.add('ring-4', 'ring-green-400');
+
                         gameState.flippedCards = [];
                         gameState.matchedPairs++;
                         gameState.isProcessing = false;
@@ -640,7 +401,10 @@
             
             // Show win screen
             gameScreen.style.display = 'none';
+            gameScreen.classList.add('hidden');
+            
             winScreen.style.display = 'block';
+            winScreen.classList.remove('hidden');
             
             // Create confetti effect
             createConfetti();
@@ -677,7 +441,9 @@
         function showLevelScreen() {
             levelScreen.style.display = 'block';
             gameScreen.style.display = 'none';
+            gameScreen.classList.add('hidden');
             winScreen.style.display = 'none';
+            winScreen.classList.add('hidden');
             
             // Clear any existing timer
             if (gameState.timerInterval) {
@@ -697,6 +463,9 @@
         function playFlipSound() {
             try {
                 const context = new (window.AudioContext || window.webkitAudioContext)();
+                if (context.state === 'suspended') {
+                    context.resume();
+                }
                 const oscillator = context.createOscillator();
                 const gainNode = context.createGain();
                 
@@ -719,6 +488,9 @@
         function playMatchSound() {
             try {
                 const context = new (window.AudioContext || window.webkitAudioContext)();
+                if (context.state === 'suspended') {
+                    context.resume();
+                }
                 const oscillator = context.createOscillator();
                 const gainNode = context.createGain();
                 

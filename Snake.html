@@ -4,326 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Snake Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    heading: ['Outfit', 'sans-serif'],
+                },
+                extend: {
+                    colors: {
+                        primary: '#6c5ce7',
+                        secondary: '#a29bfe',
+                        accent: '#fd79a8',
+                        dark: '#1e202a',
+                        darker: '#181a20',
+                        light: '#fff',
+                        surface: '#2b2e3b',
+                        success: '#00b894',
+                        warning: '#fdcb6e',
+                        danger: '#ff7675',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s infinite',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            touch-action: manipulation;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        .game-container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        header {
-            text-align: center;
-            width: 100%;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(0, 255, 150, 0.7);
-            background: linear-gradient(to right, #00ff9d, #00b8ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .stat-box {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #00ff9d;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .game-board {
-            background-color: #0d1520;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-            width: 100%;
-            aspect-ratio: 1/1;
-            max-width: 500px;
-        }
-
-        .controls-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .buttons-row {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-        }
-
-        button {
-            flex: 1;
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: linear-gradient(45deg, #00b8ff, #00ff9d);
-            color: #0d1520;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        button:active {
-            transform: translateY(1px);
-        }
-
-        #pause-btn {
-            background: linear-gradient(45deg, #ff9d00, #ff0080);
-        }
-
-        #reset-btn {
-            background: linear-gradient(45deg, #ff0080, #8000ff);
-        }
-
-        .mobile-controls {
-            display: none;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 10px;
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
-        }
-
-        .mobile-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            user-select: none;
-        }
-
-        .up-btn { grid-column: 2; grid-row: 1; }
-        .left-btn { grid-column: 1; grid-row: 2; }
-        .right-btn { grid-column: 3; grid-row: 2; }
-        .down-btn { grid-column: 2; grid-row: 3; }
-
-        .instructions {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 15px;
-            width: 100%;
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .instructions h2 {
-            margin-bottom: 10px;
-            color: #00ff9d;
-        }
-
-        .instructions p {
-            margin: 5px 0;
-            opacity: 0.9;
-        }
-
-        .game-over {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-
-        .game-over.show {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .game-over h2 {
-            font-size: 3rem;
-            color: #ff0080;
-            margin-bottom: 20px;
-        }
-
-        .final-score {
-            font-size: 2rem;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .stats-container {
-                padding: 10px;
-            }
-            
-            .stat-value {
-                font-size: 1.5rem;
-            }
-            
-            button {
-                padding: 12px;
-                font-size: 1rem;
-            }
-            
-            .mobile-controls {
-                display: grid;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .stat-value {
-                font-size: 1.3rem;
-            }
-            
-            .stat-label {
-                font-size: 0.8rem;
-            }
-            
-            .mobile-controls {
-                width: 150px;
-                height: 150px;
-            }
-            
-            .mobile-btn {
-                font-size: 20px;
-            }
-        }
-
-        .snake-segment {
-            transition: transform 0.1s ease;
-        }
-
-        .food {
-            animation: pulse 0.5s infinite alternate;
-        }
-
-        @keyframes pulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        .power-up {
-            animation: spin 2s infinite linear;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        .snake-segment { transition: transform 0.1s ease; }
+        .food { animation: pulse 0.5s infinite alternate; }
+        .power-up { animation: spin 2s infinite linear; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
-    <div class="game-container">
-        <header>
-            <h1>Advanced Snake</h1>
+<body class="bg-[#13151b] text-white min-h-screen flex flex-col items-center py-8 px-4 font-sans overflow-x-hidden selection:bg-success selection:text-white">
+
+    <div class="w-full max-w-2xl flex flex-col items-center gap-6 relative z-10">
+        <!-- Header -->
+        <header class="w-full text-center relative flex items-center justify-center mb-4">
+            <a href="index.html" class="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="text-4xl md:text-5xl font-extrabold font-heading bg-clip-text text-transparent bg-gradient-to-r from-[#00ff9d] to-[#00b8ff] drop-shadow-lg">
+                Advanced Snake
+            </h1>
         </header>
         
-        <div class="stats-container">
-            <div class="stat-box">
-                <div class="stat-value" id="score">0</div>
-                <div class="stat-label">SCORE</div>
+        <!-- Stats -->
+        <div class="grid grid-cols-3 w-full bg-surface/50 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/5 gap-4">
+            <div class="text-center">
+                <div class="text-3xl font-bold text-success mb-1" id="score">0</div>
+                <div class="text-xs text-gray-400 font-medium tracking-wider uppercase">Score</div>
             </div>
-            <div class="stat-box">
-                <div class="stat-value" id="level">1</div>
-                <div class="stat-label">LEVEL</div>
+            <div class="text-center border-l border-white/5 border-r">
+                <div class="text-3xl font-bold text-warning mb-1" id="level">1</div>
+                <div class="text-xs text-gray-400 font-medium tracking-wider uppercase">Level</div>
             </div>
-            <div class="stat-box">
-                <div class="stat-value" id="high-score">0</div>
-                <div class="stat-label">HIGH SCORE</div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-accent mb-1" id="high-score">0</div>
+                <div class="text-xs text-gray-400 font-medium tracking-wider uppercase">High Score</div>
             </div>
         </div>
         
-        <canvas id="game-board" class="game-board"></canvas>
+        <!-- Game Board -->
+        <div class="relative w-full aspect-square max-w-[500px] bg-[#0d1520] rounded-xl shadow-2xl overflow-hidden border-2 border-white/5">
+            <canvas id="game-board" class="w-full h-full block cursor-crosshair"></canvas>
+        </div>
         
-        <div class="controls-container">
-            <div class="buttons-row">
-                <button id="start-btn">Start Game</button>
-                <button id="pause-btn">Pause</button>
-                <button id="reset-btn">Reset</button>
+        <!-- Controls -->
+        <div class="w-full flex flex-col gap-6">
+            <div class="flex gap-4 w-full">
+                <button id="start-btn" class="flex-1 py-4 text-lg font-bold rounded-xl bg-gradient-to-r from-[#00b8ff] to-[#00ff9d] text-[#0d1520] shadow-lg shadow-success/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-success/30 active:translate-y-0.5">Start Game</button>
+                <button id="pause-btn" class="flex-1 py-4 text-lg font-bold rounded-xl bg-gradient-to-r from-warning to-orange-500 text-[#0d1520] shadow-lg shadow-warning/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-warning/30 active:translate-y-0.5">Pause</button>
+                <button id="reset-btn" class="flex-1 py-4 text-lg font-bold rounded-xl bg-gradient-to-r from-danger to-pink-600 text-white shadow-lg shadow-danger/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-danger/30 active:translate-y-0.5">Reset</button>
             </div>
             
-            <div class="mobile-controls">
-                <div class="mobile-btn up-btn">↑</div>
-                <div class="mobile-btn left-btn">←</div>
-                <div class="mobile-btn right-btn">→</div>
-                <div class="mobile-btn down-btn">↓</div>
+            <!-- Mobile Controls (Visible on small screens) -->
+            <div class="mobile-controls grid grid-cols-3 gap-3 w-48 h-48 mx-auto md:hidden">
+                <div class="col-start-2 row-start-1 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-xl flex items-center justify-center text-2xl text-white transition-colors cursor-pointer border border-white/10 up-btn select-none"><i class="fas fa-arrow-up"></i></div>
+                <div class="col-start-1 row-start-2 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-xl flex items-center justify-center text-2xl text-white transition-colors cursor-pointer border border-white/10 left-btn select-none"><i class="fas fa-arrow-left"></i></div>
+                <div class="col-start-3 row-start-2 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-xl flex items-center justify-center text-2xl text-white transition-colors cursor-pointer border border-white/10 right-btn select-none"><i class="fas fa-arrow-right"></i></div>
+                <div class="col-start-2 row-start-3 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-xl flex items-center justify-center text-2xl text-white transition-colors cursor-pointer border border-white/10 down-btn select-none"><i class="fas fa-arrow-down"></i></div>
             </div>
         </div>
         
-        <div class="instructions">
-            <h2>How to Play</h2>
-            <p>Desktop: Use arrow keys to move | Space to pause</p>
-            <p>Mobile: Swipe or use on-screen controls</p>
-            <p>Collect food to grow and earn points!</p>
+        <!-- Instructions -->
+        <div class="w-full bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/5 text-center">
+            <h2 class="text-xl font-bold text-success mb-2 font-heading">How to Play</h2>
+            <div class="text-gray-400 text-sm space-y-1">
+                <p><span class="text-white font-medium">Desktop:</span> Use arrow keys to move | Space to pause</p>
+                <p><span class="text-white font-medium">Mobile:</span> Swipe or use on-screen controls</p>
+                <p class="text-accent mt-2">Collect food to grow and earn points!</p>
+            </div>
         </div>
     </div>
     
-    <div class="game-over" id="game-over">
-        <h2>GAME OVER</h2>
-        <div class="final-score">Score: <span id="final-score">0</span></div>
-        <button id="restart-btn">Play Again</button>
+    <!-- Game Over Modal -->
+    <div class="fixed inset-0 bg-black/90 backdrop-blur-sm flex flex-col justify-center items-center z-50 transition-opacity duration-300 pointer-events-none opacity-0" id="game-over">
+        <h2 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500 mb-6 font-heading drop-shadow-[0_0_15px_rgba(236,72,153,0.5)]">GAME OVER</h2>
+        <div class="text-3xl font-bold text-white mb-8">Score: <span id="final-score" class="text-success">0</span></div>
+        <button id="restart-btn" class="px-10 py-4 bg-white text-black text-xl font-bold rounded-full hover:scale-110 hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] transition-all pointer-events-auto">Play Again</button>
+    </div>
+
+    <!-- Background Decoration -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+        <div class="absolute top-[10%] left-[10%] w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-[10%] right-[10%] w-96 h-96 bg-success/10 rounded-full blur-[100px]"></div>
     </div>
 
     <script>
@@ -415,7 +206,21 @@
         
         // Resize canvas based on window size
         function resizeCanvas() {
-            const containerWidth = Math.min(window.innerWidth * 0.9, 600);
+            // We want the internal resolution to match the display size for sharpness
+            // But for the snake game logic, we need the logic grid to mapping
+            // The logic uses tileCount = 20.
+            
+            // Let's keep the logic grid at 20x20
+            // But scale the canvas drawing
+            const containerWidth = Math.min(window.innerWidth * 0.9, 500); // Max 500px matches CSS
+            
+            // Set display size (css)
+            // canvas.style.width = containerWidth + 'px';
+            // canvas.style.height = containerWidth + 'px';
+            
+            // Set internal size (resolution) - making it higher res for clearer rendering?
+            // Actually the game logic relies on drawing rects.
+            // Let's set the canvas width/height to the containerWidth
             canvas.width = containerWidth;
             canvas.height = containerWidth;
             
@@ -562,32 +367,45 @@
             
             // Draw snake
             snake.forEach((segment, index) => {
+                const segX = segment.x * tileSize;
+                const segY = segment.y * tileSize;
+                const segSize = tileSize - 1;
+                
                 if (index === 0) {
                     // Draw head
                     ctx.fillStyle = '#00ff9d';
+                    // ctx.shadowColor = '#00ff9d';
+                    // ctx.shadowBlur = 10;
                 } else {
                     // Draw body with gradient
                     const colorValue = Math.max(100, 255 - index * 2);
                     ctx.fillStyle = `rgb(0, ${colorValue}, 157)`;
+                    // ctx.shadowBlur = 0;
                 }
                 
-                ctx.fillRect(segment.x * tileSize, segment.y * tileSize, tileSize - 1, tileSize - 1);
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(segment.x * tileSize, segment.y * tileSize, tileSize - 1, tileSize - 1);
+                // Rounded rect
+                ctx.beginPath();
+                ctx.roundRect(segX, segY, segSize, segSize, 4);
+                ctx.fill();
+                
+                // Reset shadow
+                // ctx.shadowBlur = 0;
             });
             
             // Draw food
             ctx.fillStyle = food.type === 'golden' ? '#ff9d00' : '#ff0080';
+            // ctx.shadowColor = ctx.fillStyle;
+            // ctx.shadowBlur = 10;
             ctx.beginPath();
             ctx.arc(
                 food.x * tileSize + tileSize/2,
                 food.y * tileSize + tileSize/2,
-                tileSize/2 - 1,
+                tileSize/2 - 2,
                 0,
                 Math.PI * 2
             );
             ctx.fill();
+            // ctx.shadowBlur = 0;
             
             // Draw obstacles
             ctx.fillStyle = '#8000ff';
@@ -742,7 +560,8 @@
             gameRunning = false;
             clearInterval(gameLoop);
             finalScoreDisplay.textContent = score;
-            gameOverScreen.classList.add('show');
+            gameOverScreen.classList.remove('opacity-0', 'pointer-events-none');
+            gameOverScreen.classList.add('opacity-100', 'pointer-events-auto');
         }
         
         // Start game
@@ -772,7 +591,8 @@
             gameRunning = false;
             gamePaused = false;
             clearInterval(gameLoop);
-            gameOverScreen.classList.remove('show');
+            gameOverScreen.classList.add('opacity-0', 'pointer-events-none');
+            gameOverScreen.classList.remove('opacity-100', 'pointer-events-auto');
             pauseBtn.textContent = 'Pause';
             initGame();
         }
@@ -886,7 +706,8 @@
         pauseBtn.addEventListener('click', togglePause);
         resetBtn.addEventListener('click', resetGame);
         restartBtn.addEventListener('click', () => {
-            gameOverScreen.classList.remove('show');
+            gameOverScreen.classList.add('opacity-0', 'pointer-events-none');
+            gameOverScreen.classList.remove('opacity-100', 'pointer-events-auto');
             resetGame();
             startGame();
         });

@@ -1,799 +1,369 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Hub Central | Ultimate Gaming Experience</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    heading: ['Outfit', 'sans-serif'],
+                },
+                extend: {
+                    colors: {
+                        primary: '#6c5ce7',
+                        secondary: '#a29bfe',
+                        accent: '#fd79a8',
+                        dark: '#1e202a',
+                        darker: '#181a20',
+                        light: '#fff',
+                        surface: '#2b2e3b',
+                        success: '#00b894',
+                        warning: '#fdcb6e',
+                        danger: '#ff7675',
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')",
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shine': 'shine 2s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        shine: {
+                            '0%': { backgroundPosition: '200% center' },
+                            '100%': { backgroundPosition: '-200% center' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Minimal custom scrollbar to match theme */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        :root {
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --accent: #fd79a8;
-            --dark: #2d3436;
-            --light: #f7f7f7;
-            --success: #00b894;
-            --warning: #fdcb6e;
-            --danger: #ff7675;
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --card-hover: rgba(108, 92, 231, 0.25);
+        ::-webkit-scrollbar-track {
+            background: #181a20;
         }
-
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: var(--light);
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
+        ::-webkit-scrollbar-thumb {
+            background: #2b2e3b;
+            border-radius: 4px;
         }
-
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.15) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(253, 121, 168, 0.15) 0%, transparent 20%);
-            z-index: -1;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6c5ce7;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        .glass {
+            background: rgba(43, 46, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-
-        header {
-            text-align: center;
-            padding: 30px 0;
-            position: relative;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            animation: pulse 2s infinite;
-            display: inline-block;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            background: linear-gradient(to right, var(--accent), var(--primary));
-            -webkit-background-clip: text;
+        .text-gradient {
             background-clip: text;
+            -webkit-background-clip: text;
             color: transparent;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-
-        h1::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(to right, var(--accent), var(--primary));
-            border-radius: 2px;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 25px auto 30px;
-            color: var(--secondary);
-            line-height: 1.7;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            min-width: 150px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            background: var(--card-hover);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--accent);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            color: var(--secondary);
-        }
-
-        .games-section {
-            margin: 50px 0;
-        }
-
-        .section-title {
-            font-size: 2.2rem;
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .section-title::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(to right, var(--accent), var(--primary));
-            border-radius: 2px;
-        }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        .game-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-card:hover {
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            background: var(--card-hover);
-        }
-
-        .game-banner {
-            height: 180px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-banner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .game-card:hover .game-banner img {
-            transform: scale(1.1);
-        }
-
-        .game-icon {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2.5rem;
-            background: rgba(0, 0, 0, 0.5);
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            z-index: 2;
-        }
-
-        .game-content {
-            padding: 25px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-title {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: var(--light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .game-title i {
-            color: var(--accent);
-        }
-
-        .game-description {
-            color: var(--secondary);
-            margin-bottom: 20px;
-            line-height: 1.6;
-            font-size: 1.05rem;
-            flex-grow: 1;
-        }
-
-        .game-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            color: var(--secondary);
-        }
-
-        .difficulty {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .difficulty-bar {
-            width: 80px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .difficulty-level {
-            height: 100%;
-            background: var(--success);
-            border-radius: 3px;
-        }
-
-        .players {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .game-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .game-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.6);
-        }
-
-        .game-btn:active {
-            transform: translateY(1px);
-        }
-
-        .game-btn::after {
-            content: "▶";
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            transition: transform 0.3s ease;
-        }
-
-        .game-btn:hover::after {
-            transform: translateY(-50%) translateX(5px);
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px 0 20px;
-            color: var(--secondary);
-            font-size: 1rem;
-            margin-top: 30px;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin: 50px 0;
-        }
-
-        .feature-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            background: var(--card-hover);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: var(--accent);
-        }
-
-        .feature-title {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--light);
-        }
-
-        .feature-desc {
-            color: var(--secondary);
-            line-height: 1.6;
-        }
-
-        /* Animations */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .floating {
-            animation: float 4s ease-in-out infinite;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            h1 {
-                font-size: 2.8rem;
-            }
-            
-            .games-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            }
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.3rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-            
-            .stats {
-                gap: 15px;
-            }
-            
-            .stat-card {
-                min-width: 120px;
-                padding: 15px;
-            }
-            
-            .stat-value {
-                font-size: 2rem;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .container {
-                padding: 10px;
-            }
-            
-            header {
-                padding: 20px 0;
-            }
-            
-            .logo {
-                font-size: 3rem;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .games-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stat-card {
-                min-width: 100px;
-                padding: 12px;
-            }
-            
-            .stat-value {
-                font-size: 1.8rem;
-            }
-            
-            .feature-card {
-                padding: 20px 15px;
-            }
-            
-            .section-title {
-                font-size: 1.6rem;
-            }
-        }
-
-        /* Loading animation for game cards */
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .game-card {
-            background: linear-gradient(90deg, 
-                rgba(255,255,255,0.05) 25%, 
-                rgba(255,255,255,0.1) 50%, 
-                rgba(255,255,255,0.05) 75%);
-            background-size: 200% 100%;
-            animation: loading 2s infinite;
-        }
-
-        .game-card.loaded {
-            animation: none;
-            background: var(--card-bg);
-        }
-
-        /* Category filter */
-        .category-filter {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 30px;
-            color: var(--secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn:hover, .filter-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Search bar */
-        .search-container {
-            max-width: 500px;
-            margin: 0 auto 40px;
-            position: relative;
-        }
-
-        .search-bar {
-            width: 100%;
-            padding: 15px 20px;
-            border-radius: 30px;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            padding-left: 50px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .search-bar:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--primary);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--secondary);
-        }
-
-        /* Notification badge */
-        .badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--danger);
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: bold;
+            background-image: linear-gradient(to right, #6c5ce7, #fd79a8);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo">🎮</div>
-            <h1>Game Hub Central</h1>
-            <p class="subtitle">Discover, play, and master the best collection of games in one place. Challenge yourself with our diverse selection!</p>
-            
-            <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-bar" placeholder="Search for games...">
+<body class="bg-[#13151b] text-white min-h-screen overflow-x-hidden selection:bg-primary selection:text-white font-sans antialiased">
+    
+    <!-- Background Elements -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px] animate-pulse delay-1000"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-16 relative">
+            <div class="inline-flex items-center justify-center p-4 mb-6 rounded-full glass animate-float">
+                <span class="text-5xl">🎮</span>
             </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold font-heading mb-6 tracking-tight">
+                <span class="text-gradient">Game Hub</span> Central
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+                Discover, play, and master the best collection of games in one place. 
+                Challenge yourself with our diverse selection of premium experiences.
+            </p>
             
-            <div class="category-filter">
-                <button class="filter-btn active">All Games</button>
-                <button class="filter-btn">Puzzle</button>
-                <button class="filter-btn">Action</button>
-                <button class="filter-btn">Strategy</button>
-                <button class="filter-btn">Arcade</button>
-            </div>
-            
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-value">12+</div>
-                    <div class="stat-label">Games Available</div>
+
+
+            <!-- Stats -->
+            <div class="flex flex-wrap justify-center gap-6 mt-12">
+                <div class="glass px-8 py-4 rounded-2xl text-center min-w-[140px] transform transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 group">
+                    <div class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-success to-emerald-400 mb-1">12+</div>
+                    <div class="text-sm text-gray-400 font-medium group-hover:text-gray-300 transition-colors">Games Ready</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">50K+</div>
-                    <div class="stat-label">Players Online</div>
+                <div class="glass px-8 py-4 rounded-2xl text-center min-w-[140px] transform transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 group">
+                    <div class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-400 mb-1">50K+</div>
+                    <div class="text-sm text-gray-400 font-medium group-hover:text-gray-300 transition-colors">Players Online</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">98%</div>
-                    <div class="stat-label">Satisfaction</div>
+                <div class="glass px-8 py-4 rounded-2xl text-center min-w-[140px] transform transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 group">
+                    <div class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-warning to-orange-400 mb-1">98%</div>
+                    <div class="text-sm text-gray-400 font-medium group-hover:text-gray-300 transition-colors">Satisfaction</div>
                 </div>
             </div>
+
         </header>
 
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">🏆</div>
-                <h3 class="feature-title">Leaderboards</h3>
-                <p class="feature-desc">Compete with players worldwide and climb the global rankings</p>
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20 max-w-6xl mx-auto">
+            <div class="glass p-8 rounded-3xl group hover:bg-white/5 transition-all duration-500 hover:border-primary/20 border border-transparent">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <span class="text-3xl">🏆</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 font-heading text-white">Leaderboards</h3>
+                <p class="text-gray-400 leading-relaxed text-sm">Compete with players worldwide and climb the global rankings to prove your mastery.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔄</div>
-                <h3 class="feature-title">Cross-Platform</h3>
-                <p class="feature-desc">Play seamlessly on desktop, tablet, and mobile devices</p>
+            <div class="glass p-8 rounded-3xl group hover:bg-white/5 transition-all duration-500 hover:border-primary/20 border border-transparent">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400/20 to-purple-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <span class="text-3xl">🔄</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3 font-heading text-white">Cross-Platform</h3>
+                <p class="text-gray-400 leading-relaxed text-sm">Experience seamless gameplay across all your devices - desktop, tablet, or mobile.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3 class="feature-title">Secure</h3>
-                <p class="feature-desc">Your data is protected with enterprise-grade security</p>
-            </div>
-        </div>
-
-        <div class="games-section">
-            <h2 class="section-title">Featured Games</h2>
-            <div class="games-grid">
-                <div class="game-card floating">
-                    <div class="game-banner">
-                        <div style="background: linear-gradient(45deg, #00b894, #00cec9); height: 100%;"></div>
-                        <div class="game-icon">🎲</div>
-                    </div>
-                    <div class="game-content">
-                        <h2 class="game-title"><i class="fas fa-memory"></i> Memory Card</h2>
-                        <p class="game-description">Test your memory skills with this challenging card matching game. Multiple themes available!</p>
-                        <div class="game-meta">
-                            <div class="difficulty">
-                                <span>Easy</span>
-                                <div class="difficulty-bar">
-                                    <div class="difficulty-level" style="width: 30%"></div>
-                                </div>
-                            </div>
-                            <div class="players">
-                                <i class="fas fa-users"></i>
-                                <span>1 Player</span>
-                            </div>
-                        </div>
-                        <a href="MemoryCard.html" class="game-btn">Play Now</a>
-                    </div>
+            <div class="glass p-8 rounded-3xl group hover:bg-white/5 transition-all duration-500 hover:border-primary/20 border border-transparent">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400/20 to-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <span class="text-3xl">🔒</span>
                 </div>
-
-                <div class="game-card floating" style="animation-delay: 0.2s">
-                    <div class="game-banner">
-                        <div style="background: linear-gradient(45deg, #fdcb6e, #e17055); height: 100%;"></div>
-                        <div class="game-icon">🎯</div>
-                    </div>
-                    <div class="game-content">
-                        <h2 class="game-title"><i class="fas fa-hammer"></i> Mole Whacker</h2>
-                        <p class="game-description">Whack as many moles as you can before time runs out! How fast are your reflexes?</p>
-                        <div class="game-meta">
-                            <div class="difficulty">
-                                <span>Medium</span>
-                                <div class="difficulty-bar">
-                                    <div class="difficulty-level" style="width: 60%"></div>
-                                </div>
-                            </div>
-                            <div class="players">
-                                <i class="fas fa-users"></i>
-                                <span>1 Player</span>
-                            </div>
-                        </div>
-                        <a href="Mole.html" class="game-btn">Play Now</a>
-                    </div>
-                </div>
-
-                <div class="game-card floating" style="animation-delay: 0.4s">
-                    <div class="game-banner">
-                        <div style="background: linear-gradient(45deg, #6c5ce7, #a29bfe); height: 100%;"></div>
-                        <div class="game-icon">🧩</div>
-                    </div>
-                    <div class="game-content">
-                        <h2 class="game-title"><i class="fas fa-calculator"></i> Number Guessing</h2>
-                        <p class="game-description">Can you guess the secret number? Use logic and deduction to solve this classic puzzle.</p>
-                        <div class="game-meta">
-                            <div class="difficulty">
-                                <span>Hard</span>
-                                <div class="difficulty-bar">
-                                    <div class="difficulty-level" style="width: 85%"></div>
-                                </div>
-                            </div>
-                            <div class="players">
-                                <i class="fas fa-users"></i>
-                                <span>1 Player</span>
-                            </div>
-                        </div>
-                        <a href="NumberGuessing.html" class="game-btn">Play Now</a>
-                    </div>
-                </div>
-
-                <div class="game-card floating" style="animation-delay: 0.2s">
-                    <div class="game-banner">
-                        <div style="background: linear-gradient(45deg, #fdcb6e, #e17055); height: 100%;"></div>
-                        <div class="game-icon">🎯</div>
-                    </div>
-                    <div class="game-content">
-                        <h2 class="game-title"><i class="fas fa-hammer"></i> Snake Game</h2>
-                        <p class="game-description">Whack as many Collect food to grow and earn points!</p>
-                        <div class="game-meta">
-                            <div class="difficulty">
-                                <span>Medium</span>
-                                <div class="difficulty-bar">
-                                    <div class="difficulty-level" style="width: 60%"></div>
-                                </div>
-                            </div>
-                            <div class="players">
-                                <i class="fas fa-users"></i>
-                                <span>1 Player</span>
-                            </div>
-                        </div>
-                        <a href="Snake.html" class="game-btn">Play Now</a>
-                    </div>
-                </div>
-
-                <div class="game-card floating" style="animation-delay: 0.6s">
-                    <div class="game-banner">
-                        <div style="background: linear-gradient(45deg, #e84393, #fd79a8); height: 100%;"></div>
-                        <div class="game-icon">🚀</div>
-                    </div>
-                    <div class="game-content">
-                        <h2 class="game-title"><i class="fas fa-hand-rock"></i> Rock Paper Scissors</h2>
-                        <p class="game-description">The classic game of strategy and luck. Can you beat the computer?</p>
-                        <div class="game-meta">
-                            <div class="difficulty">
-                                <span>Easy</span>
-                                <div class="difficulty-bar">
-                                    <div class="difficulty-level" style="width: 30%"></div>
-                                </div>
-                            </div>
-                            <div class="players">
-                                <i class="fas fa-users"></i>
-                                <span>1 Player</span>
-                            </div>
-                        </div>
-                        <a href="RockPaper.html" class="game-btn">Play Now</a>
-                    </div>
-                </div>
+                <h3 class="text-xl font-bold mb-3 font-heading text-white">Secure & Safe</h3>
+                <p class="text-gray-400 leading-relaxed text-sm">Your data and progress are always protected with enterprise-grade security protocols.</p>
             </div>
         </div>
 
-        <footer>
+        <!-- Games Section -->
+        <section class="mb-20">
+            <div class="flex items-center justify-between mb-10 px-2">
+                <h2 class="text-3xl md:text-4xl font-bold font-heading">
+                    Featured <span class="text-primary">Games</span>
+                </h2>
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group text-sm font-medium">
+                    View All <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                
+                <!-- Card 1: Memory Card -->
+                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 h-full flex flex-col">
+                    <div class="relative h-48 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#00b894] to-[#00cec9] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <img src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Memory Card" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
+                            <span class="text-2xl">🎲</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-primary transition-colors">Memory Card</h3>
+                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-success">Easy</span>
+                                    <span>•</span>
+                                    <span>Puzzle</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">Test your memory skills with this challenging card matching game. Multiple themes available!</p>
+                        <div class="mt-auto">
+                            <a href="MemoryCard.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-primary text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-primary hover:shadow-lg hover:shadow-primary/25 relative overflow-hidden group/btn">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Mole Whacker -->
+                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-warning/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-warning/20 h-full flex flex-col">
+                    <div class="relative h-48 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#fdcb6e] to-[#e17055] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                         <img src="https://images.unsplash.com/photo-1551103782-8ab07afd45c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Mole Whacker" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                         <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-warning transition-colors">Mole Whacker</h3>
+                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-warning">Medium</span>
+                                    <span>•</span>
+                                    <span>Arcade</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">Whack as many moles as you can before time runs out! How fast are your reflexes?</p>
+                        <div class="mt-auto">
+                            <a href="Mole.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-warning hover:text-black text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-warning hover:shadow-lg hover:shadow-warning/25 relative overflow-hidden group/btn">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Number Guessing -->
+                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-secondary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-secondary/20 h-full flex flex-col">
+                    <div class="relative h-48 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#6c5ce7] to-[#a29bfe] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                         <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Number Guessing" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
+                            <span class="text-2xl">🧩</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                         <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-secondary transition-colors">Number Guessing</h3>
+                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-danger">Hard</span>
+                                    <span>•</span>
+                                    <span>Logic</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">Can you guess the secret number? Use logic and deduction to solve this classic puzzle.</p>
+                        <div class="mt-auto">
+                            <a href="NumberGuessing.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-secondary hover:text-black text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-secondary hover:shadow-lg hover:shadow-secondary/25 relative overflow-hidden group/btn">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Snake Game -->
+                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-success/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-success/20 h-full flex flex-col">
+                    <div class="relative h-48 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#00b894] to-[#55efc4] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                         <img src="https://images.unsplash.com/photo-1628277613967-6ab58cf56736?ixlib=rb-4.0.3&auto=format&fit=crop&w=1632&q=80" alt="Snake Game" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
+                            <span class="text-2xl">🐍</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                         <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-success transition-colors">Snake Game</h3>
+                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-warning">Medium</span>
+                                    <span>•</span>
+                                    <span>Classic</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">The legendary classic! Collect food to grow, avoid obstacles, and set the high score.</p>
+                        <div class="mt-auto">
+                            <a href="Snake.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-success hover:text-black text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-success hover:shadow-lg hover:shadow-success/25 relative overflow-hidden group/btn">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Rock Paper Scissors -->
+                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-accent/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/20 h-full flex flex-col">
+                    <div class="relative h-48 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#e84393] to-[#fd79a8] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                         <img src="https://images.unsplash.com/photo-1614926075191-2c0205220c45?ixlib=rb-4.0.3&auto=format&fit=crop&w=1543&q=80" alt="Rock Paper Scissors" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
+                            <span class="text-2xl">⚡</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                         <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-accent transition-colors">Rock Paper Scissors</h3>
+                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-success">Easy</span>
+                                    <span>•</span>
+                                    <span>Strategy</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">The classic game of luck and strategy. Can you outsmart the AI?</p>
+                        <div class="mt-auto">
+                            <a href="RockPaper.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-accent hover:text-white text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-accent hover:shadow-lg hover:shadow-accent/25 relative overflow-hidden group/btn">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Image Puzzle -->
+                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 h-full flex flex-col">
+                    <div class="relative h-48 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[#6c5ce7] to-[#0984e3] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                         <img src="https://images.unsplash.com/photo-1546527868-ccb7ee7dfa6a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Image Puzzle" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
+                            <span class="text-2xl">🖼️</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                         <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-primary transition-colors">Image Slider</h3>
+                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-success">Variable</span>
+                                    <span>•</span>
+                                    <span>Puzzle</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">Reconstruct beautiful images by sliding tiles. Multiple difficulties and custom images!</p>
+                        <div class="mt-auto">
+                            <a href="ImagePuzzle.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-primary hover:text-white text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-primary hover:shadow-lg hover:shadow-primary/25 relative overflow-hidden group/btn">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-10 mt-10 border-t border-white/5 text-gray-500 text-sm">
             <p>© 2023 Game Hub Central. All rights reserved. | Designed with ❤️ for gamers</p>
+            <div class="flex justify-center gap-4 mt-4">
+                <a href="#" class="hover:text-primary transition-colors"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-primary transition-colors"><i class="fab fa-github"></i></a>
+                <a href="#" class="hover:text-primary transition-colors"><i class="fab fa-discord"></i></a>
+            </div>
         </footer>
     </div>
 
-    <script>
-        // Add loading animation effect to game cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const gameCards = document.querySelectorAll('.game-card');
-            
-            // Simulate loading delay
-            setTimeout(() => {
-                gameCards.forEach(card => {
-                    card.classList.add('loaded');
-                });
-            }, 800);
-            
-            // Add hover effect to buttons
-            const buttons = document.querySelectorAll('.game-btn');
-            buttons.forEach(button => {
-                button.addEventListener('mouseenter', function() {
-                    this.style.background = 'linear-gradient(45deg, #a29bfe, #6c5ce7)';
-                });
-                
-                button.addEventListener('mouseleave', function() {
-                    this.style.background = 'linear-gradient(45deg, var(--primary), var(--accent))';
-                });
-            });
-            
-            // Filter button functionality
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // In a real implementation, this would filter games
-                    // For demo, we'll just show a message
-                    if(this.textContent !== 'All Games') {
-                        alert(`Filtering games by: ${this.textContent}`);
-                    }
-                });
-            });
-            
-            // Search functionality
-            const searchBar = document.querySelector('.search-bar');
-            searchBar.addEventListener('keyup', function(e) {
-                if(e.key === 'Enter') {
-                    alert(`Searching for: ${this.value}`);
-                }
-            });
-        });
-    </script>
+
 </body>
 </html>
