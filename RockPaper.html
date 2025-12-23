@@ -50,7 +50,7 @@
             }
         }
     </script>
-    <style>
+    <style type="text/tailwindcss">
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
@@ -61,10 +61,7 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
         }
-        /* Specific state classes hooked by JS */
-        .result-text-win { @apply text-success drop-shadow-lg animate-pulse; }
-        .result-text-lose { @apply text-danger drop-shadow-lg animate-shake; }
-        .result-text-draw { @apply text-warning drop-shadow-lg; }
+
     </style>
 </head>
 <body class="bg-[#13151b] text-white min-h-screen flex items-center justify-center p-4 font-sans overflow-x-hidden selection:bg-primary selection:text-white">
@@ -185,10 +182,16 @@
             const modeButtons = document.querySelectorAll('.mode-btn');
 
             // Web Audio API Context
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            let audioCtx;
 
             function playSound(type) {
                 if (!gameState.soundEnabled) return;
+                
+                // Lazy load audio context to avoid "not allowed to start" warning
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
                 if (audioCtx.state === 'suspended') audioCtx.resume();
 
                 const oscillator = audioCtx.createOscillator();
@@ -300,17 +303,17 @@
                 switch(result) {
                     case 'win':
                         resultTextEl.textContent = 'You Win!';
-                        resultTextEl.classList.add('text-success');
+                        resultTextEl.classList.add('text-success', 'drop-shadow-lg', 'animate-pulse');
                         playSound('win');
                         break;
                     case 'lose':
                         resultTextEl.textContent = 'You Lose!';
-                        resultTextEl.classList.add('text-danger');
+                        resultTextEl.classList.add('text-danger', 'drop-shadow-lg', 'animate-shake');
                         playSound('lose');
                         break;
                     case 'draw':
                         resultTextEl.textContent = "It's a Draw!";
-                        resultTextEl.classList.add('text-warning');
+                        resultTextEl.classList.add('text-warning', 'drop-shadow-lg');
                         break;
                 }
                 
