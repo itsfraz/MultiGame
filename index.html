@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Hub Central | Ultimate Gaming Experience</title>
+    <title>Game Hub Central | All-in-One Arcade</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,38 +17,31 @@
             darkMode: 'class',
             theme: {
                 fontFamily: {
-                    sans: ['Inter', 'sans-serif'],
+                    sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     heading: ['Outfit', 'sans-serif'],
                 },
                 extend: {
                     colors: {
-                        primary: '#6c5ce7',
-                        secondary: '#a29bfe',
-                        accent: '#fd79a8',
-                        dark: '#1e202a',
-                        darker: '#181a20',
-                        light: '#fff',
-                        surface: '#2b2e3b',
-                        success: '#00b894',
-                        warning: '#fdcb6e',
-                        danger: '#ff7675',
-                    },
-                    backgroundImage: {
-                        'hero-pattern': "url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')",
+                        cyber: {
+                            base: '#0B0D14',
+                            surface: '#121624',
+                            card: '#181E33',
+                            border: 'rgba(255, 255, 255, 0.08)',
+                            primary: '#6366F1',
+                            accent: '#EC4899',
+                            cyan: '#06B6D4',
+                            emerald: '#10B981',
+                            amber: '#F59E0B'
+                        }
                     },
                     animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'shine': 'shine 2s linear infinite',
+                        'pulse-glow': 'pulseGlow 4s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
                     },
                     keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
-                        shine: {
-                            '0%': { backgroundPosition: '200% center' },
-                            '100%': { backgroundPosition: '-200% center' },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                            '50%': { opacity: '0.7', transform: 'scale(1.05)' },
                         }
                     }
                 }
@@ -54,378 +49,1069 @@
         }
     </script>
     <style>
-        /* Minimal custom scrollbar to match theme */
+        /* Compact layout custom styles */
+        body {
+            background-color: #090B10;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(6, 182, 212, 0.12) 0px, transparent 50%);
+        }
+
+        /* Custom scrollbar for small screens */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #181a20;
+            background: #0B0D14;
         }
         ::-webkit-scrollbar-thumb {
-            background: #2b2e3b;
-            border-radius: 4px;
+            background: #252D4A;
+            border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #6c5ce7;
+            background: #6366F1;
         }
-        .glass {
-            background: rgba(43, 46, 59, 0.4);
+
+        .glass-panel {
+            background: rgba(18, 22, 36, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .glass-card {
+            background: rgba(24, 30, 51, 0.65);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .text-gradient {
-            background-clip: text;
+
+        .glass-card:hover {
+            background: rgba(30, 38, 64, 0.85);
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.35);
+            box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.25);
+        }
+
+        .text-gradient-purple {
+            background: linear-gradient(135deg, #A5B4FC 0%, #6366F1 50%, #EC4899 100%);
             -webkit-background-clip: text;
-            color: transparent;
-            background-image: linear-gradient(to right, #6c5ce7, #fd79a8);
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-accent {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+        }
+
+        /* Single Page Fit Clamp */
+        @media (min-height: 800px) and (min-width: 1280px) {
+            .app-container {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+            }
+            .games-board {
+                flex: 1;
+                min-height: 0;
+            }
         }
     </style>
 </head>
-<body class="bg-[#13151b] text-white min-h-screen overflow-x-hidden selection:bg-primary selection:text-white font-sans antialiased">
-    
-    <!-- Background Elements -->
-    <div class="fixed inset-0 z-0 pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px] animate-pulse delay-1000"></div>
+<body class="text-slate-100 font-sans antialiased min-h-screen selection:bg-indigo-500 selection:text-white flex flex-col justify-between">
+
+    <!-- Ambient glowing light orbs -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px] animate-pulse-glow"></div>
+        <div class="absolute top-1/2 -right-32 w-80 h-80 bg-pink-600/15 rounded-full blur-[110px] animate-pulse-glow" style="animation-delay: 2s;"></div>
+        <div class="absolute -bottom-20 left-1/3 w-80 h-80 bg-cyan-600/15 rounded-full blur-[100px] animate-pulse-glow" style="animation-delay: 1s;"></div>
     </div>
 
-    <!-- Main Container -->
-    <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Header Section -->
-        <header class="text-center mb-16 relative">
-            <div class="inline-flex items-center justify-center p-4 mb-6 rounded-full glass animate-float">
-                <span class="text-5xl">🎮</span>
+    <!-- Main Wrapper (Single Page layout with max height control) -->
+    <div class="app-container relative z-10 w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-3 lg:py-4 flex-1 flex flex-col">
+
+        <!-- Top Header & Control Hub Bar -->
+        <header class="glass-panel rounded-2xl px-4 py-3 sm:py-3.5 mb-3 sm:mb-4 flex flex-col md:flex-row items-center justify-between gap-3 shadow-xl">
+            <!-- Brand & Tagline -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 text-white text-lg">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-white flex items-center gap-1.5">
+                                GAME <span class="text-gradient-purple">HUB</span>
+                            </h1>
+                            <span class="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">PRO</span>
+                        </div>
+                        <p class="text-xs text-slate-400 hidden sm:block">8 curated retro & skill games in one instant single-page portal</p>
+                    </div>
+                </div>
+
+                <!-- Mobile Quick Stats Summary -->
+                <div class="flex md:hidden items-center gap-2">
+                    <button id="mobileRandomBtn" class="px-2.5 py-1.5 rounded-lg bg-pink-500/20 text-pink-300 border border-pink-500/30 text-xs font-semibold hover:bg-pink-500/30 transition-all flex items-center gap-1.5" title="Random Game">
+                        <i class="fa-solid fa-dice"></i>
+                    </button>
+                    <button id="soundToggleBtnMobile" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center text-xs" title="Toggle Sound">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
             </div>
-            <h1 class="text-5xl md:text-7xl font-extrabold font-heading mb-6 tracking-tight">
-                <span class="text-gradient">Game Hub</span> Central
-            </h1>
-            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-                Discover, play, and master the best collection of games in one place. 
-                Challenge yourself with our diverse selection of premium experiences.
-            </p>
-            
 
+            <!-- Central Search & Filters -->
+            <div class="w-full md:w-auto flex-1 max-w-2xl flex flex-col sm:flex-row items-center gap-2.5">
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64 lg:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input 
+                        type="text" 
+                        id="gameSearch" 
+                        placeholder="Search games (press '/' to focus)..." 
+                        class="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-900/80 border border-slate-700/60 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-xs text-white placeholder-slate-500 transition-all outline-none"
+                    >
+                    <button id="clearSearchBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
 
-            <!-- Stats -->
-            <div class="flex flex-wrap justify-center gap-6 mt-12">
-                <div class="glass px-8 py-4 rounded-2xl text-center min-w-[140px] transform transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 group">
-                    <div class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-success to-emerald-400 mb-1">8</div>
-                    <div class="text-sm text-gray-400 font-medium group-hover:text-gray-300 transition-colors">Games Ready</div>
-                </div>
-                <div class="glass px-8 py-4 rounded-2xl text-center min-w-[140px] transform transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 group">
-                    <div class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-400 mb-1">50K+</div>
-                    <div class="text-sm text-gray-400 font-medium group-hover:text-gray-300 transition-colors">Players Online</div>
-                </div>
-                <div class="glass px-8 py-4 rounded-2xl text-center min-w-[140px] transform transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 group">
-                    <div class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-warning to-orange-400 mb-1">98%</div>
-                    <div class="text-sm text-gray-400 font-medium group-hover:text-gray-300 transition-colors">Satisfaction</div>
+                <!-- Category Pills -->
+                <div class="flex items-center gap-1.5 overflow-x-auto w-full pb-1 sm:pb-0 scrollbar-none" id="categoryFilterContainer">
+                    <button data-cat="all" class="cat-pill active px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/30 whitespace-nowrap">
+                        All <span class="opacity-75 text-[10px] ml-1">(8)</span>
+                    </button>
+                    <button data-cat="Arcade" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
+                        Arcade
+                    </button>
+                    <button data-cat="Puzzle" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
+                        Puzzle
+                    </button>
+                    <button data-cat="Classic" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
+                        Classic
+                    </button>
+                    <button data-cat="Skill" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 whitespace-nowrap">
+                        Skill
+                    </button>
+                    <button data-cat="fav" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white/5 text-amber-400 hover:text-amber-300 hover:bg-amber-400/10 whitespace-nowrap flex items-center gap-1">
+                        <i class="fa-solid fa-star text-[10px]"></i> Favs
+                    </button>
                 </div>
             </div>
 
+            <!-- Right Controls: Random Pick, Audio, Theme Stats -->
+            <div class="hidden md:flex items-center gap-2.5">
+                <!-- Random Pick button -->
+                <button id="randomGameBtn" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-semibold text-xs transition-all shadow-md shadow-pink-600/25 flex items-center gap-2 group active:scale-95" title="Play a random game (Hotkey: R)">
+                    <i class="fa-solid fa-dice group-hover:rotate-45 transition-transform duration-300"></i>
+                    <span>Surprise Me</span>
+                </button>
+
+                <!-- Sound Effects Toggle -->
+                <button id="soundToggleBtn" class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500 flex items-center justify-center text-xs transition-all" title="Toggle Sound FX (Hotkey: M)">
+                    <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+                </button>
+
+                <!-- Global Play Counter Badge -->
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs flex items-center gap-2 text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Plays: <strong id="totalHubPlays" class="text-white font-bold">0</strong></span>
+                </div>
+            </div>
         </header>
 
-        <!-- Features Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20 max-w-6xl mx-auto">
-            <div class="glass p-8 rounded-3xl group hover:bg-white/5 transition-all duration-500 hover:border-primary/20 border border-transparent">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                    <span class="text-3xl">🏆</span>
+        <!-- Main Games Grid Area (Compact 4x2 responsive grid so all 8 games are visible together on screen) -->
+        <main class="games-board flex-1 flex flex-col justify-center my-auto">
+            
+            <!-- Empty state when search/filter returns nothing -->
+            <div id="noResultsNotice" class="hidden flex-col items-center justify-center p-12 text-center my-8 glass-panel rounded-2xl">
+                <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-2xl text-slate-400 mb-3">
+                    <i class="fa-solid fa-ghost"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3 font-heading text-white">Leaderboards</h3>
-                <p class="text-gray-400 leading-relaxed text-sm">Compete with players worldwide and climb the global rankings to prove your mastery.</p>
+                <h3 class="text-lg font-bold text-white mb-1">No matching games found</h3>
+                <p class="text-xs text-slate-400 max-w-sm mb-4">Try clearing your search query or selecting a different category filter.</p>
+                <button id="resetFiltersBtn" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all">
+                    Reset All Filters
+                </button>
             </div>
-            <div class="glass p-8 rounded-3xl group hover:bg-white/5 transition-all duration-500 hover:border-primary/20 border border-transparent">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400/20 to-purple-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                    <span class="text-3xl">🔄</span>
+
+            <!-- 8 Games Compact Grid (2 rows x 4 cols on XL screens, 3 cols on LG, 2 cols on MD/SM) -->
+            <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-3.5 xl:gap-4">
+
+                <!-- 1. Typing Speed Racer -->
+                <div class="game-card glass-card rounded-2xl overflow-hidden flex flex-col relative group" data-category="Skill Arcade" data-tags="typing racer speed car racing keyboard words" data-title="Typing Speed Racer" data-file="Typing Speed Racer.html">
+                    <!-- Top banner / Accent -->
+                    <div class="relative h-28 sm:h-32 xl:h-28 overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-950 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <!-- Icon representation -->
+                        <div class="relative z-10 w-14 h-14 rounded-2xl bg-blue-500/20 border border-blue-400/30 backdrop-blur-md flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl shadow-blue-500/20 text-white">
+                            🏎️
+                        </div>
+                        <!-- Difficulty & Badge -->
+                        <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-blue-500/30 backdrop-blur-md text-blue-200 border border-blue-400/30 text-[10px] font-bold uppercase tracking-wider">Skill</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/60 backdrop-blur-md text-slate-300 text-[10px] font-medium">Dynamic AI</span>
+                        </div>
+                        <!-- Favorite Star Button -->
+                        <button class="fav-btn absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-slate-400 hover:text-amber-400 hover:scale-110 flex items-center justify-center text-xs transition-all" data-game="typing" title="Add to favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+
+                    <!-- Body Content -->
+                    <div class="p-3 sm:p-3.5 xl:p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <h2 class="font-heading font-bold text-sm sm:text-base text-white group-hover:text-blue-400 transition-colors truncate">Typing Speed Racer</h2>
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-bolt text-amber-400 text-[9px]"></i> Hot</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">High-octane drag racing powered by your typing speed! Live telemetry & AI racers.</p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <button class="play-in-modal-btn flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-blue-600/30 active:scale-95" data-file="Typing Speed Racer.html" data-title="Typing Speed Racer">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </button>
+                            <a href="Typing Speed Racer.html" target="_blank" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-all" title="Open in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold mb-3 font-heading text-white">Cross-Platform</h3>
-                <p class="text-gray-400 leading-relaxed text-sm">Experience seamless gameplay across all your devices - desktop, tablet, or mobile.</p>
+
+                <!-- 2. Tic Tac Toe Pro -->
+                <div class="game-card glass-card rounded-2xl overflow-hidden flex flex-col relative group" data-category="Classic" data-tags="tic tac toe x o multiplayer ai turn based board" data-title="Tic Tac Toe Pro" data-file="TicTacToe.html">
+                    <div class="relative h-28 sm:h-32 xl:h-28 overflow-hidden bg-gradient-to-br from-indigo-700 via-purple-900 to-slate-950 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <div class="relative z-10 w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 backdrop-blur-md flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl shadow-indigo-500/20 text-white">
+                            ❌
+                        </div>
+                        <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-indigo-500/30 backdrop-blur-md text-indigo-200 border border-indigo-400/30 text-[10px] font-bold uppercase tracking-wider">Classic</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/60 backdrop-blur-md text-slate-300 text-[10px] font-medium">1P / 2P</span>
+                        </div>
+                        <button class="fav-btn absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-slate-400 hover:text-amber-400 hover:scale-110 flex items-center justify-center text-xs transition-all" data-game="tictactoe" title="Add to favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-3 sm:p-3.5 xl:p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <h2 class="font-heading font-bold text-sm sm:text-base text-white group-hover:text-indigo-400 transition-colors truncate">Tic Tac Toe Pro</h2>
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-robot text-indigo-400 text-[9px]"></i> Smart AI</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">Cyberpunk arena with adaptive Minimax AI, 2-player local mode & combo streaks.</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <button class="play-in-modal-btn flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-indigo-600/30 active:scale-95" data-file="TicTacToe.html" data-title="Tic Tac Toe Pro">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </button>
+                            <a href="TicTacToe.html" target="_blank" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-all" title="Open in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Memory Card Match -->
+                <div class="game-card glass-card rounded-2xl overflow-hidden flex flex-col relative group" data-category="Puzzle" data-tags="memory card match cards brain concentration test flip" data-title="Memory Card Match" data-file="MemoryCard.html">
+                    <div class="relative h-28 sm:h-32 xl:h-28 overflow-hidden bg-gradient-to-br from-emerald-700 via-teal-900 to-slate-950 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <div class="relative z-10 w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 backdrop-blur-md flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl shadow-emerald-500/20 text-white">
+                            🎲
+                        </div>
+                        <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-emerald-500/30 backdrop-blur-md text-emerald-200 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider">Puzzle</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/60 backdrop-blur-md text-slate-300 text-[10px] font-medium">Brain Gym</span>
+                        </div>
+                        <button class="fav-btn absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-slate-400 hover:text-amber-400 hover:scale-110 flex items-center justify-center text-xs transition-all" data-game="memory" title="Add to favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-3 sm:p-3.5 xl:p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <h2 class="font-heading font-bold text-sm sm:text-base text-white group-hover:text-emerald-400 transition-colors truncate">Memory Card Match</h2>
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-brain text-emerald-400 text-[9px]"></i> Logic</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">Flip tiles and match pairs against timer. Multiple themes and grid difficulties.</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <button class="play-in-modal-btn flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-emerald-600/30 active:scale-95" data-file="MemoryCard.html" data-title="Memory Card Match">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </button>
+                            <a href="MemoryCard.html" target="_blank" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-all" title="Open in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Snake Game -->
+                <div class="game-card glass-card rounded-2xl overflow-hidden flex flex-col relative group" data-category="Classic Arcade" data-tags="snake arcade retro apple eat grow classic 90s" data-title="Cyber Snake" data-file="Snake.html">
+                    <div class="relative h-28 sm:h-32 xl:h-28 overflow-hidden bg-gradient-to-br from-green-600 via-emerald-900 to-slate-950 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <div class="relative z-10 w-14 h-14 rounded-2xl bg-green-500/20 border border-green-400/30 backdrop-blur-md flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl shadow-green-500/20 text-white">
+                            🐍
+                        </div>
+                        <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-green-500/30 backdrop-blur-md text-green-200 border border-green-400/30 text-[10px] font-bold uppercase tracking-wider">Arcade</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/60 backdrop-blur-md text-slate-300 text-[10px] font-medium">Retro</span>
+                        </div>
+                        <button class="fav-btn absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-slate-400 hover:text-amber-400 hover:scale-110 flex items-center justify-center text-xs transition-all" data-game="snake" title="Add to favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-3 sm:p-3.5 xl:p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <h2 class="font-heading font-bold text-sm sm:text-base text-white group-hover:text-green-400 transition-colors truncate">Cyber Snake</h2>
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-gamepad text-green-400 text-[9px]"></i> Legend</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">The quintessential arcade game. Slither, gobble energy apples, and beat the record.</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <button class="play-in-modal-btn flex-1 py-2 rounded-xl bg-green-600 hover:bg-green-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-green-600/30 active:scale-95" data-file="Snake.html" data-title="Cyber Snake">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </button>
+                            <a href="Snake.html" target="_blank" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-all" title="Open in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Image Puzzle -->
+                <div class="game-card glass-card rounded-2xl overflow-hidden flex flex-col relative group" data-category="Puzzle" data-tags="image puzzle slider tile 15 puzzle slide photo" data-title="Image Slider Puzzle" data-file="ImagePuzzle.html">
+                    <div class="relative h-28 sm:h-32 xl:h-28 overflow-hidden bg-gradient-to-br from-violet-700 via-purple-900 to-slate-950 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <div class="relative z-10 w-14 h-14 rounded-2xl bg-violet-500/20 border border-violet-400/30 backdrop-blur-md flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl shadow-violet-500/20 text-white">
+                            🖼️
+                        </div>
+                        <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-violet-500/30 backdrop-blur-md text-violet-200 border border-violet-400/30 text-[10px] font-bold uppercase tracking-wider">Puzzle</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/60 backdrop-blur-md text-slate-300 text-[10px] font-medium">Custom Art</span>
+                        </div>
+                        <button class="fav-btn absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-slate-400 hover:text-amber-400 hover:scale-110 flex items-center justify-center text-xs transition-all" data-game="imagepuzzle" title="Add to favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-3 sm:p-3.5 xl:p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <h2 class="font-heading font-bold text-sm sm:text-base text-white group-hover:text-violet-400 transition-colors truncate">Image Slider Puzzle</h2>
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-puzzle-piece text-violet-400 text-[9px]"></i> Visual</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">Reconstruct stunning artwork tile-by-tile. Supports multiple grid sizes and images.</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <button class="play-in-modal-btn flex-1 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-violet-600/30 active:scale-95" data-file="ImagePuzzle.html" data-title="Image Slider Puzzle">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </button>
+                            <a href="ImagePuzzle.html" target="_blank" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-all" title="Open in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Mole Whacker -->
+                <div class="game-card glass-card rounded-2xl overflow-hidden flex flex-col relative group" data-category="Arcade" data-tags="mole whacker whack reflex tap fast hammer reaction" data-title="Mole Whacker" data-file="Mole.html">
+                    <div class="relative h-28 sm:h-32 xl:h-28 overflow-hidden bg-gradient-to-br from-amber-600 via-orange-900 to-slate-950 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <div class="relative z-10 w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-400/30 backdrop-blur-md flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl shadow-amber-500/20 text-white">
+                            🎯
+                        </div>
+                        <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-amber-500/30 backdrop-blur-md text-amber-200 border border-amber-400/30 text-[10px] font-bold uppercase tracking-wider">Arcade</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/60 backdrop-blur-md text-slate-300 text-[10px] font-medium">Reflex</span>
+                        </div>
+                        <button class="fav-btn absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-slate-400 hover:text-amber-400 hover:scale-110 flex items-center justify-center text-xs transition-all" data-game="mole" title="Add to favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-3 sm:p-3.5 xl:p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <h2 class="font-heading font-bold text-sm sm:text-base text-white group-hover:text-amber-400 transition-colors truncate">Mole Whacker</h2>
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-stopwatch text-amber-400 text-[9px]"></i> Fast</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">Whack cheeky moles as fast as they pop up! Test and train your reaction speed.</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <button class="play-in-modal-btn flex-1 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-amber-600/30 active:scale-95" data-file="Mole.html" data-title="Mole Whacker">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </button>
+                            <a href="Mole.html" target="_blank" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-all" title="Open in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Rock Paper Scissors -->
+                <div class="game-card glass-card rounded-2xl overflow-hidden flex flex-col relative group" data-category="Classic Skill" data-tags="rock paper scissors hand duel ai strategy luck" data-title="Rock Paper Scissors" data-file="RockPaper.html">
+                    <div class="relative h-28 sm:h-32 xl:h-28 overflow-hidden bg-gradient-to-br from-pink-600 via-rose-900 to-slate-950 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <div class="relative z-10 w-14 h-14 rounded-2xl bg-pink-500/20 border border-pink-400/30 backdrop-blur-md flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl shadow-pink-500/20 text-white">
+                            ⚡
+                        </div>
+                        <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-pink-500/30 backdrop-blur-md text-pink-200 border border-pink-400/30 text-[10px] font-bold uppercase tracking-wider">Skill</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/60 backdrop-blur-md text-slate-300 text-[10px] font-medium">Quick Duel</span>
+                        </div>
+                        <button class="fav-btn absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-slate-400 hover:text-amber-400 hover:scale-110 flex items-center justify-center text-xs transition-all" data-game="rockpaper" title="Add to favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-3 sm:p-3.5 xl:p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <h2 class="font-heading font-bold text-sm sm:text-base text-white group-hover:text-pink-400 transition-colors truncate">Rock Paper Scissors</h2>
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-trophy text-pink-400 text-[9px]"></i> Streak</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">Electrifying hand duel against the computer. Build up winning streaks and combos!</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <button class="play-in-modal-btn flex-1 py-2 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-pink-600/30 active:scale-95" data-file="RockPaper.html" data-title="Rock Paper Scissors">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </button>
+                            <a href="RockPaper.html" target="_blank" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-all" title="Open in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Number Guessing -->
+                <div class="game-card glass-card rounded-2xl overflow-hidden flex flex-col relative group" data-category="Puzzle" data-tags="number guessing math logic secret clue deduction" data-title="Number Guessing" data-file="NumberGuessing.html">
+                    <div class="relative h-28 sm:h-32 xl:h-28 overflow-hidden bg-gradient-to-br from-cyan-600 via-sky-900 to-slate-950 flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                        <div class="relative z-10 w-14 h-14 rounded-2xl bg-cyan-500/20 border border-cyan-400/30 backdrop-blur-md flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-xl shadow-cyan-500/20 text-white">
+                            🧩
+                        </div>
+                        <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-cyan-500/30 backdrop-blur-md text-cyan-200 border border-cyan-400/30 text-[10px] font-bold uppercase tracking-wider">Puzzle</span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/60 backdrop-blur-md text-slate-300 text-[10px] font-medium">Logic Master</span>
+                        </div>
+                        <button class="fav-btn absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-slate-400 hover:text-amber-400 hover:scale-110 flex items-center justify-center text-xs transition-all" data-game="numberguess" title="Add to favorites">
+                            <i class="fa-regular fa-star"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-3 sm:p-3.5 xl:p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-1 mb-1">
+                                <h2 class="font-heading font-bold text-sm sm:text-base text-white group-hover:text-cyan-400 transition-colors truncate">Number Guessing</h2>
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 whitespace-nowrap"><i class="fa-solid fa-calculator text-cyan-400 text-[9px]"></i> Deduction</span>
+                            </div>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">Crack the mystery number with binary search logic and hints before attempts vanish.</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+                            <button class="play-in-modal-btn flex-1 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-cyan-600/30 active:scale-95" data-file="NumberGuessing.html" data-title="Number Guessing">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </button>
+                            <a href="NumberGuessing.html" target="_blank" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-all" title="Open in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="glass p-8 rounded-3xl group hover:bg-white/5 transition-all duration-500 hover:border-primary/20 border border-transparent">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400/20 to-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                    <span class="text-3xl">🔒</span>
+        </main>
+
+        <!-- Compact Bottom HUD Bar -->
+        <footer class="glass-panel rounded-2xl px-4 py-2.5 mt-3 sm:mt-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+            <div class="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
+                <span class="flex items-center gap-1.5 font-medium text-slate-300">
+                    <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                    <span id="activeGameCount">8 Games Active</span>
+                </span>
+                <span class="hidden sm:inline text-slate-700">•</span>
+                <span class="flex items-center gap-1 text-slate-400">
+                    <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] border border-slate-700 text-slate-300 font-mono">/</kbd> Search
+                </span>
+                <span class="flex items-center gap-1 text-slate-400">
+                    <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] border border-slate-700 text-slate-300 font-mono">R</kbd> Random
+                </span>
+                <span class="flex items-center gap-1 text-slate-400">
+                    <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] border border-slate-700 text-slate-300 font-mono">Esc</kbd> Close Game
+                </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <span class="text-[11px] text-slate-500">Game Hub Central Pro &bull; Zero Lag Arcade</span>
+                <button id="clearDataBtn" class="text-[10px] text-slate-500 hover:text-rose-400 transition-colors" title="Reset played count & favorites">
+                    Reset Data
+                </button>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ==============================================
+         IN-PAGE SEAMLESS GAME PLAYER MODAL 
+         (Allows playing ANY game on the same single page)
+         ============================================== -->
+    <div id="gameModal" class="fixed inset-0 z-50 hidden flex-col bg-slate-950/85 backdrop-blur-xl transition-opacity duration-300 opacity-0">
+        <!-- Modal Top Bar -->
+        <div class="glass-panel border-x-0 border-t-0 rounded-none px-4 py-2.5 flex items-center justify-between gap-3 shadow-lg">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-400 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-gamepad"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3 font-heading text-white">Secure & Safe</h3>
-                <p class="text-gray-400 leading-relaxed text-sm">Your data and progress are always protected with enterprise-grade security protocols.</p>
+                <div>
+                    <h3 id="modalGameTitle" class="text-sm font-bold text-white flex items-center gap-2">
+                        Game Playing
+                    </h3>
+                    <p class="text-[11px] text-slate-400">Press <kbd class="px-1 rounded bg-slate-800 border border-slate-700 text-[10px]">Esc</kbd> anytime to return to Game Hub</p>
+                </div>
+            </div>
+
+            <!-- Modal Action Controls -->
+            <div class="flex items-center gap-2">
+                <!-- Reload Game -->
+                <button id="modalReloadBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-slate-700/60 transition-all" title="Restart game">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">Restart</span>
+                </button>
+
+                <!-- Open in New Tab -->
+                <a id="modalExternalLink" href="#" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-slate-700/60 transition-all" title="Open full screen in a new window">
+                    <i class="fa-solid fa-up-right-from-square"></i>
+                    <span class="hidden sm:inline">New Tab</span>
+                </a>
+
+                <!-- Fullscreen Toggle for the iframe -->
+                <button id="modalFullscreenBtn" class="px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all" title="Toggle Fullscreen">
+                    <i class="fa-solid fa-expand"></i>
+                    <span class="hidden sm:inline">Fullscreen</span>
+                </button>
+
+                <!-- Close Modal -->
+                <button id="modalCloseBtn" class="w-8 h-8 rounded-lg bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/30 flex items-center justify-center text-sm transition-all" title="Exit to Hub">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Games Section -->
-        <section class="mb-20">
-            <div class="flex items-center justify-between mb-10 px-2">
-                <h2 class="text-3xl md:text-4xl font-bold font-heading">
-                    Featured <span class="text-primary">Games</span>
-                </h2>
-                <a href="#" class="text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group text-sm font-medium">
-                    View All <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
-                </a>
+        <!-- Game Iframe Container -->
+        <div class="flex-1 w-full h-full relative overflow-hidden bg-black/40">
+            <div id="modalLoadingSpinner" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/60 z-10 transition-opacity duration-200">
+                <div class="w-12 h-12 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin mb-3"></div>
+                <p class="text-xs font-semibold text-slate-300">Loading game arena...</p>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                
-                <!-- Card 1: Memory Card -->
-                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-[#00b894] to-[#00cec9] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <img src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Memory Card" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
-                            <span class="text-2xl">🎲</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-primary transition-colors">Memory Card</h3>
-                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
-                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-success">Easy</span>
-                                    <span>•</span>
-                                    <span>Puzzle</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">Test your memory skills with this challenging card matching game. Multiple themes available!</p>
-                        <div class="mt-auto">
-                            <a href="MemoryCard.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-primary text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-primary hover:shadow-lg hover:shadow-primary/25 relative overflow-hidden group/btn">
-                                <span class="relative z-10 flex items-center justify-center gap-2">
-                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 2: Mole Whacker -->
-                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-warning/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-warning/20 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-[#fdcb6e] to-[#e17055] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-                         <img src="https://images.unsplash.com/photo-1551103782-8ab07afd45c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Mole Whacker" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
-                            <span class="text-2xl">🎯</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-warning transition-colors">Mole Whacker</h3>
-                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
-                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-warning">Medium</span>
-                                    <span>•</span>
-                                    <span>Arcade</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">Whack as many moles as you can before time runs out! How fast are your reflexes?</p>
-                        <div class="mt-auto">
-                            <a href="Mole.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-warning hover:text-black text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-warning hover:shadow-lg hover:shadow-warning/25 relative overflow-hidden group/btn">
-                                <span class="relative z-10 flex items-center justify-center gap-2">
-                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3: Number Guessing -->
-                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-secondary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-secondary/20 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-[#6c5ce7] to-[#a29bfe] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-                         <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Number Guessing" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
-                            <span class="text-2xl">🧩</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-secondary transition-colors">Number Guessing</h3>
-                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
-                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-danger">Hard</span>
-                                    <span>•</span>
-                                    <span>Logic</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">Can you guess the secret number? Use logic and deduction to solve this classic puzzle.</p>
-                        <div class="mt-auto">
-                            <a href="NumberGuessing.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-secondary hover:text-black text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-secondary hover:shadow-lg hover:shadow-secondary/25 relative overflow-hidden group/btn">
-                                <span class="relative z-10 flex items-center justify-center gap-2">
-                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 4: Snake Game -->
-                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-success/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-success/20 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-[#00b894] to-[#55efc4] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-                         <img src="https://images.unsplash.com/photo-1628277613967-6ab58cf56736?ixlib=rb-4.0.3&auto=format&fit=crop&w=1632&q=80" alt="Snake Game" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
-                            <span class="text-2xl">🐍</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-success transition-colors">Snake Game</h3>
-                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
-                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-warning">Medium</span>
-                                    <span>•</span>
-                                    <span>Classic</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">The legendary classic! Collect food to grow, avoid obstacles, and set the high score.</p>
-                        <div class="mt-auto">
-                            <a href="Snake.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-success hover:text-black text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-success hover:shadow-lg hover:shadow-success/25 relative overflow-hidden group/btn">
-                                <span class="relative z-10 flex items-center justify-center gap-2">
-                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 5: Rock Paper Scissors -->
-                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-accent/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/20 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-[#e84393] to-[#fd79a8] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-                         <img src="https://images.unsplash.com/photo-1614926075191-2c0205220c45?ixlib=rb-4.0.3&auto=format&fit=crop&w=1543&q=80" alt="Rock Paper Scissors" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
-                            <span class="text-2xl">⚡</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-accent transition-colors">Rock Paper Scissors</h3>
-                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
-                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-success">Easy</span>
-                                    <span>•</span>
-                                    <span>Strategy</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">The classic game of luck and strategy. Can you outsmart the AI?</p>
-                        <div class="mt-auto">
-                            <a href="RockPaper.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-accent hover:text-white text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-accent hover:shadow-lg hover:shadow-accent/25 relative overflow-hidden group/btn">
-                                <span class="relative z-10 flex items-center justify-center gap-2">
-                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 6: Tic Tac Toe Pro -->
-                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-                         <img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Tic Tac Toe" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
-                            <span class="text-2xl">❌</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-primary transition-colors">Tic Tac Toe Pro</h3>
-                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
-                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-warning">Variable</span>
-                                    <span>•</span>
-                                    <span>Classic</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">The ultimate 3-in-a-row challenge. Play against AI with adaptive difficulty or challenge a friend.</p>
-                        <div class="mt-auto">
-                            <a href="TicTacToe.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-primary hover:text-white text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-primary hover:shadow-lg hover:shadow-primary/25 relative overflow-hidden group/btn">
-                                <span class="relative z-10 flex items-center justify-center gap-2">
-                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 7: Image Puzzle -->
-                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-[#6c5ce7] to-[#0984e3] opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-                         <img src="https://images.unsplash.com/photo-1546527868-ccb7ee7dfa6a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Image Puzzle" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
-                            <span class="text-2xl">🖼️</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-primary transition-colors">Image Slider</h3>
-                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
-                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-success">Variable</span>
-                                    <span>•</span>
-                                    <span>Puzzle</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">Reconstruct beautiful images by sliding tiles. Multiple difficulties and custom images!</p>
-                        <div class="mt-auto">
-                            <a href="ImagePuzzle.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-primary hover:text-white text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-primary hover:shadow-lg hover:shadow-primary/25 relative overflow-hidden group/btn">
-                                <span class="relative z-10 flex items-center justify-center gap-2">
-                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 8: Typing Speed Racer -->
-                <div class="group relative rounded-3xl overflow-hidden bg-surface border border-white/5 hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20 h-full flex flex-col">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-600 opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Typing Speed Racer" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-110 transition-transform duration-700">
-                        <div class="absolute top-4 right-4 w-12 h-12 rounded-xl bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-all duration-500">
-                            <span class="text-2xl">🏎️</span>
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-blue-400 transition-colors">Typing Speed Racer</h3>
-                                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
-                                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-warning">Dynamic</span>
-                                    <span>•</span>
-                                    <span>Racing & Skill</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">High-octane drag racing powered by your typing speed! Live telemetry, smart AI bots, and custom challenges.</p>
-                        <div class="mt-auto">
-                            <a href="Typing Speed Racer.html" class="block w-full py-3.5 rounded-xl bg-white/5 hover:bg-blue-600 hover:text-white text-center font-bold text-white transition-all duration-300 border border-white/5 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group/btn">
-                                <span class="relative z-10 flex items-center justify-center gap-2">
-                                    Play Now <i class="fas fa-play text-xs transform group-hover/btn:translate-x-1 transition-transform"></i>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="text-center py-10 mt-10 border-t border-white/5 text-gray-500 text-sm">
-            <p>© 2023 Game Hub Central. All rights reserved. | Designed with ❤️ for gamers</p>
-            <div class="flex justify-center gap-4 mt-4">
-                <a href="#" class="hover:text-primary transition-colors"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="hover:text-primary transition-colors"><i class="fab fa-github"></i></a>
-                <a href="#" class="hover:text-primary transition-colors"><i class="fab fa-discord"></i></a>
-            </div>
-        </footer>
+            <iframe id="gameIframe" class="w-full h-full border-0" allow="fullscreen; autoplay; gamepad"></iframe>
+        </div>
     </div>
 
+    <!-- ==============================================
+         ROULETTE / RANDOM PICK MODAL 
+         ============================================== -->
+    <div id="rouletteModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-opacity duration-200 opacity-0">
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-sm w-full text-center border border-pink-500/30 shadow-2xl shadow-pink-500/20 relative">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-600 to-rose-500 mx-auto flex items-center justify-center text-3xl shadow-lg shadow-pink-500/40 text-white mb-4 animate-spin-slow">
+                <i class="fa-solid fa-dice"></i>
+            </div>
+            <h3 class="text-xl font-heading font-extrabold text-white mb-1">Random Selector</h3>
+            <p class="text-xs text-slate-400 mb-6">Picking your next gaming challenge...</p>
+            
+            <div id="rouletteGameName" class="py-4 px-6 rounded-2xl bg-slate-900 border border-slate-700/80 text-lg font-bold text-pink-400 mb-6 min-h-[60px] flex items-center justify-center shadow-inner">
+                Spinning...
+            </div>
 
+            <div class="flex items-center gap-3">
+                <button id="rouletteCancelBtn" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-semibold text-xs border border-white/10 transition-all">
+                    Cancel
+                </button>
+                <button id="rouletteConfirmBtn" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-bold text-xs shadow-lg shadow-pink-600/30 transition-all active:scale-95 disabled:opacity-50" disabled>
+                    Launch Now!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================
+         INTERACTIVE CLIENT LOGIC & SOUND SYNTHESIS
+         ============================================== -->
+    <script>
+        // Web Audio API Sound Synthesizer (Instant SFX without external audio files)
+        class HubAudio {
+            constructor() {
+                this.enabled = localStorage.getItem('hub_sound') !== 'muted';
+                this.ctx = null;
+            }
+
+            init() {
+                if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playHover() {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(420, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(840, this.ctx.currentTime + 0.04);
+                    gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.04);
+                } catch(e) {}
+            }
+
+            playClick() {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(580, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(290, this.ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.08);
+                } catch(e) {}
+            }
+
+            playFanfare() {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+                        const startTime = this.ctx.currentTime + idx * 0.06;
+                        gain.gain.setValueAtTime(0.05, startTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.15);
+                    });
+                } catch(e) {}
+            }
+
+            toggle() {
+                this.enabled = !this.enabled;
+                localStorage.setItem('hub_sound', this.enabled ? 'active' : 'muted');
+                return this.enabled;
+            }
+        }
+
+        const audio = new HubAudio();
+
+        // DOM Elements
+        const searchInput = document.getElementById('gameSearch');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const categoryPills = document.querySelectorAll('.cat-pill');
+        const gameCards = Array.from(document.querySelectorAll('.game-card'));
+        const noResultsNotice = document.getElementById('noResultsNotice');
+        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+        const activeGameCount = document.getElementById('activeGameCount');
+        const soundToggleBtn = document.getElementById('soundToggleBtn');
+        const soundToggleBtnMobile = document.getElementById('soundToggleBtnMobile');
+        const soundIcon = document.getElementById('soundIcon');
+        const totalHubPlays = document.getElementById('totalHubPlays');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const randomGameBtn = document.getElementById('randomGameBtn');
+        const mobileRandomBtn = document.getElementById('mobileRandomBtn');
+
+        // Modal Elements
+        const gameModal = document.getElementById('gameModal');
+        const modalGameTitle = document.getElementById('modalGameTitle');
+        const modalIframe = document.getElementById('gameIframe');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalReloadBtn = document.getElementById('modalReloadBtn');
+        const modalFullscreenBtn = document.getElementById('modalFullscreenBtn');
+        const modalExternalLink = document.getElementById('modalExternalLink');
+        const modalLoadingSpinner = document.getElementById('modalLoadingSpinner');
+
+        // Roulette Modal Elements
+        const rouletteModal = document.getElementById('rouletteModal');
+        const rouletteGameName = document.getElementById('rouletteGameName');
+        const rouletteCancelBtn = document.getElementById('rouletteCancelBtn');
+        const rouletteConfirmBtn = document.getElementById('rouletteConfirmBtn');
+
+        let currentCategory = 'all';
+        let currentSearchQuery = '';
+        let favorites = JSON.parse(localStorage.getItem('hub_favs') || '[]');
+        let totalPlays = parseInt(localStorage.getItem('hub_total_plays') || '0', 10);
+        let currentLoadedGame = null;
+
+        // Initialize state
+        function initApp() {
+            updatePlayCounterDisplay();
+            updateSoundIconDisplay();
+            syncFavoritesUI();
+            applyFilter();
+
+            // Setup audio hover on interactive cards and buttons
+            document.querySelectorAll('button, .game-card, .cat-pill').forEach(el => {
+                el.addEventListener('mouseenter', () => audio.playHover());
+            });
+        }
+
+        function updatePlayCounterDisplay() {
+            totalHubPlays.textContent = totalPlays.toLocaleString();
+        }
+
+        function updateSoundIconDisplay() {
+            if (audio.enabled) {
+                soundIcon.className = 'fa-solid fa-volume-high text-indigo-400';
+                if (soundToggleBtnMobile) soundToggleBtnMobile.innerHTML = '<i class="fa-solid fa-volume-high text-indigo-400"></i>';
+            } else {
+                soundIcon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                if (soundToggleBtnMobile) soundToggleBtnMobile.innerHTML = '<i class="fa-solid fa-volume-xmark text-slate-500"></i>';
+            }
+        }
+
+        function syncFavoritesUI() {
+            document.querySelectorAll('.fav-btn').forEach(btn => {
+                const gameKey = btn.dataset.game;
+                const icon = btn.querySelector('i');
+                if (favorites.includes(gameKey)) {
+                    icon.className = 'fa-solid fa-star text-amber-400';
+                    btn.classList.add('border-amber-400/40', 'bg-amber-400/10');
+                } else {
+                    icon.className = 'fa-regular fa-star';
+                    btn.classList.remove('border-amber-400/40', 'bg-amber-400/10');
+                }
+            });
+        }
+
+        // Filtering Logic
+        function applyFilter() {
+            let visibleCount = 0;
+            const query = currentSearchQuery.trim().toLowerCase();
+
+            gameCards.forEach(card => {
+                const title = (card.dataset.title || '').toLowerCase();
+                const tags = (card.dataset.tags || '').toLowerCase();
+                const category = card.dataset.category || '';
+                const gameKey = card.querySelector('.fav-btn')?.dataset.game;
+
+                const matchesSearch = !query || title.includes(query) || tags.includes(query);
+                let matchesCategory = false;
+
+                if (currentCategory === 'all') {
+                    matchesCategory = true;
+                } else if (currentCategory === 'fav') {
+                    matchesCategory = favorites.includes(gameKey);
+                } else {
+                    matchesCategory = category.toLowerCase().includes(currentCategory.toLowerCase());
+                }
+
+                if (matchesSearch && matchesCategory) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResultsNotice.classList.remove('hidden');
+                noResultsNotice.classList.add('flex');
+            } else {
+                noResultsNotice.classList.add('hidden');
+                noResultsNotice.classList.remove('flex');
+            }
+
+            activeGameCount.textContent = `${visibleCount} Game${visibleCount === 1 ? '' : 's'} Visible`;
+        }
+
+        // Event Listeners for Search & Categories
+        searchInput.addEventListener('input', (e) => {
+            currentSearchQuery = e.target.value;
+            clearSearchBtn.classList.toggle('hidden', !currentSearchQuery);
+            applyFilter();
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            currentSearchQuery = '';
+            clearSearchBtn.classList.add('hidden');
+            audio.playClick();
+            applyFilter();
+            searchInput.focus();
+        });
+
+        categoryPills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                audio.playClick();
+                categoryPills.forEach(p => {
+                    p.classList.remove('active', 'bg-indigo-600', 'text-white', 'shadow-md', 'shadow-indigo-600/30');
+                    if (p.dataset.cat === 'fav') {
+                        p.classList.add('bg-white/5', 'text-amber-400');
+                    } else {
+                        p.classList.add('bg-white/5', 'text-slate-400');
+                    }
+                });
+
+                pill.classList.add('active', 'bg-indigo-600', 'text-white', 'shadow-md', 'shadow-indigo-600/30');
+                pill.classList.remove('bg-white/5', 'text-slate-400', 'text-amber-400');
+
+                currentCategory = pill.dataset.cat;
+                applyFilter();
+            });
+        });
+
+        resetFiltersBtn.addEventListener('click', () => {
+            audio.playClick();
+            searchInput.value = '';
+            currentSearchQuery = '';
+            clearSearchBtn.classList.add('hidden');
+            const allPill = document.querySelector('.cat-pill[data-cat="all"]');
+            if (allPill) allPill.click();
+        });
+
+        // Favorite Toggle
+        document.querySelectorAll('.fav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                audio.playClick();
+                const gameKey = btn.dataset.game;
+                if (favorites.includes(gameKey)) {
+                    favorites = favorites.filter(id => id !== gameKey);
+                } else {
+                    favorites.push(gameKey);
+                    audio.playFanfare();
+                }
+                localStorage.setItem('hub_favs', JSON.stringify(favorites));
+                syncFavoritesUI();
+                if (currentCategory === 'fav') applyFilter();
+            });
+        });
+
+        // Sound Toggle Button
+        function handleSoundToggle() {
+            audio.toggle();
+            audio.playClick();
+            updateSoundIconDisplay();
+        }
+        soundToggleBtn.addEventListener('click', handleSoundToggle);
+        if (soundToggleBtnMobile) soundToggleBtnMobile.addEventListener('click', handleSoundToggle);
+
+        // Reset Data Button
+        clearDataBtn.addEventListener('click', () => {
+            if (confirm('Reset your played counts and favorites?')) {
+                audio.playClick();
+                localStorage.removeItem('hub_total_plays');
+                localStorage.removeItem('hub_favs');
+                totalPlays = 0;
+                favorites = [];
+                updatePlayCounterDisplay();
+                syncFavoritesUI();
+                applyFilter();
+            }
+        });
+
+        // Modal Game Player Operations
+        function launchGameModal(gameFile, gameTitle) {
+            audio.playClick();
+            currentLoadedGame = { file: gameFile, title: gameTitle };
+
+            // Increment plays
+            totalPlays++;
+            localStorage.setItem('hub_total_plays', totalPlays.toString());
+            updatePlayCounterDisplay();
+
+            // Set Title & Links
+            modalGameTitle.textContent = gameTitle;
+            modalExternalLink.href = gameFile;
+
+            // Show loading spinner while loading iframe
+            modalLoadingSpinner.classList.remove('opacity-0', 'pointer-events-none');
+            modalIframe.src = gameFile;
+
+            modalIframe.onload = () => {
+                setTimeout(() => {
+                    modalLoadingSpinner.classList.add('opacity-0', 'pointer-events-none');
+                }, 150);
+            };
+
+            // Open modal with smooth fade
+            gameModal.classList.remove('hidden');
+            setTimeout(() => {
+                gameModal.classList.remove('opacity-0');
+                gameModal.classList.add('opacity-100');
+            }, 10);
+        }
+
+        function closeGameModal() {
+            audio.playClick();
+            gameModal.classList.remove('opacity-100');
+            gameModal.classList.add('opacity-0');
+            setTimeout(() => {
+                gameModal.classList.add('hidden');
+                modalIframe.src = '';
+                currentLoadedGame = null;
+            }, 250);
+        }
+
+        // Attach modal trigger to buttons
+        document.querySelectorAll('.play-in-modal-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const file = btn.dataset.file;
+                const title = btn.dataset.title;
+                launchGameModal(file, title);
+            });
+        });
+
+        modalCloseBtn.addEventListener('click', closeGameModal);
+
+        modalReloadBtn.addEventListener('click', () => {
+            if (currentLoadedGame) {
+                audio.playClick();
+                modalLoadingSpinner.classList.remove('opacity-0', 'pointer-events-none');
+                modalIframe.src = currentLoadedGame.file;
+            }
+        });
+
+        modalFullscreenBtn.addEventListener('click', () => {
+            audio.playClick();
+            if (!document.fullscreenElement) {
+                gameModal.requestFullscreen().catch(err => {
+                    console.log(`Fullscreen error: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Roulette / Random Picker Modal
+        let rouletteTimer = null;
+        let selectedRandomGame = null;
+
+        function startRoulette() {
+            audio.playClick();
+            const visibleOrAll = gameCards.filter(c => c.style.display !== 'none');
+            const pool = visibleOrAll.length > 0 ? visibleOrAll : gameCards;
+
+            rouletteModal.classList.remove('hidden');
+            setTimeout(() => {
+                rouletteModal.classList.remove('opacity-0');
+                rouletteModal.classList.add('opacity-100');
+            }, 10);
+
+            rouletteConfirmBtn.disabled = true;
+            let counter = 0;
+            const maxSpins = 16;
+            const speed = 70;
+
+            if (rouletteTimer) clearInterval(rouletteTimer);
+
+            rouletteTimer = setInterval(() => {
+                const randomCard = pool[Math.floor(Math.random() * pool.length)];
+                rouletteGameName.textContent = randomCard.dataset.title;
+                audio.playHover();
+                counter++;
+
+                if (counter >= maxSpins) {
+                    clearInterval(rouletteTimer);
+                    selectedRandomGame = randomCard;
+                    rouletteGameName.innerHTML = `<span class="text-emerald-400 font-extrabold flex items-center gap-2"><i class="fa-solid fa-crown text-amber-400"></i> ${randomCard.dataset.title}</span>`;
+                    rouletteConfirmBtn.disabled = false;
+                    audio.playFanfare();
+                }
+            }, speed);
+        }
+
+        function closeRoulette() {
+            audio.playClick();
+            if (rouletteTimer) clearInterval(rouletteTimer);
+            rouletteModal.classList.remove('opacity-100');
+            rouletteModal.classList.add('opacity-0');
+            setTimeout(() => {
+                rouletteModal.classList.add('hidden');
+            }, 200);
+        }
+
+        randomGameBtn.addEventListener('click', startRoulette);
+        if (mobileRandomBtn) mobileRandomBtn.addEventListener('click', startRoulette);
+        rouletteCancelBtn.addEventListener('click', closeRoulette);
+
+        rouletteConfirmBtn.addEventListener('click', () => {
+            if (selectedRandomGame) {
+                const file = selectedRandomGame.dataset.file;
+                const title = selectedRandomGame.dataset.title;
+                closeRoulette();
+                setTimeout(() => {
+                    launchGameModal(file, title);
+                }, 220);
+            }
+        });
+
+        // Global Keyboard Shortcuts
+        window.addEventListener('keydown', (e) => {
+            // '/' to focus search (when not in an input)
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+                audio.playHover();
+            }
+
+            // 'Esc' to close modal
+            if (e.key === 'Escape') {
+                if (!gameModal.classList.contains('hidden')) {
+                    closeGameModal();
+                } else if (!rouletteModal.classList.contains('hidden')) {
+                    closeRoulette();
+                }
+            }
+
+            // 'R' for Random game (when not focused on search)
+            if ((e.key === 'r' || e.key === 'R') && document.activeElement !== searchInput) {
+                if (gameModal.classList.contains('hidden') && rouletteModal.classList.contains('hidden')) {
+                    startRoulette();
+                }
+            }
+
+            // 'M' for toggle Mute (when not focused on search)
+            if ((e.key === 'm' || e.key === 'M') && document.activeElement !== searchInput) {
+                handleSoundToggle();
+            }
+        });
+
+        // Bootstrap on load
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
 </body>
 </html>

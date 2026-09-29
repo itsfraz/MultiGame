@@ -2,68 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#4f46e5">
-    <meta name="description" content="A modern, mobile-first Tic Tac Toe game with smart AI and beautiful aesthetics.">
-    <title>Tic Tac Toe Pro</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="Ultimate Tic Tac Toe Pro - Featuring Unbeatable Minimax AI, Infinite Disappearing Mode, Real-time Blitz Timer, and Gorgeous Cyber Aesthetics.">
+    <title>Tic Tac Toe Pro | Cyber Arena</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Tailwind Config -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 fontFamily: {
-                    sans: ['Outfit', 'sans-serif'],
+                    sans: ['Inter', 'sans-serif'],
+                    heading: ['Outfit', 'sans-serif'],
                 },
                 extend: {
                     colors: {
-                        glass: 'rgba(255, 255, 255, 0.1)',
-                        glassDark: 'rgba(15, 23, 42, 0.6)',
-                        primary: {
-                            400: '#818cf8',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                        },
-                        accent: {
-                            x: '#f43f5e', // Rose-500
-                            o: '#3b82f6', // Blue-500
-                        }
+                        darkBg: '#090d16',
+                        darkCard: '#111827',
+                        darkSurface: '#1a2234',
+                        darkBorder: 'rgba(255, 255, 255, 0.08)',
+                        lightBg: '#f1f5f9',
+                        lightCard: '#ffffff',
+                        lightSurface: '#e2e8f0',
+                        lightBorder: 'rgba(0, 0, 0, 0.08)',
+                        neonX: '#f43f5e',
+                        neonO: '#06b6d4',
+                        neonGold: '#f59e0b',
+                    },
+                    boxShadow: {
+                        'neon-x': '0 0 20px rgba(244, 63, 94, 0.45)',
+                        'neon-o': '0 0 20px rgba(6, 182, 212, 0.45)',
+                        'neon-gold': '0 0 20px rgba(245, 158, 11, 0.5)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.25)',
                     },
                     animation: {
-                        'pop-in': 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-                        'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'u-slide-up': 'slideUp 0.4s ease-out forwards',
-                        'bounce-slight': 'bounceSlight 2s infinite',
-                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pop': 'pop 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
                     },
                     keyframes: {
-                        popIn: {
-                            '0%': { transform: 'scale(0.5)', opacity: '0' },
-                            '100%': { transform: 'scale(1)', opacity: '1' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        },
-                        bounceSlight: {
+                        float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-5px)' },
+                            '50%': { transform: 'translateY(-4px)' },
                         },
-                        pulseGlow: {
-                            '0%, 100%': { boxShadow: '0 0 15px rgba(99, 102, 241, 0.5)' },
-                            '50%': { boxShadow: '0 0 25px rgba(99, 102, 241, 0.8)' },
+                        pop: {
+                            '0%': { transform: 'scale(0.6)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
                         }
                     }
                 }
@@ -72,423 +71,1091 @@
     </script>
 
     <style>
-        /* Custom tweaks that Tailwind can't handle purely via classes or for specific feel */
-        body {
+        /* Strict Viewport Containment - 100% Zero Scroll Guaranteed */
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            max-height: 100dvh;
+            width: 100%;
+            width: 100dvw;
+            margin: 0;
+            padding: 0;
+            overflow: hidden !important;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile, allow scroll */
         }
+
+        /* Glassmorphism Styles */
         .glass-panel {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .dark .glass-panel {
+            background: rgba(17, 24, 39, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
-        .dark .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .dark .glass-card {
+            background: rgba(26, 34, 52, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .perspective-card {
-            perspective: 1000px;
+
+        /* Ambient Animated Glow Background */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.28;
+            pointer-events: none;
+            z-index: 0;
+            transition: all 1s ease;
         }
-        .cell-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .dark .ambient-orb {
+            opacity: 0.18;
         }
-        .dark .cell-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.16);
+
+        /* Board Cell Styling */
+        .game-cell {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .game-cell:hover:not(.occupied):not(.disabled) {
+            transform: translateY(-2px);
+        }
+        .game-cell:active:not(.occupied):not(.disabled) {
+            transform: scale(0.95);
+        }
+
+        /* Ghost piece warning in Infinite Mode */
+        .ghost-fade {
+            animation: ghostWarning 1.2s infinite ease-in-out;
+        }
+        @keyframes ghostWarning {
+            0%, 100% { opacity: 0.4; transform: scale(0.92); filter: grayscale(40%); }
+            50% { opacity: 0.85; transform: scale(1); filter: grayscale(0%); }
+        }
+
+        /* Winning Animated SVG Strike */
+        @keyframes drawStrike {
+            to { stroke-dashoffset: 0; }
+        }
+        .strike-active {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 800;
+            animation: drawStrike 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* Custom Scrollbar for Modal lists */
+        .modal-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .modal-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-scroll::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.4);
+            border-radius: 9999px;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col overflow-y-auto transition-colors duration-500 ease-in-out">
+<body class="bg-lightBg dark:bg-darkBg text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300 relative flex flex-col items-center justify-between">
 
-    <!-- Celebration Overlay -->
-    <div id="celebrationOverlay" class="fixed inset-0 z-50 pointer-events-none hidden items-center justify-center flex-col">
-        <!-- Confetti Canvas -->
-        <canvas id="confettiCanvas" class="absolute inset-0 w-full h-full"></canvas>
-        <!-- Win Message -->
-        <div id="winCard" class="relative z-10 glass-panel p-8 rounded-3xl shadow-2xl transform scale-0 opacity-0 transition-all duration-500 text-center mx-4 max-w-sm">
-            <h2 id="winnerText" class="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500 mb-2">You Win!</h2>
-            <p id="winnerSub" class="text-slate-600 dark:text-slate-300 text-lg mb-6">Great moves out there.</p>
-            <button id="newGameBtnOverlay" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-500/30 transition transform hover:scale-105 active:scale-95 pointer-events-auto">
-                Play Again
-            </button>
-        </div>
-    </div>
+    <!-- Ambient Glowing Orbs -->
+    <div class="ambient-orb w-72 h-72 -top-12 -left-12 bg-indigo-500"></div>
+    <div class="ambient-orb w-80 h-80 -bottom-16 -right-16 bg-rose-500"></div>
+    <div class="ambient-orb w-64 h-64 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-cyan-500"></div>
 
-    <!-- Match History Modal -->
-    <div id="historyModal" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm hidden items-center justify-center transition-opacity opacity-0">
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl w-full max-w-md mx-4 shadow-2xl transform transition-all scale-95 opacity-0" id="historyContent">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold">Match History</h3>
-                <button id="closeHistory" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+    <!-- MAIN APP WRAPPER (Guaranteed Single Viewport Fit) -->
+    <div class="relative z-10 w-full h-full max-w-lg mx-auto flex flex-col justify-between p-2 sm:p-3 overflow-hidden select-none">
+
+        <!-- ================= 1. HEADER BAR ================= -->
+        <header class="w-full flex items-center justify-between py-1 px-1">
+            <!-- Left: Back Button & Title -->
+            <div class="flex items-center gap-2">
+                <a href="index.html" class="p-2 rounded-xl glass-card text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-105 active:scale-95 transition shadow-sm" title="Back to Hub" aria-label="Back to Hub">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
+                </a>
+                <div class="flex items-center gap-1.5">
+                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-rose-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-500/30">
+                        <i class="fa-solid fa-hashtag text-xs"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-black font-heading tracking-tight leading-none">
+                            TicTac<span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-indigo-500">Toe</span>
+                        </h1>
+                        <span id="seriesBadge" class="text-[10px] text-slate-400 font-medium block leading-none mt-0.5">Casual Match</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Quick Action Controls -->
+            <div class="flex items-center gap-1 sm:gap-1.5">
+                <button id="soundBtn" class="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition active:scale-90" title="Toggle Sound">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-xs"></i>
+                </button>
+                <button id="rulesBtn" class="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition active:scale-90" title="Rules & How to Play">
+                    <i class="fa-solid fa-circle-question text-xs"></i>
+                </button>
+                <button id="statsBtn" class="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition active:scale-90" title="Match History & Stats">
+                    <i class="fa-solid fa-chart-simple text-xs"></i>
+                </button>
+                <button id="settingsBtn" class="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition active:scale-90" title="Game Settings">
+                    <i class="fa-solid fa-gear text-xs"></i>
+                </button>
+                <button id="themeBtn" class="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-amber-500 transition active:scale-90" title="Toggle Theme">
+                    <i id="themeIcon" class="fa-solid fa-moon text-xs"></i>
                 </button>
             </div>
-            <div id="historyList" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                <!-- History items injected here -->
-                <p class="text-center text-slate-500 py-4">No games played yet.</p>
-            </div>
-            <div class="mt-6 flex justify-end">
-                <button id="clearHistory" class="text-red-500 font-medium hover:text-red-600 px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">Clear History</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Game Area -->
-    <main class="flex-1 flex flex-col items-center justify-center w-full max-w-md mx-auto p-4 relative z-10 space-y-3">
-        
-        <!-- Header -->
-        <header class="w-full flex justify-between items-center animate-fade-in">
-            <div class="flex items-center gap-2">
-                <a href="index.html" class="p-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition text-slate-600 dark:text-slate-300 mr-1" aria-label="Back to Hub">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                </a>
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">#</div>
-                <h1 class="text-2xl font-bold tracking-tight">TicTacToe<span class="text-indigo-500">.</span></h1>
-            </div>
-            <button id="historyBtn" class="p-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition text-slate-600 dark:text-slate-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </button>
         </header>
 
-        <!-- Scoreboard -->
-        <div class="w-full grid grid-cols-3 gap-3 animate-fade-in" style="animation-delay: 100ms;">
-            <div class="flex flex-col items-center p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border-b-4 border-rose-500 transition-transform active:scale-95">
-                <span class="text-xs font-bold text-rose-500 uppercase tracking-wider mb-1">Player (X)</span>
-                <span id="scoreX" class="text-3xl font-black">0</span>
-            </div>
-            <div class="flex flex-col items-center p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border-b-4 border-slate-300 dark:border-slate-600">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Draws</span>
-                <span id="scoreDraw" class="text-3xl font-black">0</span>
-            </div>
-            <div class="flex flex-col items-center p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border-b-4 border-blue-500 transition-transform active:scale-95">
-                <span class="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">CPU (O)</span>
-                <span id="scoreO" class="text-3xl font-black">0</span>
-            </div>
-        </div>
-
-        <!-- Mode & Difficulty Selection -->
-        <div class="w-full flex flex-col gap-3 animate-fade-in" style="animation-delay: 200ms;">
-            <div class="w-full bg-slate-200 dark:bg-slate-700 p-1 rounded-xl flex relative">
-                <div id="modeIndicator" class="absolute left-1 top-1 h-[calc(100%-8px)] w-[calc(50%-4px)] bg-white dark:bg-slate-600 rounded-lg shadow-sm transition-all duration-300 ease-out"></div>
-                <button id="modePvP" class="flex-1 relative z-10 py-2.5 text-sm font-bold text-center rounded-lg transition-colors">vs Player</button>
-                <button id="modePvC" class="flex-1 relative z-10 py-2.5 text-sm font-bold text-center rounded-lg transition-colors text-slate-500 dark:text-slate-400">vs Computer</button>
-            </div>
+        <!-- ================= 2. SCOREBOARD & TURN CARDS ================= -->
+        <div class="w-full grid grid-cols-7 gap-1.5 sm:gap-2 my-1 items-center">
             
-            <!-- Difficulty Selector (Only visible in PvC) -->
-            <div id="difficultyContainer" class="w-full flex justify-center gap-2 overflow-hidden transition-all duration-300 max-h-12 opacity-0 h-0"> 
-               <!-- Populated via JS -->
+            <!-- Player X Card (3 cols) -->
+            <div id="playerCardX" class="col-span-3 glass-card rounded-2xl p-2 sm:p-2.5 transition-all duration-300 relative border-2 border-transparent">
+                <div class="flex items-center justify-between mb-1">
+                    <div class="flex items-center gap-1.5 overflow-hidden">
+                        <span id="playerIconX" class="w-6 h-6 rounded-lg bg-rose-500/15 text-rose-500 flex items-center justify-center text-xs font-black shrink-0">X</span>
+                        <span id="playerNameX" class="text-xs font-bold truncate">Player 1</span>
+                    </div>
+                    <span id="pieceCountX" class="text-[10px] font-semibold text-rose-500/70 hidden">0/3</span>
+                </div>
+                <div class="flex items-baseline justify-between">
+                    <span id="scoreX" class="text-xl sm:text-2xl font-black font-heading text-rose-500">0</span>
+                    <span id="streakX" class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500">0 Win</span>
+                </div>
+                <!-- Active Turn Glow Bar -->
+                <div id="turnBarX" class="absolute bottom-0 left-3 right-3 h-1 bg-gradient-to-r from-rose-500 to-pink-500 rounded-t-full transition-all duration-300 opacity-0"></div>
+                <!-- Blitz Timer Indicator -->
+                <div id="timerBarX" class="absolute bottom-0 left-0 h-1 bg-rose-500 rounded-b-2xl transition-all duration-100 ease-linear w-0"></div>
+            </div>
+
+            <!-- Middle VS / Draws Card (1 col) -->
+            <div class="col-span-1 flex flex-col items-center justify-center py-1">
+                <span class="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 dark:text-slate-500">Tie</span>
+                <span id="scoreDraw" class="text-base sm:text-lg font-black font-heading text-slate-600 dark:text-slate-300 my-0.5">0</span>
+                <div id="blitzBadge" class="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-500 font-bold hidden">
+                    <i class="fa-solid fa-bolt text-[8px]"></i> <span id="timerText">5s</span>
+                </div>
+            </div>
+
+            <!-- Player O Card (3 cols) -->
+            <div id="playerCardO" class="col-span-3 glass-card rounded-2xl p-2 sm:p-2.5 transition-all duration-300 relative border-2 border-transparent">
+                <div class="flex items-center justify-between mb-1">
+                    <div class="flex items-center gap-1.5 overflow-hidden">
+                        <span id="playerIconO" class="w-6 h-6 rounded-lg bg-cyan-500/15 text-cyan-500 flex items-center justify-center text-xs font-black shrink-0">O</span>
+                        <span id="playerNameO" class="text-xs font-bold truncate">Computer</span>
+                    </div>
+                    <span id="pieceCountO" class="text-[10px] font-semibold text-cyan-500/70 hidden">0/3</span>
+                </div>
+                <div class="flex items-baseline justify-between">
+                    <span id="scoreO" class="text-xl sm:text-2xl font-black font-heading text-cyan-500">0</span>
+                    <span id="streakO" class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-500">0 Win</span>
+                </div>
+                <!-- Active Turn Glow Bar -->
+                <div id="turnBarO" class="absolute bottom-0 left-3 right-3 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-t-full transition-all duration-300 opacity-0"></div>
+                <!-- Blitz Timer Indicator -->
+                <div id="timerBarO" class="absolute bottom-0 left-0 h-1 bg-cyan-500 rounded-b-2xl transition-all duration-100 ease-linear w-0"></div>
+            </div>
+
+        </div>
+
+        <!-- ================= 3. MODE & DIFFICULTY PILL ================= -->
+        <div class="w-full flex items-center justify-between gap-1.5 px-0.5">
+            <!-- Mode Selector Tabs -->
+            <div class="flex-1 bg-slate-200/80 dark:bg-darkSurface/90 p-1 rounded-xl flex relative text-xs font-semibold">
+                <button id="tabPvC" class="flex-1 py-1 sm:py-1.5 rounded-lg text-center transition-all duration-200 z-10 font-bold bg-white dark:bg-darkCard text-indigo-600 dark:text-indigo-400 shadow-sm">
+                    <i class="fa-solid fa-robot mr-1"></i>vs AI
+                </button>
+                <button id="tabPvP" class="flex-1 py-1 sm:py-1.5 rounded-lg text-center transition-all duration-200 z-10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-user-group mr-1"></i>2 Players
+                </button>
+                <button id="tabInfinite" class="flex-1 py-1 sm:py-1.5 rounded-lg text-center transition-all duration-200 z-10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 relative">
+                    <i class="fa-solid fa-infinity mr-1"></i>Infinite
+                    <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                </button>
+            </div>
+
+            <!-- Difficulty Pills (Visible only in PvC mode) -->
+            <div id="difficultyPills" class="flex bg-slate-200/80 dark:bg-darkSurface/90 p-1 rounded-xl gap-0.5 text-[11px] font-bold">
+                <button data-diff="easy" class="diff-btn px-2 py-1 rounded-lg text-slate-500 dark:text-slate-400 transition">Easy</button>
+                <button data-diff="medium" class="diff-btn px-2 py-1 rounded-lg text-slate-500 dark:text-slate-400 transition">Med</button>
+                <button data-diff="unbeatable" class="diff-btn px-2 py-1 rounded-lg bg-indigo-600 text-white shadow-sm transition">Pro</button>
             </div>
         </div>
 
-        <!-- Game Board -->
-        <div class="relative w-full aspect-square mx-auto animate-u-slide-up" style="animation-delay: 300ms; max-width: 45vh;">
-            <div class="absolute inset-0 grid grid-cols-3 gap-3 p-3 bg-white dark:bg-slate-800 rounded-3xl shadow-xl">
-                <!-- Cells generated here -->
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="0"></div>
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="1"></div>
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="2"></div>
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="3"></div>
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="4"></div>
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="5"></div>
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="6"></div>
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="7"></div>
-                <div class="cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none" data-index="8"></div>
+        <!-- ================= 4. MAIN GAME BOARD CONTAINER ================= -->
+        <div class="flex-1 min-h-0 w-full flex flex-col items-center justify-center my-auto py-1 relative">
+            
+            <!-- Game Board Outer Wrapper (Scales with screen height & width to guarantee NO scroll) -->
+            <div id="boardContainer" class="relative w-full max-w-[min(48vh,86vw,380px)] aspect-square mx-auto p-2 sm:p-3 rounded-3xl glass-panel shadow-glass border border-white/40 dark:border-white/10 transition-transform">
+                
+                <!-- 3x3 Grid of Cells -->
+                <div id="boardGrid" class="w-full h-full grid grid-cols-3 gap-2 sm:gap-2.5">
+                    <!-- Cell 0 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="0"></div>
+                    <!-- Cell 1 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="1"></div>
+                    <!-- Cell 2 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="2"></div>
+                    <!-- Cell 3 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="3"></div>
+                    <!-- Cell 4 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="4"></div>
+                    <!-- Cell 5 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="5"></div>
+                    <!-- Cell 6 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="6"></div>
+                    <!-- Cell 7 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="7"></div>
+                    <!-- Cell 8 -->
+                    <div class="game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50" data-index="8"></div>
+                </div>
+
+                <!-- High-Precision Dynamic Strike SVG Overlay -->
+                <svg id="strikeSvg" class="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible opacity-0 transition-opacity duration-200">
+                    <line id="strikeLineEl" x1="0" y1="0" x2="0" y2="0" stroke="currentColor" stroke-width="8" stroke-linecap="round" class="text-indigo-500 drop-shadow-[0_0_12px_rgba(99,102,241,0.8)]" />
+                </svg>
+
             </div>
-            <!-- Strike Line Container -->
-            <svg id="strikeLine" class="absolute inset-0 pointer-events-none w-full h-full z-20 overflow-visible opacity-0 transition-opacity duration-300">
-                <line x1="0" y1="0" x2="0" y2="0" stroke="currentColor" stroke-width="12" stroke-linecap="round" class="text-indigo-500/80 dark:text-indigo-400/80 shadow-[0_0_15px_currentColor]" />
-            </svg>
+
+            <!-- Status Banner & Mode Callout -->
+            <div class="h-6 sm:h-7 mt-1.5 flex items-center justify-center text-center">
+                <span id="statusMessage" class="text-xs sm:text-sm font-semibold tracking-wide text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                    Player X's Turn
+                </span>
+            </div>
+
         </div>
 
-        <!-- Status & Turn -->
-        <div id="statusText" class="text-center font-medium text-lg text-slate-600 dark:text-slate-300 animate-pulse transition-all h-8">
-            Starting game...
-        </div>
+        <!-- ================= 5. BOTTOM CONTROL BAR ================= -->
+        <footer class="w-full glass-card rounded-2xl p-1.5 sm:p-2 shadow-lg flex items-center justify-between gap-1.5">
+            
+            <!-- Undo Move Button -->
+            <button id="undoBtn" class="flex-1 py-2 sm:py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-darkSurface dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:pointer-events-none shadow-sm" title="Undo Move">
+                <i class="fa-solid fa-rotate-left text-xs"></i>
+                <span>Undo</span>
+            </button>
 
-    </main>
+            <!-- Hint Button -->
+            <button id="hintBtn" class="flex-1 py-2 sm:py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1.5 border border-amber-500/30 shadow-sm" title="Show Best Move">
+                <i class="fa-regular fa-lightbulb text-xs"></i>
+                <span>Hint</span>
+            </button>
 
-    <!-- Bottom Action Bar (Sticky) -->
-    <div class="sticky bottom-2 w-[95%] max-w-md mx-auto glass-panel rounded-2xl shadow-lg p-2 flex justify-between items-center z-30 animate-u-slide-up" style="animation-delay: 400ms;">
-        <button id="soundBtn" class="p-3 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-300 transition active:scale-90" aria-label="Toggle Sound">
-            <!-- Speaker Icon -->
-            <svg id="soundIconOn" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-            <svg id="soundIconOff" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
-        </button>
-        
-        <button id="resetBtn" class="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/30 transition transform active:scale-95">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-            <span>Reset</span>
-        </button>
+            <!-- Reset / New Match Button -->
+            <button id="resetBtn" class="flex-[1.5] py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold text-xs transition active:scale-95 shadow-md shadow-indigo-500/25 flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                <span>New Round</span>
+            </button>
 
-        <button id="themeBtn" class="p-3 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-700/50 text-slate-600 dark:text-slate-300 transition active:scale-90" aria-label="Toggle Theme">
-            <!-- Moon/Sun Icon -->
-            <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-            <svg id="sunIcon" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-        </button>
+        </footer>
+
     </div>
 
-    <!-- Script Logic -->
+    <!-- ================= MODALS & OVERLAYS ================= -->
+
+    <!-- 1. Match End Celebration Modal -->
+    <div id="celebrationModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden items-center justify-center p-4 transition-all opacity-0">
+        <div id="celebrationCard" class="w-full max-w-sm glass-panel rounded-3xl p-6 shadow-2xl text-center transform scale-90 transition-all duration-300 border border-white/30 dark:border-white/10">
+            <div id="winnerIconWrap" class="w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl font-black shadow-lg">
+                🏆
+            </div>
+            <h2 id="winHeading" class="text-2xl sm:text-3xl font-black font-heading mb-1 text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-purple-500 to-cyan-500">
+                Victory!
+            </h2>
+            <p id="winSubtext" class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 mb-5">
+                Outstanding tactical play!
+            </p>
+
+            <!-- Series Tracker Preview inside Modal -->
+            <div id="seriesModalBox" class="mb-5 p-3 rounded-xl bg-slate-100/80 dark:bg-darkSurface/80 border border-slate-200 dark:border-slate-700">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Series Standing</div>
+                <div class="flex items-center justify-center gap-4 text-base font-extrabold font-heading">
+                    <span id="seriesP1Name" class="text-rose-500">P1: 0</span>
+                    <span class="text-slate-400">-</span>
+                    <span id="seriesP2Name" class="text-cyan-500">AI: 0</span>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button id="modalHistoryBtn" class="flex-1 py-3 rounded-xl glass-card text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition">
+                    Stats
+                </button>
+                <button id="modalPlayAgainBtn" class="flex-[2] py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-indigo-500/30 transition transform active:scale-95">
+                    Next Round
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Match History & Statistics Modal -->
+    <div id="statsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden items-center justify-center p-4 transition-all opacity-0">
+        <div class="w-full max-w-md glass-panel rounded-3xl p-5 shadow-2xl flex flex-col max-h-[85vh] border border-white/20 dark:border-white/10">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-bold">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="text-base font-black font-heading">Player Statistics</h3>
+                </div>
+                <button id="closeStatsBtn" class="w-7 h-7 rounded-lg glass-card flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Stats Metric Cards -->
+            <div class="grid grid-cols-4 gap-2 my-3 text-center">
+                <div class="p-2 rounded-xl bg-slate-100 dark:bg-darkSurface">
+                    <span class="text-[10px] text-slate-400 font-bold block">Total</span>
+                    <span id="statTotal" class="text-base font-black text-slate-700 dark:text-slate-100">0</span>
+                </div>
+                <div class="p-2 rounded-xl bg-rose-500/10">
+                    <span class="text-[10px] text-rose-500 font-bold block">Win %</span>
+                    <span id="statWinRate" class="text-base font-black text-rose-500">0%</span>
+                </div>
+                <div class="p-2 rounded-xl bg-amber-500/10">
+                    <span class="text-[10px] text-amber-500 font-bold block">Streak</span>
+                    <span id="statStreak" class="text-base font-black text-amber-500">0</span>
+                </div>
+                <div class="p-2 rounded-xl bg-cyan-500/10">
+                    <span class="text-[10px] text-cyan-500 font-bold block">Best</span>
+                    <span id="statBestStreak" class="text-base font-black text-cyan-500">0</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Recent Matches</span>
+                <button id="clearHistoryBtn" class="text-[11px] font-semibold text-rose-500 hover:underline">Clear Log</button>
+            </div>
+
+            <!-- History List (Scrollable within modal only) -->
+            <div id="statsList" class="flex-1 overflow-y-auto space-y-2 pr-1 modal-scroll min-h-[140px] max-h-[220px]">
+                <!-- History Items injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Game Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden items-center justify-center p-4 transition-all opacity-0">
+        <div class="w-full max-w-md glass-panel rounded-3xl p-5 shadow-2xl flex flex-col max-h-[85vh] border border-white/20 dark:border-white/10 overflow-hidden">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-bold">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <h3 class="text-base font-black font-heading">Game Preferences</h3>
+                </div>
+                <button id="closeSettingsBtn" class="w-7 h-7 rounded-lg glass-card flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto space-y-4 py-3 pr-1 modal-scroll">
+                <!-- Theme / Symbol Packs -->
+                <div>
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Symbol Theme</label>
+                    <div class="grid grid-cols-4 gap-1.5" id="symbolPacks">
+                        <button data-theme="classic" class="symbol-pack-btn p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30 text-xs font-bold text-center">
+                            <span class="text-sm block">❌ ⭕</span> Classic
+                        </button>
+                        <button data-theme="cyber" class="symbol-pack-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center">
+                            <span class="text-sm block">⚡ 🛡️</span> Cyber
+                        </button>
+                        <button data-theme="element" class="symbol-pack-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:darkSurface text-xs font-bold text-center">
+                            <span class="text-sm block">🔥 💧</span> Element
+                        </button>
+                        <button data-theme="space" class="symbol-pack-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:darkSurface text-xs font-bold text-center">
+                            <span class="text-sm block">🚀 🛸</span> Space
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Match Series Option -->
+                <div>
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Tournament Series</label>
+                    <div class="grid grid-cols-3 gap-1.5" id="seriesOptions">
+                        <button data-series="1" class="series-btn p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30 text-xs font-bold text-center">
+                            Single Game
+                        </button>
+                        <button data-series="3" class="series-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center">
+                            Best of 3
+                        </button>
+                        <button data-series="5" class="series-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center">
+                            Best of 5
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Who Plays First -->
+                <div>
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1.5">First Move Order</label>
+                    <div class="grid grid-cols-3 gap-1.5" id="firstTurnOptions">
+                        <button data-turn="X" class="first-turn-btn p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30 text-xs font-bold text-center">
+                            Player X
+                        </button>
+                        <button data-turn="O" class="first-turn-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center">
+                            Player O / AI
+                        </button>
+                        <button data-turn="alternate" class="first-turn-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center">
+                            Alternate
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Blitz Turn Timer -->
+                <div>
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Blitz Turn Timer</label>
+                    <div class="grid grid-cols-3 gap-1.5" id="blitzOptions">
+                        <button data-blitz="0" class="blitz-btn p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30 text-xs font-bold text-center">
+                            Off (Casual)
+                        </button>
+                        <button data-blitz="5" class="blitz-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center">
+                            5 Seconds
+                        </button>
+                        <button data-blitz="10" class="blitz-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center">
+                            10 Seconds
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Player Names -->
+                <div>
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1.5">Player Custom Names</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input id="inputNameX" type="text" maxlength="12" placeholder="Player X" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-darkSurface border border-slate-300 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:border-indigo-500" />
+                        <input id="inputNameO" type="text" maxlength="12" placeholder="Player O" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-darkSurface border border-slate-300 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:border-indigo-500" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                <button id="saveSettingsBtn" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-500/30 transition">
+                    Apply & Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Rules & Instructions Modal -->
+    <div id="rulesModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden items-center justify-center p-4 transition-all opacity-0">
+        <div class="w-full max-w-md glass-panel rounded-3xl p-5 shadow-2xl flex flex-col max-h-[85vh] border border-white/20 dark:border-white/10">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-bold">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 class="text-base font-black font-heading">Game Modes & Rules</h3>
+                </div>
+                <button id="closeRulesBtn" class="w-7 h-7 rounded-lg glass-card flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto space-y-3 py-3 pr-1 text-xs modal-scroll">
+                <!-- Classic -->
+                <div class="p-3 rounded-2xl bg-slate-100/90 dark:bg-darkSurface/90 border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="font-extrabold text-indigo-600 dark:text-indigo-400 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved"></i> Classic Mode
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Traditional 3x3 grid. Line up 3 of your marks horizontally, vertically, or diagonally to win.
+                    </p>
+                </div>
+
+                <!-- Infinite Disappearing Mode -->
+                <div class="p-3 rounded-2xl bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/20">
+                    <div class="font-extrabold text-rose-500 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-infinity"></i> Infinite Disappearing Mode
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Eliminates boring ties! Each player can only maintain <span class="font-bold text-rose-500">3 marks</span> on the board. Placing your 4th mark automatically vaporizes your oldest mark (it will pulse as a ghost warning on your turn).
+                    </p>
+                </div>
+
+                <!-- AI Difficulty Breakdown -->
+                <div class="p-3 rounded-2xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/20">
+                    <div class="font-extrabold text-cyan-500 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-brain"></i> Pro AI (Unbeatable Minimax)
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        The "Pro" AI computes optimal game-tree branches with zero mistakes. A human can only tie it at best. Can you hold the line?
+                    </p>
+                </div>
+            </div>
+
+            <button id="gotItRulesBtn" class="w-full py-2.5 mt-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-500/30 transition">
+                Got it, Let's Play!
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT GAME ENGINE ================= -->
     <script>
-        // --- 🎵 Audio Controller (Synthesized) ---
-        const AudioController = {
+        /**
+         * 🎵 High-Fidelity Web Audio Synthesizer
+         */
+        const SoundFX = {
             ctx: null,
             enabled: true,
-            
+
             init() {
                 if (!this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContextClass) {
+                        this.ctx = new AudioContextClass();
+                    }
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
                 }
             },
-            
-            playTone(freq, type, duration, vol=0.1) {
-                if (!this.enabled || !this.ctx) return;
+
+            playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.1) {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
+                const now = this.ctx.currentTime;
+
                 osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                osc.frequency.setValueAtTime(freq, now);
+                gain.gain.setValueAtTime(gainVal, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + duration);
+
+                osc.start(now);
+                osc.stop(now + duration);
             },
 
-            playMove() { this.playTone(400, 'sine', 0.1); }, // 'Blip'
-            playWin() { 
-                // Victory Arpeggio
-                if(!this.enabled) return;
-                const now = this.ctx.currentTime;
-                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-                    setTimeout(() => this.playTone(freq, 'triangle', 0.2, 0.15), i * 100);
+            playMoveX() {
+                this.playTone(523.25, 'triangle', 0.12, 0.15); // C5
+            },
+
+            playMoveO() {
+                this.playTone(659.25, 'sine', 0.12, 0.15); // E5
+            },
+
+            playVanish() {
+                this.playTone(280, 'sawtooth', 0.18, 0.08); // Whoosh / pop
+            },
+
+            playWin() {
+                if (!this.enabled) return;
+                this.init();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C - E - G - High C
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => this.playTone(freq, 'triangle', 0.22, 0.18), idx * 90);
                 });
             },
-            playDraw() { this.playTone(200, 'sawtooth', 0.3); }, // 'Womp'
-            playClick() { this.playTone(800, 'sine', 0.05, 0.05); } // UI Click
+
+            playDraw() {
+                if (!this.enabled) return;
+                this.init();
+                [400, 350, 300].forEach((freq, idx) => {
+                    setTimeout(() => this.playTone(freq, 'sawtooth', 0.18, 0.1), idx * 100);
+                });
+            },
+
+            playClick() {
+                this.playTone(850, 'sine', 0.04, 0.05);
+            },
+
+            playHint() {
+                this.playTone(987.77, 'sine', 0.15, 0.1); // B5 crystal chime
+            },
+
+            playUndo() {
+                this.playTone(330, 'triangle', 0.15, 0.12);
+            },
+
+            playTick() {
+                this.playTone(1100, 'sine', 0.03, 0.03);
+            }
         };
 
-        // Initialize Audio on first user interaction
-        document.body.addEventListener('click', () => {
-            AudioController.init();
-            if (AudioController.ctx && AudioController.ctx.state === 'suspended') {
-                AudioController.ctx.resume();
-            }
-        }, { once: true });
-
-
-        // --- 🧠 Game State & Logic ---
+        /**
+         * 🎮 Core Game Controller & State Machine
+         */
         const Game = {
             board: Array(9).fill(""),
+            movesHistory: [], // Array of { index, player }
             active: false,
-            mode: 'pvc', // 'pvp' or 'pvc'
-            difficulty: 'hard', // 'easy', 'medium', 'hard'
             currentPlayer: 'X',
-            scores: { X: 0, O: 0, Draw: 0 },
-            history: JSON.parse(localStorage.getItem('tictactoe_history')) || [],
+            mode: 'pvc', // 'pvc', 'pvp', 'infinite'
+            difficulty: 'unbeatable', // 'easy', 'medium', 'unbeatable'
             
-            winningConditions: [
+            // Player Pieces Queue for Infinite Mode
+            piecesQueue: {
+                X: [], // FIFO of indices
+                O: []
+            },
+
+            // Scores & Streaks
+            scores: { X: 0, O: 0, Draw: 0 },
+            seriesWins: { X: 0, O: 0 },
+            currentStreak: 0,
+            bestStreak: 0,
+
+            // Config & Settings
+            settings: {
+                symbolTheme: 'classic', // 'classic', 'cyber', 'element', 'space'
+                seriesLength: 1, // 1, 3, 5
+                firstTurn: 'X', // 'X', 'O', 'alternate'
+                blitzSeconds: 0, // 0 (off), 5, 10
+                nameX: 'Player 1',
+                nameO: 'Computer',
+                soundEnabled: true
+            },
+
+            // History Log (Stored in localStorage)
+            historyLog: [],
+
+            // Blitz Timer references
+            blitzTimeRemaining: 0,
+            blitzInterval: null,
+
+            winningCombos: [
                 [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Cols
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
                 [0, 4, 8], [2, 4, 6]             // Diagonals
             ],
 
             init() {
-                this.loadSettings();
-                UI.updateScoreboard();
-                this.renderHistory();
-                this.startNewGame();
-                UI.setupEventListeners();
-                UI.updateModeUI();
+                this.loadStoredData();
+                UI.init();
+                this.startRound();
             },
 
-            loadSettings() {
-                const dark = localStorage.getItem('theme') === 'dark' || 
-                             (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                if (dark) document.documentElement.classList.add('dark');
-                
-                // Load scores? Optional. Let's keep session scores for now as per original.
-                // Actually user requested match history, so session scores are fine to reset on reload, but we have history.
-            },
-
-            startNewGame() {
-                this.board = Array(9).fill("");
-                this.active = true;
-                this.currentPlayer = 'X';
-                UI.clearBoard();
-                UI.updateStatus(`Player ${this.currentPlayer}'s Turn`);
-                UI.hideCelebration();
-                
-                // If PvC and Computer is X (optional feature, but currently computer is always O)
-                if (this.mode === 'pvc' && this.currentPlayer === 'O') {
-                    setTimeout(() => AI.makeMove(), 500);
-                }
-            },
-
-            handleClick(index) {
-                if (!this.active || this.board[index] !== "") return;
-                
-                // Human Move
-                this.makeMove(index, this.currentPlayer);
-                AudioController.playMove();
-
-                if (this.checkWin(this.currentPlayer)) {
-                    this.handleWin(this.currentPlayer);
-                } else if (!this.board.includes("")) {
-                    this.handleDraw();
-                } else {
-                    this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-                    UI.updateStatus(this.mode === 'pvc' && this.currentPlayer === 'O' ? "Computer Thinking..." : `Player ${this.currentPlayer}'s Turn`);
-                    
-                    // AI Turn
-                    if (this.mode === 'pvc' && this.currentPlayer === 'O' && this.active) {
-                        UI.disableBoard();
-                        setTimeout(() => {
-                            AI.makeMove();
-                            UI.enableBoard();
-                        }, 600);
+            loadStoredData() {
+                try {
+                    const savedSettings = localStorage.getItem('ttt_settings_pro');
+                    if (savedSettings) {
+                        this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
                     }
+                    const savedHistory = localStorage.getItem('ttt_history_pro');
+                    if (savedHistory) {
+                        this.historyLog = JSON.parse(savedHistory);
+                    }
+                    const savedBestStreak = localStorage.getItem('ttt_best_streak');
+                    if (savedBestStreak) {
+                        this.bestStreak = parseInt(savedBestStreak, 10) || 0;
+                    }
+                    const isDark = localStorage.getItem('ttt_theme') === 'dark' ||
+                        (!('ttt_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                    if (isDark) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                } catch (e) {
+                    console.error("Local storage load error:", e);
+                }
+                SoundFX.enabled = this.settings.soundEnabled;
+            },
+
+            saveSettings() {
+                try {
+                    localStorage.setItem('ttt_settings_pro', JSON.stringify(this.settings));
+                    localStorage.setItem('ttt_history_pro', JSON.stringify(this.historyLog));
+                    localStorage.setItem('ttt_best_streak', this.bestStreak.toString());
+                } catch (e) {
+                    console.error("Local storage save error:", e);
                 }
             },
 
-            makeMove(index, player) {
+            startRound() {
+                this.stopBlitzTimer();
+                this.board = Array(9).fill("");
+                this.movesHistory = [];
+                this.piecesQueue = { X: [], O: [] };
+                this.active = true;
+
+                // Determine First Turn
+                if (this.settings.firstTurn === 'alternate') {
+                    this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+                } else {
+                    this.currentPlayer = this.settings.firstTurn;
+                }
+
+                UI.resetBoardUI();
+                UI.updatePlayerCards();
+                UI.updateTurnIndicator();
+                UI.updateStatusMessage(`${this.getPlayerName(this.currentPlayer)}'s Turn`);
+
+                // Start Blitz Timer if enabled
+                if (this.settings.blitzSeconds > 0) {
+                    this.startBlitzTimer();
+                }
+
+                // If AI is first in PvC or Infinite against AI
+                if (this.isAITurn() && this.active) {
+                    UI.setBoardInteractive(false);
+                    setTimeout(() => AI.takeTurn(), 450);
+                }
+            },
+
+            isAITurn() {
+                return (this.mode === 'pvc' || (this.mode === 'infinite' && this.settings.nameO === 'Computer')) && this.currentPlayer === 'O';
+            },
+
+            handleCellClick(index) {
+                if (!this.active || this.board[index] !== "" || this.isAITurn()) return;
+
+                this.executeMove(index, this.currentPlayer);
+            },
+
+            executeMove(index, player) {
+                // If in Infinite Mode: check if player already has 3 pieces
+                if (this.mode === 'infinite') {
+                    if (this.piecesQueue[player].length === 3) {
+                        const oldestIndex = this.piecesQueue[player].shift();
+                        this.board[oldestIndex] = "";
+                        UI.clearCell(oldestIndex);
+                        SoundFX.playVanish();
+                    }
+                    this.piecesQueue[player].push(index);
+                }
+
+                // Apply Move
                 this.board[index] = player;
-                UI.updateCell(index, player);
+                this.movesHistory.push({ index, player });
+                UI.renderMark(index, player);
+
+                if (player === 'X') SoundFX.playMoveX();
+                else SoundFX.playMoveO();
+
+                // Haptic feedback for mobile
+                if (navigator.vibrate) {
+                    navigator.vibrate(18);
+                }
+
+                // Check Win
+                const winningCombo = this.checkWin(player);
+                if (winningCombo) {
+                    this.handleWin(player, winningCombo);
+                    return;
+                }
+
+                // Check Draw (Draws only happen in Classic mode when board is full)
+                if (this.mode !== 'infinite' && !this.board.includes("")) {
+                    this.handleDraw();
+                    return;
+                }
+
+                // Advance Turn
+                this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+                UI.updateTurnIndicator();
+                UI.updateStatusMessage(`${this.getPlayerName(this.currentPlayer)}'s Turn`);
+                UI.updateGhostWarnings();
+
+                // Reset Blitz Timer
+                if (this.settings.blitzSeconds > 0) {
+                    this.startBlitzTimer();
+                }
+
+                // Trigger AI Turn
+                if (this.isAITurn() && this.active) {
+                    UI.setBoardInteractive(false);
+                    const aiDelay = Math.floor(Math.random() * 200) + 380;
+                    setTimeout(() => {
+                        AI.takeTurn();
+                        UI.setBoardInteractive(true);
+                    }, aiDelay);
+                }
             },
 
             checkWin(player) {
-                return this.winningConditions.some(combination => {
-                    return combination.every(index => this.board[index] === player);
+                return this.winningCombos.find(combo => {
+                    const [a, b, c] = combo;
+                    return this.board[a] === player && this.board[b] === player && this.board[c] === player;
                 });
             },
 
-            getWinningCombination() {
-                 return this.winningConditions.find(combination => {
-                    const [a, b, c] = combination;
-                    return this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c];
-                });
-            },
-
-            handleWin(winner) {
+            handleWin(winner, combo) {
+                this.stopBlitzTimer();
                 this.active = false;
                 this.scores[winner]++;
-                this.saveToHistory(winner);
-                UI.updateScoreboard();
-                UI.highlightWin(this.getWinningCombination());
-                AudioController.playWin();
-                
-                const winMsg = this.mode === 'pvc' && winner === 'O' ? 'Computer Wins!' : 
-                               (this.mode === 'pvp' ? `Player ${winner} Wins!` : 'You Win!');
-                
-                setTimeout(() => UI.showCelebration(winMsg, winner), 800);
+                this.seriesWins[winner]++;
+
+                // Streak tracking for Player 1
+                if (winner === 'X') {
+                    this.currentStreak++;
+                    if (this.currentStreak > this.bestStreak) {
+                        this.bestStreak = this.currentStreak;
+                    }
+                } else if (winner === 'O' && this.mode === 'pvc') {
+                    this.currentStreak = 0;
+                }
+
+                // Log Match
+                this.recordMatchHistory(winner);
+                this.saveSettings();
+
+                // Visual & Audio fanfare
+                UI.highlightWinningLine(combo);
+                SoundFX.playWin();
+
+                // Show Confetti & Modal after short dramatic pause
+                setTimeout(() => {
+                    UI.triggerConfetti();
+                    UI.showCelebrationModal(winner);
+                }, 600);
             },
 
             handleDraw() {
+                this.stopBlitzTimer();
                 this.active = false;
                 this.scores.Draw++;
-                this.saveToHistory('Draw');
-                UI.updateScoreboard();
-                AudioController.playDraw();
-                UI.statusText.textContent = "It's a Draw!";
-                setTimeout(() => UI.showCelebration("It's a Draw!", 'Draw'), 800);
+                this.recordMatchHistory('Draw');
+                this.saveSettings();
+
+                SoundFX.playDraw();
+                UI.updateStatusMessage("It's a Stalemate Draw!");
+
+                setTimeout(() => {
+                    UI.showCelebrationModal('Draw');
+                }, 500);
             },
 
-            saveToHistory(result) {
+            recordMatchHistory(winner) {
                 const entry = {
-                    date: new Date().toLocaleString(),
-                    mode: this.mode === 'pvc' ? `PvC (${this.difficulty})` : 'PvP',
-                    result: result === 'Draw' ? 'Draw' : `${result} Won`
+                    date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' }),
+                    mode: this.mode.toUpperCase(),
+                    winner: winner === 'Draw' ? 'Draw' : `${this.getPlayerName(winner)} Won`,
+                    symbol: winner
                 };
-                this.history.unshift(entry);
-                if (this.history.length > 50) this.history.pop();
-                localStorage.setItem('tictactoe_history', JSON.stringify(this.history));
-                this.renderHistory();
+                this.historyLog.unshift(entry);
+                if (this.historyLog.length > 40) this.historyLog.pop();
             },
 
-            renderHistory() {
-                const list = document.getElementById('historyList');
-                list.innerHTML = this.history.length ? '' : '<p class="text-center text-slate-500 py-4">No games played yet.</p>';
-                this.history.forEach(h => {
-                    const item = document.createElement('div');
-                    item.className = 'flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg text-sm';
-                    const color = h.result.includes('X') ? 'text-rose-500' : (h.result.includes('O') ? 'text-blue-500' : 'text-slate-500');
-                    item.innerHTML = `
-                        <div class="flex flex-col">
-                            <span class="font-bold text-slate-700 dark:text-slate-200">${h.mode}</span>
-                            <span class="text-xs text-slate-400">${h.date}</span>
-                        </div>
-                        <span class="font-bold ${color}">${h.result}</span>
-                    `;
-                    list.appendChild(item);
-                });
+            getPlayerName(player) {
+                if (player === 'X') return this.settings.nameX || 'Player 1';
+                if (this.mode === 'pvc') return 'Computer';
+                return this.settings.nameO || 'Player 2';
+            },
+
+            undoMove() {
+                if (this.movesHistory.length === 0 || !this.active) return;
+
+                // In PvC mode, undo both the AI move and the Human move
+                if (this.mode === 'pvc') {
+                    if (this.movesHistory.length < 2) return;
+                    const aiMove = this.movesHistory.pop();
+                    this.board[aiMove.index] = "";
+                    UI.clearCell(aiMove.index);
+
+                    const humanMove = this.movesHistory.pop();
+                    this.board[humanMove.index] = "";
+                    UI.clearCell(humanMove.index);
+
+                    this.currentPlayer = 'X';
+                } else {
+                    const lastMove = this.movesHistory.pop();
+                    this.board[lastMove.index] = "";
+                    UI.clearCell(lastMove.index);
+                    this.currentPlayer = lastMove.player;
+                }
+
+                SoundFX.playUndo();
+                UI.resetStrikeLine();
+                UI.updateTurnIndicator();
+                UI.updateStatusMessage(`${this.getPlayerName(this.currentPlayer)}'s Turn`);
+                UI.updateGhostWarnings();
+
+                if (this.settings.blitzSeconds > 0) {
+                    this.startBlitzTimer();
+                }
+            },
+
+            startBlitzTimer() {
+                this.stopBlitzTimer();
+                const maxSeconds = this.settings.blitzSeconds;
+                this.blitzTimeRemaining = maxSeconds;
+                UI.updateBlitzBar(100);
+
+                this.blitzInterval = setInterval(() => {
+                    this.blitzTimeRemaining -= 0.1;
+                    const percent = Math.max(0, (this.blitzTimeRemaining / maxSeconds) * 100);
+                    UI.updateBlitzBar(percent);
+
+                    if (this.blitzTimeRemaining <= 0) {
+                        this.stopBlitzTimer();
+                        // Time out! Force random move or pass
+                        SoundFX.playTick();
+                        const randomEmpty = AI.getRandomMove();
+                        if (randomEmpty !== undefined && this.active) {
+                            this.executeMove(randomEmpty, this.currentPlayer);
+                        }
+                    }
+                }, 100);
+            },
+
+            stopBlitzTimer() {
+                if (this.blitzInterval) {
+                    clearInterval(this.blitzInterval);
+                    this.blitzInterval = null;
+                }
+                UI.updateBlitzBar(0);
             }
         };
 
-        // --- 🤖 AI Logic (The Brain) ---
+        /**
+         * 🤖 AI Engine with Unbeatable Minimax & Alpha-Beta Pruning
+         */
         const AI = {
-            makeMove() {
-                let index;
-                if (Game.difficulty === 'easy') {
-                    index = this.getRandomMove();
+            takeTurn() {
+                if (!Game.active) return;
+                let moveIndex;
+
+                if (Game.mode === 'infinite') {
+                    // Tactical move selection for Infinite Mode
+                    moveIndex = this.getInfiniteMove();
+                } else if (Game.difficulty === 'easy') {
+                    moveIndex = this.getEasyMove();
                 } else if (Game.difficulty === 'medium') {
-                    index = this.getBlockOrRandom();
+                    moveIndex = this.getMediumMove();
                 } else {
-                    index = this.getBestMove(); // Hard - Minimax-ish logic
+                    // Unbeatable Minimax Algorithm
+                    moveIndex = this.getMinimaxBestMove();
                 }
-                
-                if (index !== undefined) {
-                    Game.handleClick(index);
+
+                if (moveIndex !== undefined && moveIndex !== -1) {
+                    Game.executeMove(moveIndex, 'O');
                 }
             },
 
             getRandomMove() {
-                const available = Game.board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
-                if (available.length === 0) return;
+                const available = [];
+                for (let i = 0; i < 9; i++) {
+                    if (Game.board[i] === "") available.push(i);
+                }
+                if (available.length === 0) return undefined;
                 return available[Math.floor(Math.random() * available.length)];
             },
-            
-            getBlockOrRandom() {
-                // Try to win first (always good)
-                let winMove = this.findWinningMove('O');
-                if (winMove !== -1) return winMove;
-                
-                // Try to block info
-                let blockMove = this.findWinningMove('X');
-                if (blockMove !== -1) return blockMove;
 
+            getEasyMove() {
+                // 80% random, 20% block
+                if (Math.random() < 0.2) {
+                    const block = this.findWinningCell('X');
+                    if (block !== -1) return block;
+                }
                 return this.getRandomMove();
             },
 
-            getBestMove() {
-                // 1. Win if possible
-                let winMove = this.findWinningMove('O');
-                if (winMove !== -1) return winMove;
+            getMediumMove() {
+                // Win if possible
+                const win = this.findWinningCell('O');
+                if (win !== -1) return win;
 
-                // 2. Block player win
-                let blockMove = this.findWinningMove('X');
-                if (blockMove !== -1) return blockMove;
+                // Block opponent
+                const block = this.findWinningCell('X');
+                if (block !== -1) return block;
 
-                // 3. Take center
+                // Center preference
                 if (Game.board[4] === "") return 4;
 
-                // 4. Take corners
-                const corners = [0, 2, 6, 8].filter(i => Game.board[i] === "");
-                if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
-
-                // 5. Random sides
+                // Else random
                 return this.getRandomMove();
             },
 
-            findWinningMove(player) {
-                for (let condition of Game.winningConditions) {
-                    const [a, b, c] = condition;
+            getMinimaxBestMove() {
+                // Check immediate win or immediate block first for instant response
+                const instantWin = this.findWinningCell('O');
+                if (instantWin !== -1) return instantWin;
+                const instantBlock = this.findWinningCell('X');
+                if (instantBlock !== -1) return instantBlock;
+
+                // If board is empty, take center or corner
+                const emptyCells = Game.board.filter(c => c === "").length;
+                if (emptyCells === 9) return 4; // Center
+                if (emptyCells === 8 && Game.board[4] === "") return 4;
+
+                let bestScore = -Infinity;
+                let bestMove = -1;
+
+                for (let i = 0; i < 9; i++) {
+                    if (Game.board[i] === "") {
+                        Game.board[i] = 'O';
+                        const score = this.minimax(Game.board, 0, false, -Infinity, Infinity);
+                        Game.board[i] = "";
+
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestMove = i;
+                        }
+                    }
+                }
+                return bestMove !== -1 ? bestMove : this.getRandomMove();
+            },
+
+            minimax(board, depth, isMaximizing, alpha, beta) {
+                // Check terminal states
+                if (this.evalWinner(board, 'O')) return 10 - depth;
+                if (this.evalWinner(board, 'X')) return depth - 10;
+                if (!board.includes("")) return 0; // Draw
+
+                if (isMaximizing) {
+                    let maxEval = -Infinity;
+                    for (let i = 0; i < 9; i++) {
+                        if (board[i] === "") {
+                            board[i] = 'O';
+                            const evaluation = this.minimax(board, depth + 1, false, alpha, beta);
+                            board[i] = "";
+                            maxEval = Math.max(maxEval, evaluation);
+                            alpha = Math.max(alpha, evaluation);
+                            if (beta <= alpha) break;
+                        }
+                    }
+                    return maxEval;
+                } else {
+                    let minEval = Infinity;
+                    for (let i = 0; i < 9; i++) {
+                        if (board[i] === "") {
+                            board[i] = 'X';
+                            const evaluation = this.minimax(board, depth + 1, true, alpha, beta);
+                            board[i] = "";
+                            minEval = Math.min(minEval, evaluation);
+                            beta = Math.min(beta, evaluation);
+                            if (beta <= alpha) break;
+                        }
+                    }
+                    return minEval;
+                }
+            },
+
+            evalWinner(board, player) {
+                return Game.winningCombos.some(combo => {
+                    const [a, b, c] = combo;
+                    return board[a] === player && board[b] === player && board[c] === player;
+                });
+            },
+
+            findWinningCell(player) {
+                for (let combo of Game.winningCombos) {
+                    const [a, b, c] = combo;
                     const vals = [Game.board[a], Game.board[b], Game.board[c]];
                     const emptyCount = vals.filter(v => v === "").length;
                     const playerCount = vals.filter(v => v === player).length;
-                    
+
                     if (emptyCount === 1 && playerCount === 2) {
                         if (Game.board[a] === "") return a;
                         if (Game.board[b] === "") return b;
@@ -496,298 +1163,564 @@
                     }
                 }
                 return -1;
+            },
+
+            getInfiniteMove() {
+                // Win if possible
+                const win = this.findWinningCell('O');
+                if (win !== -1) return win;
+
+                // Block if possible
+                const block = this.findWinningCell('X');
+                if (block !== -1) return block;
+
+                // Center or random
+                if (Game.board[4] === "") return 4;
+                return this.getRandomMove();
             }
         };
 
-        // --- 🎨 UI Controller ---
+        /**
+         * 🎨 UI Controller & View Manager
+         */
         const UI = {
-            cells: document.querySelectorAll('.cell'),
-            statusText: document.getElementById('statusText'),
-            scoreX: document.getElementById('scoreX'),
-            scoreO: document.getElementById('scoreO'),
-            scoreDraw: document.getElementById('scoreDraw'),
+            cells: document.querySelectorAll('.game-cell'),
+            boardContainer: document.getElementById('boardContainer'),
+            strikeSvg: document.getElementById('strikeSvg'),
+            strikeLineEl: document.getElementById('strikeLineEl'),
+            statusMessage: document.getElementById('statusMessage'),
+
+            // Theme Symbols Map
+            symbolPacks: {
+                classic: { X: '✕', O: '◯', iconX: '✕', iconO: '◯' },
+                cyber: { X: '⚡', O: '🛡️', iconX: '⚡', iconO: '🛡️' },
+                element: { X: '🔥', O: '💧', iconX: '🔥', iconO: '💧' },
+                space: { X: '🚀', O: '🛸', iconX: '🚀', iconO: '🛸' }
+            },
+
+            init() {
+                this.setupEventListeners();
+                this.updateScoreboardDisplay();
+                this.applySymbolTheme();
+            },
 
             setupEventListeners() {
-                // Cell Clicks
+                // Board Cell Interactions
                 this.cells.forEach(cell => {
                     cell.addEventListener('click', (e) => {
-                        const index = parseInt(e.target.dataset.index);
-                        Game.handleClick(index);
+                        const index = parseInt(cell.dataset.index, 10);
+                        Game.handleCellClick(index);
                     });
                 });
 
-                // Mode Switching
-                document.getElementById('modePvP').addEventListener('click', () => this.setMode('pvp'));
-                document.getElementById('modePvC').addEventListener('click', () => this.setMode('pvc'));
+                // Window Resize Handler for Strike Line realignment
+                window.addEventListener('resize', () => {
+                    const winningCombo = Game.checkWin('X') || Game.checkWin('O');
+                    if (!Game.active && winningCombo) {
+                        this.highlightWinningLine(winningCombo);
+                    }
+                });
 
-                // Theme Toggle
-                document.getElementById('themeBtn').addEventListener('click', this.toggleTheme);
-                
-                // Sound Toggle
-                document.getElementById('soundBtn').addEventListener('click', this.toggleSound);
+                // Top Bar Actions
+                document.getElementById('themeBtn').addEventListener('click', () => this.toggleTheme());
+                document.getElementById('soundBtn').addEventListener('click', () => this.toggleSound());
+                document.getElementById('rulesBtn').addEventListener('click', () => this.openModal('rulesModal'));
+                document.getElementById('closeRulesBtn').addEventListener('click', () => this.closeModal('rulesModal'));
+                document.getElementById('gotItRulesBtn').addEventListener('click', () => this.closeModal('rulesModal'));
 
-                // Reset
+                document.getElementById('statsBtn').addEventListener('click', () => {
+                    this.renderStatsModal();
+                    this.openModal('statsModal');
+                });
+                document.getElementById('closeStatsBtn').addEventListener('click', () => this.closeModal('statsModal'));
+                document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+                    Game.historyLog = [];
+                    Game.saveSettings();
+                    this.renderStatsModal();
+                });
+
+                document.getElementById('settingsBtn').addEventListener('click', () => {
+                    this.renderSettingsModal();
+                    this.openModal('settingsModal');
+                });
+                document.getElementById('closeSettingsBtn').addEventListener('click', () => this.closeModal('settingsModal'));
+                document.getElementById('saveSettingsBtn').addEventListener('click', () => this.saveSettingsFromModal());
+
+                // Bottom Control Bar
                 document.getElementById('resetBtn').addEventListener('click', () => {
-                   AudioController.playClick();
-                   Game.startNewGame();
+                    SoundFX.playClick();
+                    Game.startRound();
                 });
-                document.getElementById('newGameBtnOverlay').addEventListener('click', () => {
-                    document.getElementById('celebrationOverlay').classList.add('hidden');
-                    document.getElementById('celebrationOverlay').classList.remove('flex');
-                    document.getElementById('winCard').classList.remove('scale-100', 'opacity-100');
-                    document.getElementById('winCard').classList.add('scale-0', 'opacity-0');
-                    Game.startNewGame();
+                document.getElementById('undoBtn').addEventListener('click', () => Game.undoMove());
+                document.getElementById('hintBtn').addEventListener('click', () => this.showHint());
+
+                // Celebration Modal Buttons
+                document.getElementById('modalPlayAgainBtn').addEventListener('click', () => {
+                    this.closeModal('celebrationModal');
+                    Game.startRound();
+                });
+                document.getElementById('modalHistoryBtn').addEventListener('click', () => {
+                    this.closeModal('celebrationModal');
+                    this.renderStatsModal();
+                    this.openModal('statsModal');
                 });
 
-                // History
-                document.getElementById('historyBtn').addEventListener('click', () => {
-                   document.getElementById('historyModal').classList.remove('hidden');
-                   document.getElementById('historyModal').classList.add('flex');
-                   // Slight delay for animation
-                   setTimeout(() => {
-                       document.getElementById('historyModal').classList.remove('opacity-0');
-                       document.getElementById('historyContent').classList.remove('scale-95', 'opacity-0');
-                       document.getElementById('historyContent').classList.add('scale-100', 'opacity-100');
-                   }, 10);
-                });
-                
-                document.getElementById('closeHistory').addEventListener('click', this.closeHistory);
-                document.getElementById('historyModal').addEventListener('click', (e) => {
-                    if(e.target.id === 'historyModal') this.closeHistory();
-                });
+                // Mode Tabs
+                document.getElementById('tabPvC').addEventListener('click', () => this.setGameMode('pvc'));
+                document.getElementById('tabPvP').addEventListener('click', () => this.setGameMode('pvp'));
+                document.getElementById('tabInfinite').addEventListener('click', () => this.setGameMode('infinite'));
 
-                document.getElementById('clearHistory').addEventListener('click', () => {
-                    Game.history = [];
-                    localStorage.removeItem('tictactoe_history');
-                    Game.renderHistory();
-                });
-                
-                // Create Difficulty buttons dynamically
-                const diffContainer = document.getElementById('difficultyContainer');
-                ['easy', 'medium', 'hard'].forEach(level => {
-                    const btn = document.createElement('button');
-                    btn.textContent = level.charAt(0).toUpperCase() + level.slice(1);
-                    btn.className = `flex-1 py-1 text-xs rounded-md border border-slate-300 dark:border-slate-600 font-medium transition-colors ${Game.difficulty === level ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' : 'text-slate-500'}`;
-                    btn.addEventListener('click', () => {
-                        Game.difficulty = level;
-                        // update styles
-                        Array.from(diffContainer.children).forEach(b => {
-                           b.className = b.className.replace('bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300', 'text-slate-500');
+                // Difficulty Buttons
+                document.querySelectorAll('.diff-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const diff = btn.dataset.diff;
+                        Game.difficulty = diff;
+                        document.querySelectorAll('.diff-btn').forEach(b => {
+                            b.className = 'diff-btn px-2 py-1 rounded-lg text-slate-500 dark:text-slate-400 transition';
                         });
-                        btn.className = btn.className.replace('text-slate-500', 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300');
+                        btn.className = 'diff-btn px-2 py-1 rounded-lg bg-indigo-600 text-white shadow-sm transition';
+                        SoundFX.playClick();
+                        Game.startRound();
                     });
-                    diffContainer.appendChild(btn);
                 });
             },
 
-            closeHistory() {
-                document.getElementById('historyModal').classList.add('opacity-0');
-                document.getElementById('historyContent').classList.remove('scale-100', 'opacity-100');
-                document.getElementById('historyContent').classList.add('scale-95', 'opacity-0');
-                setTimeout(() => {
-                    document.getElementById('historyModal').classList.remove('flex');
-                    document.getElementById('historyModal').classList.add('hidden');
-                }, 300);
-            },
+            setGameMode(mode) {
+                Game.mode = mode;
+                SoundFX.playClick();
 
-            setMode(mode) {
-                Game.mode = mode; 
-                this.updateModeUI(); 
-                Game.startNewGame();
-            },
+                // Style active tab
+                const tabs = [
+                    { id: 'tabPvC', active: mode === 'pvc' },
+                    { id: 'tabPvP', active: mode === 'pvp' },
+                    { id: 'tabInfinite', active: mode === 'infinite' }
+                ];
+                tabs.forEach(t => {
+                    const el = document.getElementById(t.id);
+                    if (t.active) {
+                        el.className = 'flex-1 py-1 sm:py-1.5 rounded-lg text-center transition-all duration-200 z-10 font-bold bg-white dark:bg-darkCard text-indigo-600 dark:text-indigo-400 shadow-sm';
+                    } else {
+                        el.className = 'flex-1 py-1 sm:py-1.5 rounded-lg text-center transition-all duration-200 z-10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200';
+                    }
+                });
 
-            updateModeUI() {
-                const indicator = document.getElementById('modeIndicator');
-                const tvPlayer = document.getElementById('modePvP');
-                const tvComputer = document.getElementById('modePvC');
-                const diffContainer = document.getElementById('difficultyContainer');
-                
-                if (Game.mode === 'pvp') {
-                    indicator.style.transform = 'translateX(0)';
-                    tvPlayer.classList.remove('text-slate-500', 'dark:text-slate-400');
-                    tvComputer.classList.add('text-slate-500', 'dark:text-slate-400');
-                    diffContainer.classList.add('opacity-0', 'h-0');
-                    diffContainer.classList.remove('h-12', 'opacity-100');
+                // Show/hide difficulty selector
+                const diffPills = document.getElementById('difficultyPills');
+                if (mode === 'pvc') {
+                    diffPills.classList.remove('hidden');
                 } else {
-                    indicator.style.transform = 'translateX(100%)';
-                    tvComputer.classList.remove('text-slate-500', 'dark:text-slate-400');
-                    tvPlayer.classList.add('text-slate-500', 'dark:text-slate-400');
-                    diffContainer.classList.remove('opacity-0', 'h-0');
-                    diffContainer.classList.add('h-12', 'opacity-100');
+                    diffPills.classList.add('hidden');
+                }
+
+                // Show/hide piece count indicators for infinite mode
+                const countX = document.getElementById('pieceCountX');
+                const countO = document.getElementById('pieceCountO');
+                if (mode === 'infinite') {
+                    countX.classList.remove('hidden');
+                    countO.classList.remove('hidden');
+                } else {
+                    countX.classList.add('hidden');
+                    countO.classList.add('hidden');
+                }
+
+                // Update Player O label
+                document.getElementById('playerNameO').textContent = mode === 'pvp' ? (Game.settings.nameO || 'Player 2') : 'Computer';
+
+                Game.startRound();
+            },
+
+            renderMark(index, player) {
+                const cell = this.cells[index];
+                cell.classList.add('occupied');
+                const pack = this.symbolPacks[Game.settings.symbolTheme] || this.symbolPacks.classic;
+                const mark = player === 'X' ? pack.X : pack.O;
+
+                const colorClass = player === 'X'
+                    ? 'text-rose-500 drop-shadow-[0_0_12px_rgba(244,63,94,0.45)]'
+                    : 'text-cyan-500 drop-shadow-[0_0_12px_rgba(6,182,212,0.45)]';
+
+                cell.innerHTML = `
+                    <span class="text-3xl sm:text-4xl md:text-5xl font-black font-heading select-none animate-pop ${colorClass}">
+                        ${mark}
+                    </span>
+                `;
+
+                this.updatePieceCountLabels();
+            },
+
+            clearCell(index) {
+                const cell = this.cells[index];
+                cell.classList.remove('occupied', 'ghost-fade');
+                cell.innerHTML = "";
+                this.updatePieceCountLabels();
+            },
+
+            resetBoardUI() {
+                this.cells.forEach(cell => {
+                    cell.innerHTML = "";
+                    cell.className = "game-cell rounded-2xl bg-slate-100/90 dark:bg-darkSurface/80 shadow-sm border border-slate-200/60 dark:border-slate-700/50";
+                });
+                this.resetStrikeLine();
+                this.updatePieceCountLabels();
+            },
+
+            updatePieceCountLabels() {
+                if (Game.mode === 'infinite') {
+                    document.getElementById('pieceCountX').textContent = `${Game.piecesQueue.X.length}/3`;
+                    document.getElementById('pieceCountO').textContent = `${Game.piecesQueue.O.length}/3`;
                 }
             },
 
-            updateCell(index, player) {
-                const cell = this.cells[index];
-                cell.textContent = player;
-                cell.className = `cell rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none animate-pop-in cell-shadow
-                    ${player === 'X' ? 'bg-rose-50 text-rose-500 dark:bg-slate-800' : 'bg-blue-50 text-blue-500 dark:bg-slate-800'}`;
+            updateGhostWarnings() {
+                // Clear any previous ghost pulse
+                this.cells.forEach(c => c.classList.remove('ghost-fade'));
+
+                if (Game.mode === 'infinite') {
+                    const queue = Game.piecesQueue[Game.currentPlayer];
+                    if (queue && queue.length === 3) {
+                        const oldestIndex = queue[0];
+                        const cell = this.cells[oldestIndex];
+                        if (cell) {
+                            cell.classList.add('ghost-fade');
+                        }
+                    }
+                }
             },
 
-            clearBoard() {
-                this.cells.forEach((cell, i) => {
-                    cell.textContent = "";
-                    cell.className = "cell bg-slate-100 dark:bg-slate-900 rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center text-5xl font-black select-none hover:bg-slate-200 dark:hover:bg-slate-800";
-                    cell.dataset.index = i;
-                    cell.style.removeProperty('animation');
-                });
-                // Reset strike line
-                const line = document.getElementById('strikeLine');
-                line.classList.remove('opacity-100');
-                line.classList.add('opacity-0');
+            updateTurnIndicator() {
+                const cardX = document.getElementById('playerCardX');
+                const cardO = document.getElementById('playerCardO');
+                const barX = document.getElementById('turnBarX');
+                const barO = document.getElementById('turnBarO');
+
+                if (Game.currentPlayer === 'X') {
+                    cardX.classList.add('border-rose-500/40', 'shadow-neon-x');
+                    cardO.classList.remove('border-cyan-500/40', 'shadow-neon-o');
+                    barX.classList.remove('opacity-0');
+                    barO.classList.add('opacity-0');
+                } else {
+                    cardO.classList.add('border-cyan-500/40', 'shadow-neon-o');
+                    cardX.classList.remove('border-rose-500/40', 'shadow-neon-x');
+                    barO.classList.remove('opacity-0');
+                    barX.classList.add('opacity-0');
+                }
             },
 
-            updateStatus(msg) {
-                this.statusText.textContent = msg;
+            updatePlayerCards() {
+                document.getElementById('playerNameX').textContent = Game.settings.nameX || 'Player 1';
+                document.getElementById('playerNameO').textContent = Game.mode === 'pvp' ? (Game.settings.nameO || 'Player 2') : 'Computer';
+
+                this.updateScoreboardDisplay();
+                this.applySymbolTheme();
+
+                // Series Badge
+                const seriesBadge = document.getElementById('seriesBadge');
+                if (Game.settings.seriesLength > 1) {
+                    seriesBadge.textContent = `Best of ${Game.settings.seriesLength} (${Game.seriesWins.X} - ${Game.seriesWins.O})`;
+                } else {
+                    seriesBadge.textContent = 'Casual Match';
+                }
+
+                // Blitz Badge
+                const blitzBadge = document.getElementById('blitzBadge');
+                const timerText = document.getElementById('timerText');
+                if (Game.settings.blitzSeconds > 0) {
+                    blitzBadge.classList.remove('hidden');
+                    timerText.textContent = `${Game.settings.blitzSeconds}s`;
+                } else {
+                    blitzBadge.classList.add('hidden');
+                }
             },
 
-            updateScoreboard() {
-                this.scoreX.textContent = Game.scores.X;
-                this.scoreO.textContent = Game.scores.O;
-                this.scoreDraw.textContent = Game.scores.Draw;
+            updateScoreboardDisplay() {
+                document.getElementById('scoreX').textContent = Game.scores.X;
+                document.getElementById('scoreO').textContent = Game.scores.O;
+                document.getElementById('scoreDraw').textContent = Game.scores.Draw;
+                document.getElementById('streakX').textContent = `${Game.currentStreak} Win`;
+                document.getElementById('streakO').textContent = `${Game.scores.O} Win`;
             },
 
-            disableBoard() {
-                document.querySelector('.grid').style.pointerEvents = 'none';
+            applySymbolTheme() {
+                const pack = this.symbolPacks[Game.settings.symbolTheme] || this.symbolPacks.classic;
+                document.getElementById('playerIconX').textContent = pack.iconX;
+                document.getElementById('playerIconO').textContent = pack.iconO;
             },
 
-            enableBoard() {
-                document.querySelector('.grid').style.pointerEvents = 'auto';
+            updateStatusMessage(msg) {
+                this.statusMessage.textContent = msg;
             },
 
-            highlightWin(condition) {
-                // Animate valid line
-                const [a, b, c] = condition;
-                
-                // Highlight cells
+            setBoardInteractive(interactive) {
+                document.getElementById('boardGrid').style.pointerEvents = interactive ? 'auto' : 'none';
+            },
+
+            /**
+             * 🎯 Mathematically Precise Dynamic SVG Winning Strike Line
+             */
+            highlightWinningLine(combo) {
+                const [a, b, c] = combo;
+
+                // Pulsate winning cells
                 [a, b, c].forEach(idx => {
                     const cell = this.cells[idx];
-                    cell.classList.add('animate-pulse-glow', 'z-10');
-                    cell.classList.remove('bg-rose-50', 'bg-blue-50', 'dark:bg-slate-800');
-                    cell.classList.add(Game.board[a] === 'X' ? 'bg-rose-500' : 'bg-blue-500');
-                    cell.classList.add('text-white');
+                    cell.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-500/20');
                 });
 
-                // Draw SVG line (Simplified logic: we know row/col/diag structure)
-                // 012 (row 1), 345 (row 2), 678 (row 3)
-                // 036 (col 1), 147 (col 2), 258 (col 3)
-                // 048 (diag 1), 246 (diag 2)
-                const line = document.getElementById('strikeLine').querySelector('line');
-                const svg = document.getElementById('strikeLine');
-                
-                // Coordinate map based on 3x3 grid percentages
-                const getCoord = (i) => {
-                    const row = Math.floor(i / 3);
-                    const col = i % 3;
-                    return { x: (col * 33.33) + 16.66, y: (row * 33.33) + 16.66 };
-                };
-                
-                const start = getCoord(a);
-                const end = getCoord(c);
+                // Calculate exact pixel centers relative to board container
+                const boardRect = this.boardContainer.getBoundingClientRect();
+                const cellA = this.cells[a].getBoundingClientRect();
+                const cellC = this.cells[c].getBoundingClientRect();
 
-                line.setAttribute('x1', `${start.x}%`);
-                line.setAttribute('y1', `${start.y}%`);
-                line.setAttribute('x2', `${end.x}%`);
-                line.setAttribute('y2', `${end.y}%`);
-                
-                svg.classList.remove('opacity-0');
-                svg.classList.add('opacity-100');
+                const x1 = (cellA.left + cellA.width / 2) - boardRect.left;
+                const y1 = (cellA.top + cellA.height / 2) - boardRect.top;
+                const x2 = (cellC.left + cellC.width / 2) - boardRect.left;
+                const y2 = (cellC.top + cellC.height / 2) - boardRect.top;
+
+                // Extend line slightly at ends for sleek laser finish
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                const extend = 16;
+                const ux = (dx / length) * extend;
+                const uy = (dy / length) * extend;
+
+                this.strikeLineEl.setAttribute('x1', (x1 - ux).toFixed(1));
+                this.strikeLineEl.setAttribute('y1', (y1 - uy).toFixed(1));
+                this.strikeLineEl.setAttribute('x2', (x2 + ux).toFixed(1));
+                this.strikeLineEl.setAttribute('y2', (y2 + uy).toFixed(1));
+
+                this.strikeLineEl.classList.remove('strike-active');
+                void this.strikeLineEl.offsetWidth; // Trigger reflow
+                this.strikeLineEl.classList.add('strike-active');
+
+                this.strikeSvg.classList.remove('opacity-0');
+                this.strikeSvg.classList.add('opacity-100');
             },
 
-            showCelebration(text, winner) {
-                const overlay = document.getElementById('celebrationOverlay');
-                const winCard = document.getElementById('winCard');
-                const winnerText = document.getElementById('winnerText');
-                const winnerSub = document.getElementById('winnerSub');
+            resetStrikeLine() {
+                this.strikeSvg.classList.add('opacity-0');
+                this.strikeSvg.classList.remove('opacity-100');
+                this.strikeLineEl.classList.remove('strike-active');
+                this.cells.forEach(c => c.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-500/20'));
+            },
 
-                winnerText.textContent = text;
-                
-                if (winner === 'Draw') {
-                    winnerText.className = "text-4xl font-extrabold mb-2 text-slate-500";
-                    winnerSub.textContent = "Tight match!";
-                } else {
-                    winnerText.className = `text-4xl font-extrabold bg-clip-text text-transparent mb-2 ${winner === 'X' ? 'bg-gradient-to-r from-rose-500 to-orange-500' : 'bg-gradient-to-r from-blue-500 to-cyan-500'}`;
-                    winnerSub.textContent = winner === Game.currentPlayer ? "Great moves!" : "Nice try!"; // logic reuse
+            updateBlitzBar(percentage) {
+                const targetBar = Game.currentPlayer === 'X' ? document.getElementById('timerBarX') : document.getElementById('timerBarO');
+                const otherBar = Game.currentPlayer === 'X' ? document.getElementById('timerBarO') : document.getElementById('timerBarX');
+                otherBar.style.width = '0%';
+                targetBar.style.width = `${percentage}%`;
+            },
+
+            showHint() {
+                if (!Game.active) return;
+                SoundFX.playHint();
+
+                // Compute optimal move
+                let hintIndex = AI.getMinimaxBestMove();
+                if (hintIndex === undefined || hintIndex === -1) {
+                    hintIndex = AI.getRandomMove();
                 }
 
-                overlay.classList.remove('hidden');
-                overlay.classList.add('flex');
-                
-                // Allow confetti render first
-                setTimeout(() => {
-                    winCard.classList.remove('scale-0', 'opacity-0');
-                    winCard.classList.add('scale-100', 'opacity-100');
-                    startConfetti();
-                }, 100);
+                if (hintIndex !== undefined) {
+                    const cell = this.cells[hintIndex];
+                    cell.classList.add('ring-4', 'ring-amber-400', 'shadow-neon-gold');
+                    this.updateStatusMessage(`💡 Hint: Place on square ${hintIndex + 1}!`);
+
+                    setTimeout(() => {
+                        cell.classList.remove('ring-4', 'ring-amber-400', 'shadow-neon-gold');
+                    }, 1400);
+                }
             },
-            
+
+            triggerConfetti() {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 80,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#f43f5e', '#06b6d4', '#6366f1', '#f59e0b', '#10b981']
+                    });
+                }
+            },
+
+            showCelebrationModal(winner) {
+                const modal = document.getElementById('celebrationModal');
+                const card = document.getElementById('celebrationCard');
+                const iconWrap = document.getElementById('winnerIconWrap');
+                const heading = document.getElementById('winHeading');
+                const subtext = document.getElementById('winSubtext');
+                const p1Name = document.getElementById('seriesP1Name');
+                const p2Name = document.getElementById('seriesP2Name');
+
+                p1Name.textContent = `${Game.getPlayerName('X')}: ${Game.seriesWins.X}`;
+                p2Name.textContent = `${Game.getPlayerName('O')}: ${Game.seriesWins.O}`;
+
+                if (winner === 'Draw') {
+                    iconWrap.innerHTML = '⚖️';
+                    iconWrap.className = 'w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl font-black bg-slate-500/20 text-slate-400';
+                    heading.textContent = "It's a Tie!";
+                    subtext.textContent = "Masterclass defense on both sides.";
+                } else {
+                    const winnerName = Game.getPlayerName(winner);
+                    iconWrap.innerHTML = winner === 'X' ? '⚡' : '🏆';
+                    iconWrap.className = `w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl font-black ${winner === 'X' ? 'bg-rose-500/20 text-rose-500 shadow-neon-x' : 'bg-cyan-500/20 text-cyan-500 shadow-neon-o'}`;
+                    heading.textContent = `${winnerName} Wins!`;
+                    subtext.textContent = winner === 'X' ? 'Incredible offensive tactic!' : 'Calculated precision victory!';
+                }
+
+                this.openModal('celebrationModal');
+            },
+
+            openModal(id) {
+                const el = document.getElementById(id);
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+                setTimeout(() => {
+                    el.classList.remove('opacity-0');
+                    const innerCard = el.querySelector('.glass-panel');
+                    if (innerCard) {
+                        innerCard.classList.remove('scale-90');
+                        innerCard.classList.add('scale-100');
+                    }
+                }, 10);
+            },
+
+            closeModal(id) {
+                const el = document.getElementById(id);
+                el.classList.add('opacity-0');
+                const innerCard = el.querySelector('.glass-panel');
+                if (innerCard) {
+                    innerCard.classList.remove('scale-100');
+                    innerCard.classList.add('scale-90');
+                }
+                setTimeout(() => {
+                    el.classList.remove('flex');
+                    el.classList.add('hidden');
+                }, 200);
+            },
+
+            renderStatsModal() {
+                const total = Game.scores.X + Game.scores.O + Game.scores.Draw;
+                const winPercent = total > 0 ? Math.round((Game.scores.X / total) * 100) : 0;
+
+                document.getElementById('statTotal').textContent = total;
+                document.getElementById('statWinRate').textContent = `${winPercent}%`;
+                document.getElementById('statStreak').textContent = Game.currentStreak;
+                document.getElementById('statBestStreak').textContent = Game.bestStreak;
+
+                const list = document.getElementById('statsList');
+                if (Game.historyLog.length === 0) {
+                    list.innerHTML = '<p class="text-center text-slate-400 py-6 text-xs">No recorded matches yet. Play a round!</p>';
+                    return;
+                }
+
+                list.innerHTML = Game.historyLog.map(item => `
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/80 dark:bg-darkSurface/70 text-xs">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-700 dark:text-slate-200">${item.mode} Mode</span>
+                            <span class="text-[10px] text-slate-400">${item.date}</span>
+                        </div>
+                        <span class="font-bold ${item.symbol === 'X' ? 'text-rose-500' : (item.symbol === 'O' ? 'text-cyan-500' : 'text-slate-400')}">
+                            ${item.winner}
+                        </span>
+                    </div>
+                `).join('');
+            },
+
+            renderSettingsModal() {
+                // Populate current settings into inputs
+                document.getElementById('inputNameX').value = Game.settings.nameX || 'Player 1';
+                document.getElementById('inputNameO').value = Game.settings.nameO || 'Player 2';
+
+                // Symbol Pack buttons
+                document.querySelectorAll('.symbol-pack-btn').forEach(btn => {
+                    if (btn.dataset.theme === Game.settings.symbolTheme) {
+                        btn.className = 'symbol-pack-btn p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30 text-xs font-bold text-center';
+                    } else {
+                        btn.className = 'symbol-pack-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center';
+                    }
+                    btn.onclick = () => {
+                        Game.settings.symbolTheme = btn.dataset.theme;
+                        this.renderSettingsModal();
+                    };
+                });
+
+                // Series Buttons
+                document.querySelectorAll('.series-btn').forEach(btn => {
+                    const val = parseInt(btn.dataset.series, 10);
+                    if (val === Game.settings.seriesLength) {
+                        btn.className = 'series-btn p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30 text-xs font-bold text-center';
+                    } else {
+                        btn.className = 'series-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center';
+                    }
+                    btn.onclick = () => {
+                        Game.settings.seriesLength = val;
+                        this.renderSettingsModal();
+                    };
+                });
+
+                // First Turn Buttons
+                document.querySelectorAll('.first-turn-btn').forEach(btn => {
+                    if (btn.dataset.turn === Game.settings.firstTurn) {
+                        btn.className = 'first-turn-btn p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30 text-xs font-bold text-center';
+                    } else {
+                        btn.className = 'first-turn-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center';
+                    }
+                    btn.onclick = () => {
+                        Game.settings.firstTurn = btn.dataset.turn;
+                        this.renderSettingsModal();
+                    };
+                });
+
+                // Blitz Buttons
+                document.querySelectorAll('.blitz-btn').forEach(btn => {
+                    const val = parseInt(btn.dataset.blitz, 10);
+                    if (val === Game.settings.blitzSeconds) {
+                        btn.className = 'blitz-btn p-2 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/30 text-xs font-bold text-center';
+                    } else {
+                        btn.className = 'blitz-btn p-2 rounded-xl border-2 border-transparent bg-slate-100 dark:bg-darkSurface text-xs font-bold text-center';
+                    }
+                    btn.onclick = () => {
+                        Game.settings.blitzSeconds = val;
+                        this.renderSettingsModal();
+                    };
+                });
+            },
+
+            saveSettingsFromModal() {
+                const nameX = document.getElementById('inputNameX').value.trim();
+                const nameO = document.getElementById('inputNameO').value.trim();
+                if (nameX) Game.settings.nameX = nameX;
+                if (nameO) Game.settings.nameO = nameO;
+
+                Game.saveSettings();
+                this.updatePlayerCards();
+                this.closeModal('settingsModal');
+                SoundFX.playClick();
+                Game.startRound();
+            },
+
             toggleTheme() {
                 document.documentElement.classList.toggle('dark');
                 const isDark = document.documentElement.classList.contains('dark');
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                
-                document.getElementById('moonIcon').classList.toggle('hidden', isDark);
-                document.getElementById('sunIcon').classList.toggle('hidden', !isDark);
-            },
-            
-            toggleSound() {
-                AudioController.enabled = !AudioController.enabled;
-                document.getElementById('soundIconOn').classList.toggle('hidden', !AudioController.enabled);
-                document.getElementById('soundIconOff').classList.toggle('hidden', AudioController.enabled);
-                AudioController.playClick();
+                localStorage.setItem('ttt_theme', isDark ? 'dark' : 'light');
+                document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+                SoundFX.playClick();
             },
 
-            hideCelebration() { /* Handled in setup listeners */ }
+            toggleSound() {
+                SoundFX.enabled = !SoundFX.enabled;
+                Game.settings.soundEnabled = SoundFX.enabled;
+                Game.saveSettings();
+                document.getElementById('soundIcon').className = SoundFX.enabled ? 'fa-solid fa-volume-high text-xs' : 'fa-solid fa-volume-xmark text-xs text-rose-500';
+                if (SoundFX.enabled) SoundFX.playClick();
+            }
         };
 
-        // --- 🎉 Confetti Logic ---
-        function startConfetti() {
-            const canvas = document.getElementById("confettiCanvas");
-            const ctx = canvas.getContext("2d");
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            const particles = [];
-            const colors = ['#f43f5e', '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b'];
-            
-            for(let i=0; i<150; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    vx: Math.random() * 4 - 2,
-                    vy: Math.random() * 5 + 2,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    size: Math.random() * 8 + 4,
-                    rotation: Math.random() * 360
-                });
-            }
-
-            function animate() {
-                if(document.getElementById('celebrationOverlay').classList.contains('hidden')) return;
-                
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach((p, index) => {
-                    p.y += p.vy;
-                    p.x += p.vx;
-                    p.rotation += 2;
-                    
-                    if(p.y > canvas.height) p.y = -10;
-                    
-                    ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(p.rotation * Math.PI / 180);
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
-                    ctx.restore();
-                });
-                requestAnimationFrame(animate);
-            }
-            animate();
-        }
-
-        // Boot
-        Game.init();
-
+        // Bootstrap on DOM Loaded
+        window.addEventListener('DOMContentLoaded', () => {
+            Game.init();
+        });
     </script>
 </body>
 </html>
