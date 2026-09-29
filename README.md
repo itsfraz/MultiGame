@@ -4,11 +4,11 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Version](https://img.shields.io/badge/Version-1.2.0-blue)
 
-✨ **The ultimate gaming experience with six exciting games in one place!** ✨
+✨ **The ultimate gaming experience with eight exciting games in one place!** ✨
 
 ## 🚀 Features
 
-- 🎯 **Six Classic Games** in one hub
+- 🎯 **Eight Classic & Arcade Games** in one hub
 - 🌈 **Stunning UI** with modern Glassmorphism & Dark Mode
 - 📱 **Fully Responsive** for all devices
 - 🎨 **Beautiful Animations** and interactive effects
@@ -18,12 +18,14 @@
 
 | Game | Description | Difficulty | Players |
 |------|-------------|------------|---------|
-| 🧠 **[Memory Card](#)** | Test your memory with card matching | Easy | 1 |
-| 🔨 **[Mole Whacker](#)** | Whack moles as they appear | Medium | 1 |
-| 🔢 **[Number Guessing](#)** | Guess the secret number | Hard | 1 |
-| 🐍 **[Snake Game](#)** | Classic snake collecting food | Medium | 1 |
-| ✂️ **[Rock Paper Scissors](#)** | Classic strategy game | Easy | 1-2 |
-| 🖼️ **[Image Puzzle Slider](#)** | Arrange tiles to form image | Variable | 1 |
+| 🧠 **[Memory Card](MemoryCard.html)** | Test your memory with card matching | Easy | 1 |
+| 🔨 **[Mole Whacker](Mole.html)** | Whack moles as they appear | Medium | 1 |
+| 🔢 **[Number Guessing](NumberGuessing.html)** | Guess the secret number | Hard | 1 |
+| 🐍 **[Snake Game](Snake.html)** | Classic snake collecting food | Medium | 1 |
+| ✂️ **[Rock Paper Scissors](RockPaper.html)** | Classic strategy game | Easy | 1-2 |
+| ❌ **[Tic Tac Toe Pro](TicTacToe.html)** | 3-in-a-row with adaptive AI | Variable | 1-2 |
+| 🖼️ **[Image Puzzle Slider](ImagePuzzle.html)** | Arrange tiles to form image | Variable | 1 |
+| 🏎️ **[Typing Speed Racer](Typing%20Speed%20Racer.html)** | Real-time typing drag race challenge | Dynamic | 1 |
 
 ## 🖥️ Technologies Used
 

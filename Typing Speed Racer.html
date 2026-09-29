@@ -1,0 +1,2024 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Speed Racer - Executive Pro Edition</title>
+  
+  <!-- Modern Clean Typography: Plus Jakarta Sans for UI + JetBrains Mono for Console/Stats -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            pro: {
+              bg: '#090d16',
+              surface: '#0f172a',
+              card: 'rgba(15, 23, 42, 0.75)',
+              border: '#1e293b',
+              borderHover: '#334155',
+              accent: '#3b82f6', // Cobalt Blue
+              accentLight: '#60a5fa',
+              indigo: '#6366f1',
+              emerald: '#10b981', // Professional Green
+              rose: '#f43f5e',   // Refined Red
+              amber: '#f59e0b',  // Executive Gold
+              slateText: '#94a3b8'
+            }
+          },
+          keyframes: {
+            shake: {
+              '0%, 100%': { transform: 'translateX(0)' },
+              '20%, 60%': { transform: 'translateX(-6px)' },
+              '40%, 80%': { transform: 'translateX(6px)' },
+            },
+            cursorPulse: {
+              '0%, 100%': { opacity: '0.2' },
+              '50%': { opacity: '1' }
+            }
+          },
+          animation: {
+            shake: 'shake 0.3s cubic-bezier(.36,.07,.19,.97) both',
+            'cursor-pulse': 'cursorPulse 0.9s ease-in-out infinite',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Strict No-Scroll Single Page Viewport Constraints */
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background-color: #090d16;
+    }
+
+    body {
+      background-image: 
+        radial-gradient(ellipse at 50% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 90%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 20% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 45%);
+    }
+
+    /* Track surface pattern: Sleek professional asphalt dashes */
+    .track-surface-bg {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(51, 65, 85, 0.25) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(51, 65, 85, 0.2) 1px, transparent 1px);
+    }
+
+    @keyframes dashMove {
+      0% { background-position: 0 0; }
+      100% { background-position: -64px 0; }
+    }
+    .track-divider-line {
+      background-image: repeating-linear-gradient(90deg, 
+        rgba(59, 130, 246, 0.45) 0px, 
+        rgba(59, 130, 246, 0.45) 20px, 
+        transparent 20px, 
+        transparent 50px
+      );
+      animation: dashMove 0.8s linear infinite;
+    }
+
+    /* Clean Checkered Finish Gate */
+    .finish-gate-pattern {
+      background-image: 
+        linear-gradient(45deg, #334155 25%, transparent 25%), 
+        linear-gradient(-45deg, #334155 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #334155 75%), 
+        linear-gradient(-45deg, #1e293b 75%, transparent 75%);
+      background-size: 12px 12px;
+    }
+
+    /* Active cursor underline indicator */
+    .char-cursor {
+      position: relative;
+    }
+    .char-cursor::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -3px;
+      height: 3px;
+      background-color: #3b82f6;
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+      animation: cursorPulse 0.8s ease-in-out infinite;
+    }
+
+    /* Keycap dynamic styling */
+    .keycap {
+      user-select: none;
+      transition: all 0.12s ease;
+    }
+    .keycap.key-target {
+      border-color: #3b82f6 !important;
+      background-color: rgba(59, 130, 246, 0.25) !important;
+      color: #60a5fa !important;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+      font-weight: 700;
+    }
+    .keycap.key-correct {
+      background-color: #10b981 !important;
+      border-color: #34d399 !important;
+      color: #ffffff !important;
+      transform: scale(0.94);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+    .keycap.key-wrong {
+      background-color: #f43f5e !important;
+      border-color: #fb7185 !important;
+      color: #ffffff !important;
+      transform: scale(0.94);
+      box-shadow: 0 0 10px rgba(244, 63, 94, 0.5);
+    }
+    .keycap.has-heat {
+      border-bottom: 2px solid rgba(244, 63, 94, 0.7) !important;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col justify-between text-slate-100 select-none overflow-hidden text-sm">
+
+  <!-- ================= 1. HEADER HUD ================= -->
+  <header class="w-full shrink-0 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md px-3 sm:px-6 py-1.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 p-[1px] shadow-sm shadow-blue-500/30 flex items-center justify-center">
+          <div class="w-full h-full bg-slate-950 rounded-[7px] flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-bold text-xs sm:text-base tracking-tight text-white flex items-center gap-1.5">
+              <span>Typing Speed Racer</span>
+              <span class="text-[9px] sm:text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-800/60 text-blue-400 tracking-wider">
+                PRO
+              </span>
+              <span id="license-badge" class="cursor-pointer text-[9px] sm:text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300 tracking-wider transition-all hover:border-amber-500" title="Driver License Tier">
+                🏆 CLASS C
+              </span>
+            </h1>
+          </div>
+          <p class="text-[10px] text-slate-400 font-mono hidden md:block">Real-time Telemetry & Drag Race Engine</p>
+        </div>
+      </div>
+
+      <!-- Live Telemetry KPI Cards -->
+      <div class="flex items-center gap-1 sm:gap-2.5">
+        
+        <!-- Timer Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-lg px-2 py-0.5 sm:px-2.5 sm:py-1 text-center min-w-[50px] sm:min-w-[65px]">
+          <div class="text-[8px] sm:text-[9px] font-semibold text-slate-400 tracking-wider uppercase">Time</div>
+          <div id="hud-timer" class="font-mono text-xs sm:text-base font-bold text-blue-400 tracking-tight">60s</div>
+        </div>
+
+        <!-- WPM Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-lg px-2 py-0.5 sm:px-2.5 sm:py-1 text-center min-w-[50px] sm:min-w-[65px]">
+          <div class="text-[8px] sm:text-[9px] font-semibold text-slate-400 tracking-wider uppercase">WPM</div>
+          <div id="hud-wpm" class="font-mono text-xs sm:text-base font-bold text-indigo-400 tracking-tight">0</div>
+        </div>
+
+        <!-- Speed KM/H Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-lg px-2 py-0.5 sm:px-2.5 sm:py-1 text-center min-w-[50px] sm:min-w-[72px] hidden sm:block">
+          <div class="text-[8px] sm:text-[9px] font-semibold text-slate-400 tracking-wider uppercase">Speed</div>
+          <div id="hud-speed" class="font-mono text-xs sm:text-base font-bold text-slate-200 tracking-tight">0 <span class="text-[9px] text-slate-500 font-normal">km/h</span></div>
+        </div>
+
+        <!-- Accuracy Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-lg px-2 py-0.5 sm:px-2.5 sm:py-1 text-center min-w-[50px] sm:min-w-[65px]">
+          <div class="text-[8px] sm:text-[9px] font-semibold text-slate-400 tracking-wider uppercase">Acc</div>
+          <div id="hud-accuracy" class="font-mono text-xs sm:text-base font-bold text-emerald-400 tracking-tight">100%</div>
+        </div>
+
+        <!-- High Score Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-lg px-2 py-0.5 sm:px-2.5 sm:py-1 text-center min-w-[50px] sm:min-w-[65px]">
+          <div class="text-[8px] sm:text-[9px] font-semibold text-slate-400 tracking-wider uppercase">Best</div>
+          <div id="hud-highscore" class="font-mono text-xs sm:text-base font-bold text-amber-400 tracking-tight">0</div>
+        </div>
+
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center gap-1.5">
+        <a href="index.html" class="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 hover:text-white hover:border-blue-500 hover:bg-slate-800 transition-all flex items-center gap-1.5" title="Back to Game Hub">
+          <svg class="w-3.5 h-3.5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span class="hidden sm:inline font-semibold">Hub</span>
+        </a>
+        <button id="sfx-toggle-btn" class="p-1 sm:p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition-colors" title="Toggle Sound FX">
+          <span id="sfx-icon" class="text-xs">🔊</span>
+        </button>
+        <button id="quick-reset-btn" class="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-300 hover:text-white hover:border-slate-700 transition-colors" title="Reset Session">
+          Reset
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= 2. CONFIGURATION BAR ================= -->
+  <section class="w-full shrink-0 max-w-7xl mx-auto px-3 sm:px-6 pt-1.5 pb-1">
+    <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl px-2.5 py-1 flex flex-wrap items-center justify-between gap-1.5 text-xs">
+      
+      <!-- Duration Selector -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400 font-medium text-[11px]">Duration:</span>
+        <div class="flex items-center bg-slate-950 p-0.5 rounded-lg border border-slate-800" id="duration-selector">
+          <button data-duration="15" class="mode-btn px-2 py-0.5 rounded text-[11px] text-slate-400 hover:text-white transition-colors">15s</button>
+          <button data-duration="30" class="mode-btn px-2 py-0.5 rounded text-[11px] text-slate-400 hover:text-white transition-colors">30s</button>
+          <button data-duration="60" class="mode-btn px-2 py-0.5 rounded text-[11px] bg-blue-600 text-white font-medium shadow-sm">60s</button>
+          <button data-duration="120" class="mode-btn px-2 py-0.5 rounded text-[11px] text-slate-400 hover:text-white transition-colors">120s</button>
+        </div>
+      </div>
+
+      <!-- Word Vocabulary Category -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400 font-medium text-[11px]">Vocabulary:</span>
+        <select id="category-select" class="bg-slate-950 border border-slate-800 text-slate-300 rounded-lg px-2 py-0.5 text-[11px] focus:outline-none focus:border-blue-500 cursor-pointer">
+          <option value="common">Standard English</option>
+          <option value="tech" selected>Executive Tech</option>
+          <option value="code">Developer Syntax</option>
+          <option value="quotes">Pro Quotes</option>
+          <option value="drills">🎯 Smart Weak Key Drills</option>
+          <option value="custom">📝 Custom Code / Text</option>
+        </select>
+        <button id="custom-text-btn" class="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white text-[10px] transition-colors flex items-center gap-1" title="Open Custom Text / Code Studio">
+          <span>✏️</span> <span class="hidden sm:inline">Studio</span>
+        </button>
+      </div>
+
+      <!-- AI Rival Ghost Selection -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400 font-medium text-[11px]">Rival AI:</span>
+        <select id="ghost-select" class="bg-slate-950 border border-slate-800 text-slate-300 rounded-lg px-2 py-0.5 text-[11px] focus:outline-none focus:border-blue-500 cursor-pointer">
+          <option value="none">Off (Solo)</option>
+          <option value="rookie" selected>Standard AI (40 WPM)</option>
+          <option value="pro">Pro AI (65 WPM)</option>
+          <option value="master">Elite AI (90 WPM)</option>
+          <option value="record">Personal Best</option>
+        </select>
+      </div>
+
+      <!-- Vehicle Model / Livery Selector -->
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400 font-medium text-[11px]">Vehicle:</span>
+        <select id="vehicle-select" class="bg-slate-950 border border-slate-800 text-slate-300 rounded-lg px-2 py-0.5 text-[11px] focus:outline-none focus:border-blue-500 cursor-pointer">
+          <option value="hypercar">🏎️ Cobalt GT (Class C)</option>
+          <option value="stealth" id="opt-stealth" disabled>🔒 Stealth Cruiser (Class B)</option>
+          <option value="aeroblade" id="opt-aeroblade" disabled>🔒 Aero Blade (Class A)</option>
+          <option value="phantom" id="opt-phantom" disabled>🔒 Chrono Phantom (Master)</option>
+        </select>
+      </div>
+
+      <!-- Heatmap Keyboard Display Toggle -->
+      <div class="flex items-center gap-1.5">
+        <button id="keyboard-toggle-btn" class="px-2 py-0.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:text-white text-[11px] flex items-center gap-1 transition-colors" title="Toggle On-Screen Keyboard Heatmap">
+          <span>⌨️</span> <span id="kb-toggle-text">Heatmap: ON</span>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Challenge Alert Banner -->
+  <div id="challenge-banner" class="hidden w-full shrink-0 max-w-7xl mx-auto px-3 sm:px-6 pt-1">
+    <div class="px-3 py-1 rounded-lg bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 text-[11px] font-mono flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-2 truncate">
+        <span class="animate-pulse">⚔️</span>
+        <span id="challenge-banner-text">CHALLENGE ACCEPTED: Rival AI matched to Challenger's 75 WPM!</span>
+      </div>
+      <button id="clear-challenge-btn" class="text-[10px] text-slate-400 hover:text-white underline ml-2 shrink-0">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- ================= 3. THE RACE TRACK (DUAL LANE, COMPACT) ================= -->
+  <section class="w-full shrink-0 max-w-7xl mx-auto px-3 sm:px-6 py-0.5">
+    <div class="relative w-full rounded-xl border border-slate-800 bg-slate-950/80 shadow-md shadow-black/40 overflow-hidden">
+      
+      <!-- Track Status Bar -->
+      <div class="flex items-center justify-between px-3 py-0.5 border-b border-slate-800/80 bg-slate-900/40 text-[10px] sm:text-[11px] font-mono text-slate-400">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+          <span class="font-medium text-slate-300">TEST TRACK 01 • REAL-TIME VELOCITY</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span>PROGRESS: <strong id="track-progress-text" class="text-blue-400 font-bold">0%</strong></span>
+          <span>WORDS: <strong id="track-words-text" class="text-slate-300">0 / 40</strong></span>
+          <span class="hidden sm:inline">PACING: <strong id="lead-indicator" class="text-emerald-400 font-semibold">TIED</strong></span>
+        </div>
+      </div>
+
+      <!-- Track Canvas (Player Lane + Ghost Lane) -->
+      <div id="racetrack-surface" class="relative w-full h-24 sm:h-28 track-surface-bg flex flex-col justify-around py-0.5 overflow-hidden">
+        
+        <!-- Track Borders -->
+        <div class="absolute top-0 left-0 right-0 h-[1px] bg-slate-800"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-[1px] bg-slate-800"></div>
+        <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] track-divider-line opacity-75"></div>
+
+        <!-- Distance Markers -->
+        <div class="absolute inset-0 flex justify-between px-8 pointer-events-none opacity-20 font-mono text-[9px] text-slate-400 items-center">
+          <span>START</span>
+          <span>25%</span>
+          <span>50%</span>
+          <span>75%</span>
+          <span class="font-bold">FINISH</span>
+        </div>
+
+        <!-- Finish Line Gate (Right end) -->
+        <div class="absolute right-0 top-0 bottom-0 w-7 sm:w-9 border-l border-slate-700/80 z-20 flex flex-col justify-center items-center">
+          <div class="finish-gate-pattern w-full h-full opacity-60"></div>
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span class="text-[8px] font-mono font-bold tracking-widest text-slate-300 bg-slate-950/90 px-0.5 py-1.5 border border-slate-700 rounded [writing-mode:vertical-rl]">
+              FINISH
+            </span>
+          </div>
+        </div>
+
+        <!-- Lane 1: Player Vehicle -->
+        <div class="relative w-full h-10 flex items-center">
+          <div id="racer-vehicle" class="absolute left-2 sm:left-4 z-30 transition-transform duration-500 ease-out will-change-transform flex items-center" style="transform: translateX(0px);">
+            <div class="relative flex items-center">
+              
+              <!-- Vehicle SVG Slot -->
+              <div id="vehicle-svg-container">
+                <svg class="w-14 h-7 sm:w-16 sm:h-8" viewBox="0 0 200 90" fill="none">
+                  <ellipse cx="100" cy="74" rx="75" ry="8" fill="#000000" opacity="0.45"/>
+                  <path d="M18 54 L38 38 L95 34 L150 45 L186 56 L175 66 L120 68 L36 67 Z" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+                  <path d="M68 36 L105 35 L132 46 L85 46 Z" fill="#1e293b" stroke="#60a5fa" stroke-width="1.2"/>
+                  <polygon points="174,54 186,56 176,60" fill="#60a5fa"/>
+                  <circle cx="50" cy="65" r="8" fill="#090d16" stroke="#475569" stroke-width="2"/>
+                  <circle cx="50" cy="65" r="3.5" fill="#3b82f6"/>
+                  <circle cx="145" cy="65" r="8" fill="#090d16" stroke="#475569" stroke-width="2"/>
+                  <circle cx="145" cy="65" r="3.5" fill="#3b82f6"/>
+                  <line x1="55" y1="52" x2="135" y2="52" stroke="#3b82f6" stroke-width="1.8"/>
+                </svg>
+              </div>
+
+              <!-- Sleek Jet Exhaust Glow -->
+              <div class="absolute -left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-1 bg-blue-500 rounded-l-full filter blur-[0.5px]"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lane 2: AI Ghost Vehicle -->
+        <div id="ghost-lane-container" class="relative w-full h-8 flex items-center">
+          <div id="ghost-vehicle" class="absolute left-2 sm:left-4 z-20 transition-transform duration-700 ease-out will-change-transform flex items-center opacity-70" style="transform: translateX(0px);">
+            <div class="relative flex items-center">
+              <svg class="w-12 h-6 sm:w-14 sm:h-7" viewBox="0 0 200 90" fill="none">
+                <path d="M18 54 L38 38 L95 34 L150 45 L186 56 L175 66 L120 68 L36 67 Z" fill="#090d16" stroke="#64748b" stroke-width="1.8" stroke-dasharray="4 2"/>
+                <path d="M68 36 L105 35 L132 46 L85 46 Z" fill="#1e293b" opacity="0.6"/>
+                <circle cx="50" cy="65" r="7" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+                <circle cx="145" cy="65" r="7" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 4. THE TYPING CONSOLE & HEATMAP KEYBOARD ================= -->
+  <main class="w-full shrink max-w-4xl mx-auto px-3 sm:px-6 py-1 flex flex-col items-center justify-center gap-1.5">
+    
+    <!-- Word Flow Ribbon (Upcoming preview) -->
+    <div class="w-full flex items-center justify-between px-2 text-[11px] font-mono text-slate-400">
+      <div class="flex items-center gap-1.5">
+        <span class="text-[9px] uppercase font-semibold text-slate-500">Upcoming:</span>
+        <div id="upcoming-words" class="flex items-center gap-1.5 opacity-80">
+          <!-- Dynamically filled with clean word pills -->
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[9px] text-slate-500 uppercase">Streak:</span>
+        <span id="console-streak" class="font-bold text-amber-400">0x</span>
+      </div>
+    </div>
+
+    <!-- Active Typing Card -->
+    <div id="typing-card" 
+         tabindex="0"
+         class="w-full relative rounded-xl bg-slate-900/80 border border-slate-800 p-3 sm:p-5 shadow-lg shadow-black/30 transition-all duration-200 cursor-text focus:outline-none focus:border-blue-500/80 focus:ring-1 focus:ring-blue-500/30">
+      
+      <!-- Console Header Status -->
+      <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-800/80 text-xs">
+        <div id="status-badge" class="flex items-center gap-2 text-slate-300 font-medium text-[11px] sm:text-xs">
+          <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+          <span id="status-text">Click or start typing to begin the race</span>
+        </div>
+        <div class="hidden sm:flex items-center gap-1.5 font-mono text-[10px] text-slate-400">
+          <kbd class="px-1 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">Space</kbd> confirms word
+        </div>
+      </div>
+
+      <!-- Main Large Target Word Display -->
+      <div class="my-2 sm:my-3.5 flex items-center justify-center min-h-[2.8rem] sm:min-h-[3.6rem]">
+        <div id="word-display" class="font-mono text-3xl sm:text-5xl font-bold tracking-wider text-center flex flex-wrap justify-center items-center select-none">
+          <!-- Dynamically populated character spans -->
+        </div>
+      </div>
+
+      <!-- Console Footer Info -->
+      <div class="flex items-center justify-between pt-1.5 border-t border-slate-800/80 text-[10px] font-mono text-slate-400">
+        <div class="flex items-center gap-3">
+          <div>ACC: <strong id="console-acc" class="text-emerald-400 font-semibold">100%</strong></div>
+          <div class="w-1 h-2.5 bg-slate-800"></div>
+          <div>KEYSTROKES: <strong id="console-keys" class="text-slate-200 font-semibold">0</strong></div>
+        </div>
+        <div class="text-[10px] text-slate-500 flex items-center gap-1">
+          <span>⌨️</span> <span>Keyboard Ready</span>
+        </div>
+      </div>
+
+      <!-- Hidden Input for Complete Mobile / Desktop Capture -->
+      <input 
+        type="text" 
+        id="hidden-input" 
+        autocomplete="off" 
+        autocorrect="off" 
+        autocapitalize="off" 
+        spellcheck="false" 
+        class="absolute opacity-0 pointer-events-none inset-0 w-full h-full cursor-default"
+        aria-label="Typing Input Console"
+      />
+
+    </div>
+
+    <!-- ================= 4B. INTERACTIVE HEATMAP KEYBOARD ================= -->
+    <div id="virtual-keyboard" class="w-full max-w-xl mx-auto flex flex-col items-center gap-1 p-2 rounded-xl bg-slate-950/70 border border-slate-800/90 shadow-sm transition-all duration-200">
+      
+      <!-- Row 1: Q W E R T Y U I O P -->
+      <div class="flex items-center gap-1 justify-center w-full">
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="q">Q</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="w">W</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="e">E</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="r">R</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="t">T</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="y">Y</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="u">U</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="i">I</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="o">O</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="p">P</div>
+      </div>
+
+      <!-- Row 2: A S D F G H J K L -->
+      <div class="flex items-center gap-1 justify-center w-full">
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="a">A</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="s">S</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="d">D</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="f">F</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="g">G</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="h">H</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="j">J</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="k">K</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="l">L</div>
+      </div>
+
+      <!-- Row 3: Z X C V B N M -->
+      <div class="flex items-center gap-1 justify-center w-full">
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="z">Z</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="x">X</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="c">C</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="v">V</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="b">B</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="n">N</div>
+        <div class="keycap w-7 h-6 sm:w-8 sm:h-7 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] sm:text-xs flex items-center justify-center font-medium" data-key="m">M</div>
+      </div>
+
+      <!-- Row 4: Spacebar -->
+      <div class="flex items-center gap-1 justify-center w-full pt-0.5">
+        <div class="keycap w-44 sm:w-56 h-5 sm:h-6 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[10px] flex items-center justify-center font-medium" data-key=" ">
+          SPACE
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mobile submission button -->
+    <div class="w-full flex items-center justify-between sm:hidden px-1 text-xs font-mono text-slate-400">
+      <span>Tap to type</span>
+      <button id="mobile-space-btn" class="px-3 py-1 bg-slate-900 border border-slate-700 rounded-lg text-blue-400 font-medium active:scale-95 text-[11px]">
+        Submit [Space]
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ================= 5. COMPACT FOOTER ================= -->
+  <footer class="w-full shrink-0 border-t border-slate-800/60 bg-slate-950/70 px-4 py-1 text-center text-[10px] font-mono text-slate-500">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <span>Typing Speed Racer • Executive Pro</span>
+      <span>Press <kbd class="px-1 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">Space</kbd> to confirm word • <kbd class="px-1 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">Esc</kbd> to restart</span>
+    </div>
+  </footer>
+
+  <!-- ================= 6. RESULTS & TELEMETRY MODAL ================= -->
+  <div id="game-over-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-200">
+    <div id="modal-card" class="relative w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 p-5 shadow-2xl shadow-black/80 text-center transform scale-95 transition-all duration-200">
+      
+      <!-- Header Badge -->
+      <div class="w-10 h-10 mx-auto -mt-10 mb-2.5 rounded-xl bg-blue-600 border border-blue-400/40 p-1 shadow-lg shadow-blue-500/20 flex items-center justify-center text-lg text-white">
+        🏁
+      </div>
+
+      <h2 class="text-lg sm:text-xl font-bold tracking-tight text-white">Session Completed</h2>
+      <p class="text-[11px] text-slate-400 mt-0.5 mb-3">Official Performance Benchmark Report</p>
+
+      <!-- New Record Alert -->
+      <div id="new-high-score-badge" class="hidden mb-2.5 py-1 px-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
+        ⭐ New Personal Best Record!
+      </div>
+
+      <!-- License Promotion Alert -->
+      <div id="license-upgrade-badge" class="hidden mb-2.5 py-1.5 px-3 rounded-lg bg-gradient-to-r from-amber-500/15 via-blue-500/15 to-indigo-500/15 border border-amber-500/50 text-amber-300 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm shadow-amber-500/20 animate-pulse">
+        🎖️ LICENSE PROMOTION: Promoted to Class B & Unlocked Stealth Cruiser!
+      </div>
+
+      <!-- Ghost Result Alert -->
+      <div id="ghost-result-badge" class="hidden mb-2.5 py-1 px-3 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono"></div>
+
+      <!-- Key Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 font-mono">
+        <div class="p-2 rounded-xl bg-slate-950 border border-slate-800/80">
+          <div class="text-[9px] text-slate-400 uppercase font-sans">Final WPM</div>
+          <div id="final-wpm" class="text-xl sm:text-2xl font-bold text-blue-400">0</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950 border border-slate-800/80">
+          <div class="text-[9px] text-slate-400 uppercase font-sans">Peak Speed</div>
+          <div id="final-speed" class="text-xl sm:text-2xl font-bold text-indigo-400">0</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950 border border-slate-800/80">
+          <div class="text-[9px] text-slate-400 uppercase font-sans">Accuracy</div>
+          <div id="final-accuracy" class="text-xl sm:text-2xl font-bold text-emerald-400">100%</div>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950 border border-slate-800/80">
+          <div class="text-[9px] text-slate-400 uppercase font-sans">Words Done</div>
+          <div id="final-words" class="text-xl sm:text-2xl font-bold text-slate-200">0</div>
+        </div>
+      </div>
+
+      <!-- Weak Keys Diagnostic Heatmap Summary & Direct Train Action -->
+      <div class="mb-3 p-2 rounded-xl bg-slate-950 border border-slate-800 text-left font-mono text-[11px] flex items-center justify-between gap-2">
+        <div class="truncate">
+          <span class="text-slate-400">DIAGNOSTIC:</span>
+          <span id="weak-keys-display" class="font-bold text-emerald-400 ml-1">Zero Typo Flawless Run</span>
+        </div>
+        <button id="train-weak-btn" class="shrink-0 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 text-amber-400 text-[10px] font-semibold flex items-center gap-1 transition-colors" title="Launch custom practice round for weak keys">
+          <span>🎯</span> <span id="train-weak-text">Train Weak Keys</span>
+        </button>
+      </div>
+
+      <!-- SVG Telemetry Graph -->
+      <div class="mb-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-left font-mono">
+        <div class="flex items-center justify-between mb-1 text-[10px] text-slate-400">
+          <span>WPM TELEMETRY CURVE</span>
+          <span id="consistency-text" class="text-blue-400">CONSISTENCY: 96%</span>
+        </div>
+        <div class="w-full h-12 bg-slate-900/60 rounded-lg overflow-hidden p-1 flex items-end">
+          <svg id="wpm-graph" class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 300 70">
+            <polyline id="graph-line" fill="none" stroke="#3b82f6" stroke-width="2" points="0,60 100,45 200,30 300,20" />
+            <polygon id="graph-area" fill="url(#graphGrad)" points="0,60 100,45 200,30 300,20 300,70 0,70" opacity="0.2" />
+            <defs>
+              <linearGradient id="graphGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2">
+        <button id="play-again-btn" class="flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold text-white text-xs transition-colors shadow-sm shadow-blue-500/30">
+          Race Again
+        </button>
+        <button id="challenge-share-btn" class="px-3 py-2 rounded-xl bg-indigo-950/80 border border-indigo-700 hover:border-indigo-500 text-xs font-medium text-indigo-300 hover:text-white transition-colors flex items-center gap-1.5" title="Generate challenge link for a friend to race your ghost">
+          <span>⚔️</span> <span id="challenge-share-text">Challenge Rival</span>
+        </button>
+        <button id="share-results-btn" class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 hover:border-slate-600 text-xs font-medium text-slate-300 transition-colors">
+          <span id="share-btn-text">Copy Telemetry</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= CUSTOM TEXT & CODE STUDIO MODAL ================= -->
+  <div id="custom-text-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-200">
+    <div id="custom-modal-card" class="bg-slate-900 border border-slate-800/90 rounded-2xl p-4 sm:p-5 max-w-lg w-full shadow-2xl text-center scale-95 transition-all duration-200">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="p-1.5 rounded-lg bg-blue-600/10 border border-blue-500/20 text-blue-400 text-xs">📝</span>
+          <div class="text-left">
+            <h3 class="text-xs sm:text-sm font-bold text-white tracking-wide">Custom Text & Code Studio</h3>
+            <p class="text-[10px] text-slate-400">Practice custom documents, algorithms, or technical syntax</p>
+          </div>
+        </div>
+        <button id="close-custom-modal" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-xs transition-colors">
+          ✕
+        </button>
+      </div>
+
+      <!-- Preset Pills -->
+      <div class="flex flex-wrap items-center gap-1.5 mb-2.5 justify-start">
+        <span class="text-[10px] text-slate-400 font-medium">Presets:</span>
+        <button type="button" data-preset="js" class="preset-btn px-2 py-0.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-blue-500/50 text-[10px] text-slate-300 font-mono transition-colors">⚡ Modern JS</button>
+        <button type="button" data-preset="python" class="preset-btn px-2 py-0.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-blue-500/50 text-[10px] text-slate-300 font-mono transition-colors">🐍 Python</button>
+        <button type="button" data-preset="sql" class="preset-btn px-2 py-0.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-blue-500/50 text-[10px] text-slate-300 font-mono transition-colors">🐬 SQL</button>
+        <button type="button" data-preset="manifesto" class="preset-btn px-2 py-0.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-blue-500/50 text-[10px] text-slate-300 font-sans transition-colors">📄 Tech Manifesto</button>
+      </div>
+
+      <!-- Textarea -->
+      <div class="relative mb-3 text-left">
+        <textarea id="custom-text-input" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 resize-none transition-colors" placeholder="Paste your custom paragraph, code block, or interview question here..."></textarea>
+        <div class="flex items-center justify-between mt-1 text-[10px] text-slate-500 font-mono">
+          <span id="custom-word-counter">0 words / tokens</span>
+          <span>Preserves code syntax & punctuation</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2">
+        <button id="apply-custom-btn" class="flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold text-white text-xs transition-colors shadow-sm shadow-blue-500/30">
+          Load into Race
+        </button>
+        <button id="cancel-custom-btn" class="px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs font-medium text-slate-400 hover:text-white transition-colors">
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= 7. VANILLA JAVASCRIPT LOGIC ================= -->
+  <script>
+    /**
+     * TYPING SPEED RACER - EXECUTIVE PRO ENGINE
+     * Featuring: Interactive On-Screen Heatmap Keyboard & Real-Time Finger Placement Guides
+     */
+
+    const WORD_BANKS = {
+      tech: [
+        "benchmark", "telemetry", "interface", "performance", "velocity", "protocol", "architecture",
+        "bandwidth", "optimization", "infrastructure", "analytics", "execution", "algorithm",
+        "deployment", "database", "distributed", "system", "dashboard", "indicator", "engine",
+        "framework", "configuration", "cluster", "computing", "network", "throughput", "latency",
+        "precision", "efficiency", "scalability", "resilience", "production", "monitoring",
+        "endpoint", "pipeline", "automation", "integration", "enterprise", "resource", "quantum"
+      ],
+      common: [
+        "about", "above", "across", "action", "after", "again", "almost", "always", "another",
+        "answer", "around", "balance", "beautiful", "before", "behind", "believe", "between",
+        "better", "beyond", "bright", "build", "camera", "careful", "center", "chance", "change",
+        "circle", "clean", "clear", "climb", "close", "cloud", "color", "common", "complete",
+        "country", "course", "create", "danger", "decide", "direct", "discover", "distance"
+      ],
+      code: [
+        "const", "let", "function", "return", "import", "export", "default", "async", "await",
+        "promise", "callback", "boolean", "number", "string", "array", "object", "interface",
+        "document", "window", "element", "listener", "timeout", "interval", "console", "terminal",
+        "component", "render", "state", "effect", "props", "virtual", "canvas", "context"
+      ],
+      quotes: [
+        "speed", "is", "a", "byproduct", "of", "deliberate", "accuracy", "and", "relentless", "focus",
+        "measure", "twice", "code", "once", "and", "execute", "with", "flawless", "precision",
+        "consistency", "is", "the", "foundation", "upon", "which", "mastery", "is", "built"
+      ]
+    };
+
+    // State
+    const state = {
+      isActive: false,
+      isFinished: false,
+      duration: 60,
+      timeLeft: 60,
+      timerId: null,
+      category: 'tech',
+      
+      wordQueue: [],
+      currentWord: '',
+      currentInput: '',
+      targetWordsToWin: 40,
+      
+      wordsCompleted: 0,
+      totalKeystrokes: 0,
+      correctKeystrokes: 0,
+      currentStreak: 0,
+      highestStreak: 0,
+      startTime: null,
+      wpmHistory: [],
+      peakSpeedKmh: 0,
+      
+      ghostMode: 'rookie',
+      ghostWpm: 40,
+      soundEnabled: true,
+      showKeyboard: true,
+      keyErrors: {}, // { 'e': 3, 'r': 1 }
+      licenseTier: 'C',
+      currentVehicle: 'hypercar',
+      highScore: 0,
+      customWords: [],
+      rawCustomText: '',
+      isChallenge: false,
+      challengeRivalWpm: 0
+    };
+
+    // DOM Elements
+    const elements = {
+      hudTimer: document.getElementById('hud-timer'),
+      hudWpm: document.getElementById('hud-wpm'),
+      hudSpeed: document.getElementById('hud-speed'),
+      hudAccuracy: document.getElementById('hud-accuracy'),
+      hudHighScore: document.getElementById('hud-highscore'),
+      licenseBadge: document.getElementById('license-badge'),
+      sfxToggleBtn: document.getElementById('sfx-toggle-btn'),
+      sfxIcon: document.getElementById('sfx-icon'),
+      quickResetBtn: document.getElementById('quick-reset-btn'),
+
+      durationSelector: document.getElementById('duration-selector'),
+      categorySelect: document.getElementById('category-select'),
+      customTextBtn: document.getElementById('custom-text-btn'),
+      ghostSelect: document.getElementById('ghost-select'),
+      vehicleSelect: document.getElementById('vehicle-select'),
+      optStealth: document.getElementById('opt-stealth'),
+      optAeroblade: document.getElementById('opt-aeroblade'),
+      optPhantom: document.getElementById('opt-phantom'),
+      keyboardToggleBtn: document.getElementById('keyboard-toggle-btn'),
+      kbToggleText: document.getElementById('kb-toggle-text'),
+      virtualKeyboard: document.getElementById('virtual-keyboard'),
+
+      challengeBanner: document.getElementById('challenge-banner'),
+      challengeBannerText: document.getElementById('challenge-banner-text'),
+      clearChallengeBtn: document.getElementById('clear-challenge-btn'),
+
+      racetrackSurface: document.getElementById('racetrack-surface'),
+      racerVehicle: document.getElementById('racer-vehicle'),
+      vehicleSvgContainer: document.getElementById('vehicle-svg-container'),
+      ghostVehicle: document.getElementById('ghost-vehicle'),
+      ghostLaneContainer: document.getElementById('ghost-lane-container'),
+      trackProgressText: document.getElementById('track-progress-text'),
+      trackWordsText: document.getElementById('track-words-text'),
+      leadIndicator: document.getElementById('lead-indicator'),
+
+      typingCard: document.getElementById('typing-card'),
+      wordDisplay: document.getElementById('word-display'),
+      upcomingWords: document.getElementById('upcoming-words'),
+      statusDot: document.getElementById('status-dot'),
+      statusText: document.getElementById('status-text'),
+      consoleAcc: document.getElementById('console-acc'),
+      consoleStreak: document.getElementById('console-streak'),
+      consoleKeys: document.getElementById('console-keys'),
+      hiddenInput: document.getElementById('hidden-input'),
+      mobileSpaceBtn: document.getElementById('mobile-space-btn'),
+
+      // Modals
+      gameOverModal: document.getElementById('game-over-modal'),
+      modalCard: document.getElementById('modal-card'),
+      newHighScoreBadge: document.getElementById('new-high-score-badge'),
+      licenseUpgradeBadge: document.getElementById('license-upgrade-badge'),
+      ghostResultBadge: document.getElementById('ghost-result-badge'),
+      finalWpm: document.getElementById('final-wpm'),
+      finalSpeed: document.getElementById('final-speed'),
+      finalAccuracy: document.getElementById('final-accuracy'),
+      finalWords: document.getElementById('final-words'),
+      weakKeysDisplay: document.getElementById('weak-keys-display'),
+      trainWeakBtn: document.getElementById('train-weak-btn'),
+      graphLine: document.getElementById('graph-line'),
+      graphArea: document.getElementById('graph-area'),
+      consistencyText: document.getElementById('consistency-text'),
+      playAgainBtn: document.getElementById('play-again-btn'),
+      challengeShareBtn: document.getElementById('challenge-share-btn'),
+      challengeShareText: document.getElementById('challenge-share-text'),
+      shareResultsBtn: document.getElementById('share-results-btn'),
+      shareBtnText: document.getElementById('share-btn-text'),
+
+      // Custom Text / Code Studio Modal
+      customTextModal: document.getElementById('custom-text-modal'),
+      customModalCard: document.getElementById('custom-modal-card'),
+      closeCustomModal: document.getElementById('close-custom-modal'),
+      cancelCustomBtn: document.getElementById('cancel-custom-btn'),
+      applyCustomBtn: document.getElementById('apply-custom-btn'),
+      customTextInput: document.getElementById('custom-text-input'),
+      customWordCounter: document.getElementById('custom-word-counter'),
+    };
+
+    // Clean Audio FX via Web Audio API
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    const audio = {
+      key: () => {
+        if (!state.soundEnabled) return;
+        try {
+          const ctx = getAudioContext();
+          if (!ctx) return;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(500, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.03);
+          gain.gain.setValueAtTime(0.04, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.03);
+        } catch (e) {}
+      },
+      success: () => {
+        if (!state.soundEnabled) return;
+        try {
+          const ctx = getAudioContext();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          [659.25, 880].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.03);
+            gain.gain.setValueAtTime(0.06, now + idx * 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.03 + 0.12);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.03);
+            osc.stop(now + idx * 0.03 + 0.12);
+          });
+        } catch (e) {}
+      },
+      error: () => {
+        if (!state.soundEnabled) return;
+        try {
+          const ctx = getAudioContext();
+          if (!ctx) return;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(120, ctx.currentTime);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.08);
+        } catch (e) {}
+      },
+      fanfare: () => {
+        if (!state.soundEnabled) return;
+        try {
+          const ctx = getAudioContext();
+          if (!ctx) return;
+          [440, 554, 659, 880].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const t = ctx.currentTime + i * 0.08;
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, t);
+            gain.gain.setValueAtTime(0.08, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(t);
+            osc.stop(t + 0.28);
+          });
+        } catch (e) {}
+      }
+    };
+
+    // ================= KEYBOARD HEATMAP LOGIC =================
+    function updateKeyboardGuide(targetChar) {
+      if (!state.showKeyboard) return;
+      document.querySelectorAll('.keycap').forEach(el => el.classList.remove('key-target'));
+      if (!targetChar) return;
+      const keyEl = document.querySelector(`.keycap[data-key="${targetChar.toLowerCase()}"]`);
+      if (keyEl) {
+        keyEl.classList.add('key-target');
+      }
+    }
+
+    function animateKeypress(char, isCorrect) {
+      if (!state.showKeyboard) return;
+      const keyEl = document.querySelector(`.keycap[data-key="${char.toLowerCase()}"]`);
+      if (!keyEl) return;
+
+      const animClass = isCorrect ? 'key-correct' : 'key-wrong';
+      keyEl.classList.add(animClass);
+
+      if (!isCorrect) {
+        keyEl.classList.add('has-heat');
+      }
+
+      setTimeout(() => {
+        keyEl.classList.remove(animClass);
+      }, 160);
+    }
+
+    function resetKeyboardHeatmap() {
+      state.keyErrors = {};
+      document.querySelectorAll('.keycap').forEach(el => {
+        el.classList.remove('key-target', 'key-correct', 'key-wrong', 'has-heat');
+      });
+    }
+
+    // ================= VEHICLE SVGS & DRIVER LICENSE SYSTEM =================
+    const VEHICLE_SVGS = {
+      hypercar: `
+        <svg class="w-14 h-7 sm:w-16 sm:h-8" viewBox="0 0 200 90" fill="none">
+          <ellipse cx="100" cy="74" rx="75" ry="8" fill="#000000" opacity="0.45"/>
+          <path d="M18 54 L38 38 L95 34 L150 45 L186 56 L175 66 L120 68 L36 67 Z" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+          <path d="M68 36 L105 35 L132 46 L85 46 Z" fill="#1e293b" stroke="#60a5fa" stroke-width="1.2"/>
+          <polygon points="174,54 186,56 176,60" fill="#60a5fa"/>
+          <circle cx="50" cy="65" r="8" fill="#090d16" stroke="#475569" stroke-width="2"/>
+          <circle cx="50" cy="65" r="3.5" fill="#3b82f6"/>
+          <circle cx="145" cy="65" r="8" fill="#090d16" stroke="#475569" stroke-width="2"/>
+          <circle cx="145" cy="65" r="3.5" fill="#3b82f6"/>
+          <line x1="55" y1="52" x2="135" y2="52" stroke="#3b82f6" stroke-width="1.8"/>
+        </svg>
+      `,
+      stealth: `
+        <svg class="w-14 h-7 sm:w-16 sm:h-8" viewBox="0 0 200 90" fill="none">
+          <ellipse cx="100" cy="74" rx="75" ry="8" fill="#000000" opacity="0.45"/>
+          <path d="M14 56 L42 34 L105 32 L162 46 L188 56 L172 66 L110 68 L30 67 Z" fill="#090a16" stroke="#6366f1" stroke-width="2"/>
+          <path d="M72 34 L110 33 L140 46 L88 46 Z" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.2"/>
+          <polygon points="175,54 188,56 177,60" fill="#818cf8"/>
+          <circle cx="50" cy="65" r="8" fill="#050614" stroke="#6366f1" stroke-width="2"/>
+          <circle cx="50" cy="65" r="3.5" fill="#a5b4fc"/>
+          <circle cx="145" cy="65" r="8" fill="#050614" stroke="#6366f1" stroke-width="2"/>
+          <circle cx="145" cy="65" r="3.5" fill="#a5b4fc"/>
+          <line x1="50" y1="50" x2="135" y2="50" stroke="#818cf8" stroke-width="1.8"/>
+        </svg>
+      `,
+      aeroblade: `
+        <svg class="w-14 h-7 sm:w-16 sm:h-8" viewBox="0 0 200 90" fill="none">
+          <ellipse cx="100" cy="74" rx="75" ry="8" fill="#000000" opacity="0.45"/>
+          <path d="M12 48 L22 40 L35 50 L95 32 L155 42 L192 54 L178 66 L115 68 L34 67 Z" fill="#061a14" stroke="#10b981" stroke-width="2"/>
+          <path d="M68 34 L108 33 L135 44 L86 44 Z" fill="#064e3b" stroke="#34d399" stroke-width="1.2"/>
+          <polygon points="178,52 192,54 180,58" fill="#34d399"/>
+          <circle cx="52" cy="65" r="8" fill="#022c22" stroke="#10b981" stroke-width="2"/>
+          <circle cx="52" cy="65" r="3.5" fill="#34d399"/>
+          <circle cx="145" cy="65" r="8" fill="#022c22" stroke="#10b981" stroke-width="2"/>
+          <circle cx="145" cy="65" r="3.5" fill="#34d399"/>
+          <path d="M14 48 L28 28 L40 48 Z" fill="#042f2e" stroke="#10b981" stroke-width="1.5"/>
+        </svg>
+      `,
+      phantom: `
+        <svg class="w-14 h-7 sm:w-16 sm:h-8" viewBox="0 0 200 90" fill="none">
+          <ellipse cx="100" cy="74" rx="75" ry="8" fill="#000000" opacity="0.45"/>
+          <path d="M10 56 L35 32 L100 28 L168 44 L196 56 L175 66 L115 68 L32 67 Z" fill="#1c1608" stroke="#f59e0b" stroke-width="2"/>
+          <path d="M70 30 L115 29 L145 44 L90 44 Z" fill="#451a03" stroke="#fbbf24" stroke-width="1.2"/>
+          <polygon points="182,54 196,56 184,60" fill="#fbbf24"/>
+          <circle cx="50" cy="65" r="8.5" fill="#0f0c05" stroke="#f59e0b" stroke-width="2"/>
+          <circle cx="50" cy="65" r="4" fill="#fbbf24"/>
+          <circle cx="145" cy="65" r="8.5" fill="#0f0c05" stroke="#f59e0b" stroke-width="2"/>
+          <circle cx="145" cy="65" r="4" fill="#fbbf24"/>
+          <line x1="45" y1="48" x2="140" y2="48" stroke="#fbbf24" stroke-width="2"/>
+          <circle cx="95" cy="48" r="2.5" fill="#ffffff"/>
+        </svg>
+      `
+    };
+
+    const LICENSE_TIERS = {
+      C: { name: 'Class C License', badge: '🏆 CLASS C', rank: 1, carKey: 'hypercar', carName: 'Cobalt GT', minWpm: 0, minAcc: 0 },
+      B: { name: 'Class B License', badge: '🥉 CLASS B', rank: 2, carKey: 'stealth', carName: 'Stealth Cruiser', minWpm: 45, minAcc: 90 },
+      A: { name: 'Class A License', badge: '🥈 CLASS A', rank: 3, carKey: 'aeroblade', carName: 'Aero Blade', minWpm: 70, minAcc: 94 },
+      MASTER: { name: 'Master License', badge: '👑 MASTER', rank: 4, carKey: 'phantom', carName: 'Chrono Phantom', minWpm: 90, minAcc: 96 }
+    };
+
+    function loadLicenseData() {
+      state.licenseTier = localStorage.getItem('proTyping_licenseTier') || 'C';
+      updateLicenseUI();
+    }
+
+    function updateLicenseUI() {
+      const currentTier = LICENSE_TIERS[state.licenseTier] || LICENSE_TIERS.C;
+      if (elements.licenseBadge) {
+        elements.licenseBadge.textContent = currentTier.badge;
+        if (state.licenseTier === 'MASTER') {
+          elements.licenseBadge.className = 'cursor-pointer text-[9px] sm:text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-amber-950/70 border border-amber-500/80 text-amber-300 tracking-wider shadow-sm shadow-amber-500/30';
+        } else if (state.licenseTier === 'A') {
+          elements.licenseBadge.className = 'cursor-pointer text-[9px] sm:text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-950/70 border border-emerald-500/80 text-emerald-300 tracking-wider';
+        } else if (state.licenseTier === 'B') {
+          elements.licenseBadge.className = 'cursor-pointer text-[9px] sm:text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-indigo-950/70 border border-indigo-500/80 text-indigo-300 tracking-wider';
+        } else {
+          elements.licenseBadge.className = 'cursor-pointer text-[9px] sm:text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300 tracking-wider transition-all hover:border-amber-500';
+        }
+      }
+
+      // Unlock options in vehicle dropdown
+      const rank = currentTier.rank;
+      if (elements.optStealth) {
+        if (rank >= 2) {
+          elements.optStealth.disabled = false;
+          elements.optStealth.textContent = '🏎️ Stealth Cruiser (Class B)';
+        } else {
+          elements.optStealth.disabled = true;
+          elements.optStealth.textContent = '🔒 Stealth Cruiser (Req: 45 WPM)';
+        }
+      }
+      if (elements.optAeroblade) {
+        if (rank >= 3) {
+          elements.optAeroblade.disabled = false;
+          elements.optAeroblade.textContent = '🚀 Aero Blade (Class A)';
+        } else {
+          elements.optAeroblade.disabled = true;
+          elements.optAeroblade.textContent = '🔒 Aero Blade (Req: 70 WPM)';
+        }
+      }
+      if (elements.optPhantom) {
+        if (rank >= 4) {
+          elements.optPhantom.disabled = false;
+          elements.optPhantom.textContent = '⚡ Chrono Phantom (Master)';
+        } else {
+          elements.optPhantom.disabled = true;
+          elements.optPhantom.textContent = '🔒 Chrono Phantom (Req: 90 WPM)';
+        }
+      }
+    }
+
+    function evaluateLicensePromotion(wpm, accuracy) {
+      const currentTier = LICENSE_TIERS[state.licenseTier] || LICENSE_TIERS.C;
+      let eligibleTierKey = 'C';
+
+      if (wpm >= 90 && accuracy >= 96) eligibleTierKey = 'MASTER';
+      else if (wpm >= 70 && accuracy >= 94) eligibleTierKey = 'A';
+      else if (wpm >= 45 && accuracy >= 90) eligibleTierKey = 'B';
+
+      const eligibleTier = LICENSE_TIERS[eligibleTierKey];
+      if (eligibleTier.rank > currentTier.rank) {
+        state.licenseTier = eligibleTierKey;
+        localStorage.setItem('proTyping_licenseTier', eligibleTierKey);
+        updateLicenseUI();
+
+        // Equip unlocked car automatically
+        state.currentVehicle = eligibleTier.carKey;
+        if (elements.vehicleSelect) elements.vehicleSelect.value = eligibleTier.carKey;
+        if (elements.vehicleSvgContainer) elements.vehicleSvgContainer.innerHTML = VEHICLE_SVGS[eligibleTier.carKey] || VEHICLE_SVGS.hypercar;
+
+        // Show upgrade notification
+        if (elements.licenseUpgradeBadge) {
+          elements.licenseUpgradeBadge.textContent = `🎖️ LICENSE PROMOTED: Unlocked ${eligibleTier.name} & ${eligibleTier.carName}!`;
+          elements.licenseUpgradeBadge.classList.remove('hidden');
+        }
+        return true;
+      }
+      if (elements.licenseUpgradeBadge) {
+        elements.licenseUpgradeBadge.classList.add('hidden');
+      }
+      return false;
+    }
+
+    // ================= CUSTOM CODE / TEXT STUDIO & PRESETS =================
+    const CODE_PRESETS = {
+      js: [
+        "async function fetchTelemetry(endpoint, retries = 3) {",
+        "  const response = await fetch(`${API_BASE}/${endpoint}`);",
+        "  if (!response.ok) throw new Error(`HTTP ${response.status}`);",
+        "  const { data, timestamp } = await response.json();",
+        "  return data.map(item => ({ ...item, validated: true }));",
+        "}"
+      ].join("\n"),
+      python: [
+        "def calculate_moving_average(telemetry_stream, window_size=5):",
+        "    filtered = [x for x in telemetry_stream if x is not None]",
+        "    return [sum(filtered[i:i+window_size]) / window_size",
+        "            for i in range(len(filtered) - window_size + 1)]"
+      ].join("\n"),
+      sql: [
+        "SELECT driver_id, AVG(wpm) AS avg_speed, MAX(wpm) AS peak_speed",
+        "FROM driver_telemetry",
+        "WHERE accuracy >= 95 AND timestamp > NOW() - INTERVAL '7 DAYS'",
+        "GROUP BY driver_id",
+        "ORDER BY peak_speed DESC",
+        "LIMIT 10;"
+      ].join("\n"),
+      manifesto: [
+        "Software excellence requires ruthless discipline and relentless attention to detail.",
+        "Every millisecond of latency eliminated brings joy to users across the globe.",
+        "Write code that communicates clear intent, respects hardware limits, and stands resilient over time."
+      ].join("\n")
+    };
+
+    const DEFAULT_CUSTOM_CODE = [
+      "const startRace = async (driver, mode) => {",
+      "  console.log(`Starting telemetry for ${driver.name}`);",
+      "  const session = await initializeTrack(mode);",
+      "  return session.startEngine();",
+      "};"
+    ].join('\n');
+
+    function parseTextIntoWords(raw) {
+      if (!raw || !raw.trim()) return [];
+      return raw.trim().split(/\s+/).filter(w => w.length > 0);
+    }
+
+    function loadCustomTextFromStorage() {
+      try {
+        const saved = localStorage.getItem('proTyping_customText') || DEFAULT_CUSTOM_CODE;
+        state.rawCustomText = saved;
+        state.customWords = parseTextIntoWords(saved);
+        if (elements.customTextInput) {
+          elements.customTextInput.value = saved;
+          updateCustomWordCounter();
+        }
+      } catch (e) {
+        state.customWords = parseTextIntoWords(DEFAULT_CUSTOM_CODE);
+      }
+    }
+
+    function updateCustomWordCounter() {
+      if (!elements.customTextInput || !elements.customWordCounter) return;
+      const words = parseTextIntoWords(elements.customTextInput.value);
+      elements.customWordCounter.textContent = `${words.length} words / tokens`;
+    }
+
+    function openCustomStudio() {
+      if (elements.customTextModal && elements.customModalCard) {
+        elements.customTextModal.classList.remove('opacity-0', 'pointer-events-none');
+        elements.customModalCard.classList.remove('scale-95');
+        if (elements.customTextInput) {
+          elements.customTextInput.value = state.rawCustomText || DEFAULT_CUSTOM_CODE;
+          updateCustomWordCounter();
+          setTimeout(() => elements.customTextInput.focus(), 80);
+        }
+      }
+    }
+
+    function closeCustomStudio() {
+      if (elements.customTextModal && elements.customModalCard) {
+        elements.customTextModal.classList.add('opacity-0', 'pointer-events-none');
+        elements.customModalCard.classList.add('scale-95');
+        focusConsole();
+      }
+    }
+
+    function applyCustomText() {
+      const text = elements.customTextInput ? elements.customTextInput.value : '';
+      const words = parseTextIntoWords(text);
+      if (words.length === 0) {
+        alert('Please enter at least one word or code statement.');
+        return;
+      }
+      state.rawCustomText = text;
+      state.customWords = words;
+      state.category = 'custom';
+      if (elements.categorySelect) elements.categorySelect.value = 'custom';
+
+      try {
+        localStorage.setItem('proTyping_customText', text);
+      } catch (e) {}
+
+      closeCustomStudio();
+      resetGame();
+    }
+
+    // ================= CHALLENGE URL SHARING ENGINE =================
+    function checkUrlChallenge() {
+      if (window.location.hash.startsWith('#challenge=')) {
+        try {
+          const raw = window.location.hash.replace('#challenge=', '');
+          const data = JSON.parse(atob(raw));
+          if (data && data.wpm) {
+            state.isChallenge = true;
+            state.challengeRivalWpm = parseInt(data.wpm, 10);
+            state.ghostMode = 'record';
+            state.ghostWpm = state.challengeRivalWpm;
+            if (elements.ghostSelect) elements.ghostSelect.value = 'record';
+
+            if (data.cat && (WORD_BANKS[data.cat] || data.cat === 'custom')) {
+              state.category = data.cat;
+              if (elements.categorySelect) elements.categorySelect.value = data.cat;
+            }
+            if (data.dur) {
+              state.duration = parseInt(data.dur, 10);
+              elements.durationSelector.querySelectorAll('.mode-btn').forEach(b => {
+                const isMatch = parseInt(b.dataset.duration, 10) === state.duration;
+                b.className = isMatch
+                  ? 'mode-btn px-2 py-0.5 rounded text-[11px] bg-blue-600 text-white font-medium shadow-sm'
+                  : 'mode-btn px-2 py-0.5 rounded text-[11px] text-slate-400 hover:text-white transition-colors';
+              });
+            }
+
+            if (elements.challengeBanner && elements.challengeBannerText) {
+              elements.challengeBanner.classList.remove('hidden');
+              elements.challengeBannerText.textContent = `⚔️ CHALLENGE ACCEPTED: Rival AI paced to challenger's ${data.wpm} WPM (${data.acc}% Acc)!`;
+            }
+          }
+        } catch (e) {
+          console.warn('Challenge parsing error:', e);
+        }
+      }
+    }
+
+    function generateChallengeLink() {
+      const stats = calculateStats();
+      const payload = {
+        wpm: stats.wpm,
+        acc: stats.accuracy,
+        cat: state.category,
+        dur: state.duration,
+        veh: state.currentVehicle
+      };
+      const encoded = btoa(JSON.stringify(payload));
+      const url = `${window.location.origin}${window.location.pathname}#challenge=${encoded}`;
+      navigator.clipboard.writeText(url).then(() => {
+        if (elements.challengeShareText) {
+          elements.challengeShareText.textContent = 'Copied Link!';
+          setTimeout(() => {
+            elements.challengeShareText.textContent = 'Challenge Rival';
+          }, 2000);
+        }
+      });
+    }
+
+    // Initialization
+    function init() {
+      loadHighScore();
+      loadLicenseData();
+      loadCustomTextFromStorage();
+      checkUrlChallenge();
+      if (elements.vehicleSvgContainer) {
+        elements.vehicleSvgContainer.innerHTML = VEHICLE_SVGS[state.currentVehicle] || VEHICLE_SVGS.hypercar;
+      }
+      refillWordQueue();
+      resetGame();
+      setupEvents();
+    }
+
+    function loadHighScore() {
+      const key = `proTypingScore_${state.duration}_${state.category}`;
+      const saved = localStorage.getItem(key) || localStorage.getItem('typingRacerHighScore');
+      state.highScore = saved ? parseInt(saved, 10) || 0 : 0;
+      elements.hudHighScore.textContent = state.highScore;
+    }
+
+    function saveHighScore(score) {
+      if (score > state.highScore) {
+        state.highScore = score;
+        const key = `proTypingScore_${state.duration}_${state.category}`;
+        localStorage.setItem(key, score.toString());
+        elements.hudHighScore.textContent = score;
+        return true;
+      }
+      return false;
+    }
+
+    // ================= WEAK KEY DIAGNOSTIC & DRILL ENGINE =================
+    function getCumulativeWeakKeys() {
+      try {
+        const raw = localStorage.getItem('proTyping_keyDiagnostics');
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveCumulativeWeakKeys() {
+      try {
+        const cumulative = getCumulativeWeakKeys();
+        Object.entries(state.keyErrors).forEach(([k, count]) => {
+          cumulative[k] = (cumulative[k] || 0) + count;
+        });
+        localStorage.setItem('proTyping_keyDiagnostics', JSON.stringify(cumulative));
+      } catch (e) {}
+    }
+
+    function getTopWeakKeys() {
+      const sessionErrors = state.keyErrors || {};
+      const cumulative = getCumulativeWeakKeys();
+      const merged = { ...cumulative };
+      Object.entries(sessionErrors).forEach(([k, c]) => {
+        merged[k] = (merged[k] || 0) + c * 2; // prioritize recent session mistakes
+      });
+
+      const sorted = Object.entries(merged)
+        .filter(([k]) => /^[a-z]$/i.test(k))
+        .sort((a, b) => b[1] - a[1]);
+
+      if (sorted.length >= 2) {
+        return sorted.slice(0, 3).map(([k]) => k.toLowerCase());
+      }
+      return ['p', 'b', 'x', 'z']; // default coordination bottleneck keys
+    }
+
+    function generateWeakKeyDrills() {
+      const weakKeys = getTopWeakKeys();
+      state.activeDrillKeys = weakKeys;
+
+      const allWords = [
+        ...WORD_BANKS.tech,
+        ...WORD_BANKS.common,
+        ...WORD_BANKS.code
+      ];
+
+      const matchedWords = allWords.filter(w => 
+        weakKeys.some(k => w.toLowerCase().includes(k))
+      );
+
+      const syntheticDrills = [];
+      weakKeys.forEach(k => {
+        syntheticDrills.push(`${k}a${k}e`, `${k}ro${k}`, `pre${k}`, `${k}ack`, `un${k}ed`);
+      });
+
+      const combined = [...matchedWords, ...syntheticDrills];
+      return combined.length > 5 
+        ? [...combined].sort(() => Math.random() - 0.5) 
+        : ['public', 'problem', 'pipeline', 'blueprint', 'backup', 'publish', 'proactive'];
+    }
+
+    function startWeakKeyDrill() {
+      state.category = 'drills';
+      elements.categorySelect.value = 'drills';
+      const weakKeys = getTopWeakKeys();
+      state.activeDrillKeys = weakKeys;
+
+      resetGame();
+
+      const formattedKeys = weakKeys.map(k => `'${k.toUpperCase()}'`).join(', ');
+      elements.statusText.textContent = `🎯 TARGET DRILL: Deliberate practice on ${formattedKeys}`;
+
+      // Highlight target weak keys on on-screen heatmap keyboard
+      weakKeys.forEach(k => {
+        const el = document.querySelector(`.keycap[data-key="${k}"]`);
+        if (el) el.classList.add('has-heat');
+      });
+    }
+
+    function refillWordQueue() {
+      if (state.category === 'drills') {
+        state.wordQueue.push(...generateWeakKeyDrills());
+        return;
+      }
+      if (state.category === 'custom') {
+        if (!state.customWords || state.customWords.length === 0) {
+          loadCustomTextFromStorage();
+        }
+        if (state.customWords && state.customWords.length > 0) {
+          state.wordQueue.push(...state.customWords);
+          state.targetWordsToWin = Math.max(10, state.customWords.length);
+          return;
+        }
+      }
+      const list = WORD_BANKS[state.category] || WORD_BANKS.tech;
+      state.wordQueue.push(...[...list].sort(() => Math.random() - 0.5));
+    }
+
+    function getNextWord() {
+      if (state.wordQueue.length < 10) refillWordQueue();
+      return state.wordQueue.shift();
+    }
+
+    // Reset Session
+    function resetGame() {
+      if (state.timerId) {
+        clearInterval(state.timerId);
+        state.timerId = null;
+      }
+
+      state.isActive = false;
+      state.isFinished = false;
+      state.timeLeft = state.duration;
+      state.wordsCompleted = 0;
+      state.totalKeystrokes = 0;
+      state.correctKeystrokes = 0;
+      state.currentStreak = 0;
+      state.highestStreak = 0;
+      state.currentInput = '';
+      state.startTime = null;
+      state.wpmHistory = [];
+      state.peakSpeedKmh = 0;
+
+      state.wordQueue = [];
+      refillWordQueue();
+      state.currentWord = getNextWord();
+
+      // UI Reset
+      elements.hudTimer.textContent = `${state.duration}s`;
+      elements.hudTimer.className = 'font-mono text-xs sm:text-base font-bold text-blue-400 tracking-tight';
+      elements.hudWpm.textContent = '0';
+      elements.hudSpeed.innerHTML = `0 <span class="text-[9px] text-slate-500 font-normal">km/h</span>`;
+      elements.hudAccuracy.textContent = '100%';
+      elements.consoleAcc.textContent = '100%';
+      elements.consoleStreak.textContent = '0x';
+      elements.consoleKeys.textContent = '0';
+      elements.trackProgressText.textContent = '0%';
+      elements.trackWordsText.textContent = `0 / ${state.targetWordsToWin}`;
+      elements.leadIndicator.textContent = 'TIED';
+      elements.leadIndicator.className = 'text-emerald-400 font-semibold';
+
+      updateCarPosition(0);
+      updateGhostPosition(0);
+      resetKeyboardHeatmap();
+
+      if (state.ghostMode === 'none') {
+        elements.ghostLaneContainer.classList.add('hidden');
+      } else {
+        elements.ghostLaneContainer.classList.remove('hidden');
+      }
+
+      elements.statusDot.className = 'w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse';
+      if (state.category === 'drills') {
+        const weakKeys = state.activeDrillKeys || getTopWeakKeys();
+        const formattedKeys = weakKeys.map(k => `'${k.toUpperCase()}'`).join(', ');
+        elements.statusText.textContent = `🎯 TARGET DRILL: Practicing weak keys ${formattedKeys}`;
+        setTimeout(() => {
+          weakKeys.forEach(k => {
+            const el = document.querySelector(`.keycap[data-key="${k}"]`);
+            if (el) el.classList.add('has-heat');
+          });
+        }, 50);
+      } else if (state.category === 'custom') {
+        elements.statusText.textContent = '📝 Custom Studio Active • Syntax & Code Practice';
+      } else {
+        elements.statusText.textContent = 'Click or start typing to begin the race';
+      }
+
+      elements.gameOverModal.classList.add('opacity-0', 'pointer-events-none');
+      elements.modalCard.classList.add('scale-95');
+
+      elements.hiddenInput.value = '';
+      renderWord();
+      renderUpcoming();
+      focusConsole();
+    }
+
+    function startGame() {
+      if (state.isActive || state.isFinished) return;
+      state.isActive = true;
+      state.startTime = Date.now();
+
+      elements.statusDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+      elements.statusText.textContent = 'Session Active • Keystrokes Recording';
+
+      if (state.ghostMode === 'rookie') state.ghostWpm = 40;
+      else if (state.ghostMode === 'pro') state.ghostWpm = 65;
+      else if (state.ghostMode === 'master') state.ghostWpm = 90;
+      else if (state.ghostMode === 'record') state.ghostWpm = state.isChallenge ? state.challengeRivalWpm : Math.max(35, state.highScore);
+
+      state.timerId = setInterval(() => {
+        const elapsed = (Date.now() - state.startTime) / 1000;
+        const remain = Math.max(0, state.duration - Math.floor(elapsed));
+        state.timeLeft = remain;
+
+        elements.hudTimer.textContent = `${remain}s`;
+        if (remain <= 10) {
+          elements.hudTimer.className = 'font-mono text-xs sm:text-base font-bold text-rose-500 tracking-tight animate-pulse';
+        }
+
+        updateStats();
+
+        // Ghost car positioning
+        if (state.ghostMode !== 'none') {
+          const ghostWords = (state.ghostWpm / 60) * elapsed;
+          const ghostPct = Math.min(100, (ghostWords / state.targetWordsToWin) * 100);
+          updateGhostPosition(ghostPct);
+
+          const playerPct = Math.min(100, (state.wordsCompleted / state.targetWordsToWin) * 100);
+          if (playerPct > ghostPct + 2) {
+            elements.leadIndicator.textContent = 'LEAD';
+            elements.leadIndicator.className = 'text-emerald-400 font-semibold';
+          } else if (ghostPct > playerPct + 2) {
+            elements.leadIndicator.textContent = 'BEHIND';
+            elements.leadIndicator.className = 'text-rose-400 font-semibold';
+          } else {
+            elements.leadIndicator.textContent = 'TIED';
+            elements.leadIndicator.className = 'text-slate-400 font-semibold';
+          }
+        }
+
+        if (remain <= 0) {
+          endGame();
+        }
+      }, 100);
+    }
+
+    function endGame() {
+      if (state.isFinished) return;
+      state.isFinished = true;
+      state.isActive = false;
+
+      if (state.timerId) {
+        clearInterval(state.timerId);
+        state.timerId = null;
+      }
+
+      const stats = calculateStats();
+      const isRecord = saveHighScore(stats.wpm);
+      audio.fanfare();
+      saveCumulativeWeakKeys();
+      evaluateLicensePromotion(stats.wpm, stats.accuracy);
+
+      elements.finalWpm.textContent = stats.wpm;
+      elements.finalSpeed.textContent = `${Math.round(stats.wpm * 3.4)} km/h`;
+      elements.finalAccuracy.textContent = `${stats.accuracy}%`;
+      elements.finalWords.textContent = state.wordsCompleted;
+
+      // Weak Keys Diagnostic Display
+      const typoEntries = Object.entries(state.keyErrors).sort((a, b) => b[1] - a[1]);
+      if (typoEntries.length > 0) {
+        const topMisses = typoEntries.slice(0, 3).map(([key, count]) => `'${key.toUpperCase()}' (${count}x)`).join(', ');
+        elements.weakKeysDisplay.textContent = `Frequent typos: ${topMisses}`;
+        elements.weakKeysDisplay.className = 'font-bold text-amber-400';
+      } else {
+        elements.weakKeysDisplay.textContent = 'Zero Typo Flawless Run ⭐';
+        elements.weakKeysDisplay.className = 'font-bold text-emerald-400';
+      }
+
+      if (state.ghostMode !== 'none') {
+        elements.ghostResultBadge.classList.remove('hidden');
+        if (stats.wpm >= state.ghostWpm) {
+          elements.ghostResultBadge.className = 'mb-2.5 py-1 px-3 rounded-lg bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 text-xs font-mono';
+          elements.ghostResultBadge.textContent = `Paced ahead of Rival AI by +${stats.wpm - state.ghostWpm} WPM`;
+        } else {
+          elements.ghostResultBadge.className = 'mb-2.5 py-1 px-3 rounded-lg bg-rose-950/60 border border-rose-800/60 text-rose-400 text-xs font-mono';
+          elements.ghostResultBadge.textContent = `Rival AI finished +${state.ghostWpm - stats.wpm} WPM ahead`;
+        }
+      } else {
+        elements.ghostResultBadge.classList.add('hidden');
+      }
+
+      if (isRecord && stats.wpm > 0) {
+        elements.newHighScoreBadge.classList.remove('hidden');
+      } else {
+        elements.newHighScoreBadge.classList.add('hidden');
+      }
+
+      renderGraph();
+
+      elements.gameOverModal.classList.remove('opacity-0', 'pointer-events-none');
+      elements.modalCard.classList.remove('scale-95');
+    }
+
+    // Calculations
+    function calculateStats() {
+      if (!state.startTime) return { wpm: 0, accuracy: 100 };
+      const minutes = Math.max(1, (Date.now() - state.startTime) / 1000) / 60;
+      const wpm = Math.round((state.correctKeystrokes / 5) / minutes) || 0;
+      let accuracy = 100;
+      if (state.totalKeystrokes > 0) {
+        accuracy = Math.round((state.correctKeystrokes / state.totalKeystrokes) * 100);
+      }
+      return { wpm, accuracy };
+    }
+
+    function updateStats() {
+      const { wpm, accuracy } = calculateStats();
+      const speed = Math.round(wpm * 3.4);
+      if (speed > state.peakSpeedKmh) state.peakSpeedKmh = speed;
+
+      elements.hudWpm.textContent = wpm;
+      elements.hudSpeed.innerHTML = `${speed} <span class="text-[9px] text-slate-500 font-normal">km/h</span>`;
+      elements.hudAccuracy.textContent = `${accuracy}%`;
+      elements.consoleAcc.textContent = `${accuracy}%`;
+      elements.consoleStreak.textContent = `${state.currentStreak}x`;
+      elements.consoleKeys.textContent = state.totalKeystrokes;
+
+      if (state.isActive && state.wpmHistory.length < 60) {
+        state.wpmHistory.push(wpm);
+      }
+    }
+
+    // Car translation
+    function updateCarPosition(customPercent = null) {
+      let pct = customPercent;
+      if (pct === null) {
+        pct = Math.min(100, (state.wordsCompleted / state.targetWordsToWin) * 100);
+      }
+      elements.trackProgressText.textContent = `${Math.round(pct)}%`;
+      elements.trackWordsText.textContent = `${state.wordsCompleted} / ${state.targetWordsToWin}`;
+
+      const trackWidth = elements.racetrackSurface.clientWidth;
+      const carWidth = elements.racerVehicle.clientWidth || 70;
+      const maxDistance = Math.max(0, trackWidth - carWidth - 45);
+      elements.racerVehicle.style.transform = `translateX(${(pct / 100) * maxDistance}px)`;
+    }
+
+    function updateGhostPosition(pct) {
+      const trackWidth = elements.racetrackSurface.clientWidth;
+      const carWidth = elements.ghostVehicle.clientWidth || 60;
+      const maxDistance = Math.max(0, trackWidth - carWidth - 45);
+      elements.ghostVehicle.style.transform = `translateX(${(pct / 100) * maxDistance}px)`;
+    }
+
+    // Telemetry Graph
+    function renderGraph() {
+      const history = state.wpmHistory.length > 2 ? state.wpmHistory : [0, 40, 55, state.finalWpm || 60];
+      const maxVal = Math.max(70, ...history);
+      const width = 300;
+      const height = 70;
+
+      let points = [];
+      const step = width / (history.length - 1);
+      history.forEach((val, i) => {
+        const x = Math.round(i * step);
+        const y = Math.round(height - ((val / maxVal) * (height - 12)) - 6);
+        points.push(`${x},${y}`);
+      });
+
+      const polyline = points.join(' ');
+      elements.graphLine.setAttribute('points', polyline);
+      elements.graphArea.setAttribute('points', `0,${height} ${polyline} ${width},${height}`);
+
+      const avg = history.reduce((a, b) => a + b, 0) / history.length;
+      const variance = history.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / history.length;
+      const consistency = Math.max(75, Math.min(99, Math.round(100 - (Math.sqrt(variance) / (avg || 1)) * 25)));
+      elements.consistencyText.textContent = `CONSISTENCY: ${consistency}%`;
+    }
+
+    // Word Rendering & Target Guide
+    function renderWord() {
+      const word = state.currentWord;
+      const input = state.currentInput;
+      elements.wordDisplay.innerHTML = '';
+
+      const maxLen = Math.max(word.length, input.length);
+      let targetChar = '';
+
+      for (let i = 0; i < maxLen; i++) {
+        const span = document.createElement('span');
+        span.className = 'inline-block px-[2px] transition-colors';
+
+        const char = word[i];
+        const inputChar = input[i];
+
+        if (i < input.length) {
+          if (i < word.length) {
+            if (inputChar === char) {
+              span.textContent = char;
+              span.className = 'inline-block px-[2px] text-emerald-400 font-semibold';
+            } else {
+              span.textContent = char;
+              span.className = 'inline-block px-[2px] text-rose-400 bg-rose-950/60 rounded';
+            }
+          } else {
+            span.textContent = inputChar;
+            span.className = 'inline-block px-[2px] text-rose-400 bg-rose-950/80 rounded';
+          }
+        } else if (i === input.length) {
+          targetChar = char || ' ';
+          span.textContent = targetChar;
+          span.className = 'inline-block px-[2px] text-blue-300 char-cursor';
+        } else {
+          span.textContent = char;
+          span.className = 'inline-block px-[2px] text-slate-500';
+        }
+
+        elements.wordDisplay.appendChild(span);
+      }
+
+      // Update On-Screen Keyboard Target Indicator
+      updateKeyboardGuide(targetChar);
+    }
+
+    function renderUpcoming() {
+      elements.upcomingWords.innerHTML = '';
+      for (let i = 0; i < Math.min(3, state.wordQueue.length); i++) {
+        const item = document.createElement('span');
+        item.className = 'px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 text-[10px]';
+        item.textContent = state.wordQueue[i];
+        elements.upcomingWords.appendChild(item);
+      }
+    }
+
+    function shakeConsole() {
+      elements.typingCard.classList.remove('animate-shake');
+      void elements.typingCard.offsetWidth;
+      elements.typingCard.classList.add('animate-shake');
+    }
+
+    // Keystroke Handlers
+    function handleKey(e) {
+      if (state.isFinished) return;
+
+      if (e.key === 'Escape') {
+        resetGame();
+        return;
+      }
+
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+      if (['Shift', 'CapsLock', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        return;
+      }
+
+      if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        confirmWord();
+        return;
+      }
+
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        if (state.currentInput.length > 0) {
+          state.currentInput = state.currentInput.slice(0, -1);
+          elements.hiddenInput.value = state.currentInput;
+          audio.key();
+          renderWord();
+        }
+        return;
+      }
+
+      if (e.key.length === 1) {
+        e.preventDefault();
+        if (!state.isActive) startGame();
+
+        const typedChar = e.key;
+        const targetChar = state.currentWord[state.currentInput.length];
+        state.totalKeystrokes++;
+
+        if (typedChar === targetChar) {
+          state.correctKeystrokes++;
+          state.currentStreak++;
+          if (state.currentStreak > state.highestStreak) state.highestStreak = state.currentStreak;
+          audio.key();
+          animateKeypress(typedChar, true);
+        } else {
+          state.currentStreak = 0;
+          audio.error();
+          shakeConsole();
+          animateKeypress(typedChar, false);
+          
+          if (targetChar) {
+            const errKey = targetChar.toLowerCase();
+            state.keyErrors[errKey] = (state.keyErrors[errKey] || 0) + 1;
+          }
+        }
+
+        state.currentInput += typedChar;
+        elements.hiddenInput.value = state.currentInput;
+        renderWord();
+        updateStats();
+      }
+    }
+
+    function confirmWord() {
+      if (state.currentInput.length === 0) return;
+
+      if (state.currentInput === state.currentWord) {
+        state.wordsCompleted++;
+        audio.success();
+        animateKeypress(' ', true);
+        updateCarPosition();
+
+        state.currentWord = getNextWord();
+        state.currentInput = '';
+        elements.hiddenInput.value = '';
+
+        renderWord();
+        renderUpcoming();
+        updateStats();
+
+        if (state.wordsCompleted >= state.targetWordsToWin) {
+          endGame();
+        }
+      } else {
+        state.currentStreak = 0;
+        audio.error();
+        shakeConsole();
+        animateKeypress(' ', false);
+      }
+    }
+
+    function focusConsole() {
+      if (elements.hiddenInput) elements.hiddenInput.focus();
+    }
+
+    // Events Setup
+    function setupEvents() {
+      window.addEventListener('keydown', handleKey);
+
+      elements.hiddenInput.addEventListener('input', () => {
+        let val = elements.hiddenInput.value;
+        if (val.endsWith(' ')) {
+          confirmWord();
+          return;
+        }
+
+        if (!state.isActive && val.length > 0) startGame();
+
+        if (val.length > state.currentInput.length) {
+          const added = val.slice(-1);
+          const expected = state.currentWord[state.currentInput.length];
+          state.totalKeystrokes++;
+          if (added === expected) {
+            state.correctKeystrokes++;
+            state.currentStreak++;
+            if (state.currentStreak > state.highestStreak) state.highestStreak = state.currentStreak;
+            audio.key();
+            animateKeypress(added, true);
+          } else {
+            state.currentStreak = 0;
+            audio.error();
+            shakeConsole();
+            animateKeypress(added, false);
+            if (expected) {
+              const errKey = expected.toLowerCase();
+              state.keyErrors[errKey] = (state.keyErrors[errKey] || 0) + 1;
+            }
+          }
+        }
+        state.currentInput = val;
+        renderWord();
+        updateStats();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!state.isFinished && !e.target.closest('button') && !e.target.closest('select')) {
+          focusConsole();
+        }
+      });
+
+      // Keyboard Display Toggle Button
+      elements.keyboardToggleBtn.addEventListener('click', () => {
+        state.showKeyboard = !state.showKeyboard;
+        elements.virtualKeyboard.classList.toggle('hidden', !state.showKeyboard);
+        elements.kbToggleText.textContent = state.showKeyboard ? 'Heatmap: ON' : 'Heatmap: OFF';
+        elements.keyboardToggleBtn.classList.toggle('border-blue-500', state.showKeyboard);
+        if (state.showKeyboard) {
+          const targetChar = state.currentWord[state.currentInput.length] || ' ';
+          updateKeyboardGuide(targetChar);
+        }
+      });
+
+      // Duration Selector
+      elements.durationSelector.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          elements.durationSelector.querySelectorAll('.mode-btn').forEach(b => {
+            b.className = 'mode-btn px-2 py-0.5 rounded text-[11px] text-slate-400 hover:text-white transition-colors';
+          });
+          btn.className = 'mode-btn px-2 py-0.5 rounded text-[11px] bg-blue-600 text-white font-medium shadow-sm';
+          state.duration = parseInt(btn.dataset.duration, 10);
+          loadHighScore();
+          resetGame();
+        });
+      });
+
+      // Category Selector
+      elements.categorySelect.addEventListener('change', (e) => {
+        state.category = e.target.value;
+        if (e.target.value === 'custom') {
+          openCustomStudio();
+        } else {
+          loadHighScore();
+          resetGame();
+        }
+      });
+
+      // Custom Text / Code Studio Buttons
+      if (elements.customTextBtn) {
+        elements.customTextBtn.addEventListener('click', openCustomStudio);
+      }
+      if (elements.closeCustomModal) {
+        elements.closeCustomModal.addEventListener('click', closeCustomStudio);
+      }
+      if (elements.cancelCustomBtn) {
+        elements.cancelCustomBtn.addEventListener('click', closeCustomStudio);
+      }
+      if (elements.applyCustomBtn) {
+        elements.applyCustomBtn.addEventListener('click', applyCustomText);
+      }
+      if (elements.customTextInput) {
+        elements.customTextInput.addEventListener('input', updateCustomWordCounter);
+        elements.customTextInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            e.stopPropagation();
+            closeCustomStudio();
+          }
+        });
+      }
+      if (elements.customTextModal) {
+        elements.customTextModal.addEventListener('click', (e) => {
+          if (e.target === elements.customTextModal) closeCustomStudio();
+        });
+      }
+
+      // Quick Code Presets
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.preset;
+          if (CODE_PRESETS[key] && elements.customTextInput) {
+            elements.customTextInput.value = CODE_PRESETS[key];
+            updateCustomWordCounter();
+          }
+        });
+      });
+
+      // Vehicle Livery Selector
+      if (elements.vehicleSelect) {
+        elements.vehicleSelect.addEventListener('change', (e) => {
+          state.currentVehicle = e.target.value;
+          if (elements.vehicleSvgContainer) {
+            elements.vehicleSvgContainer.innerHTML = VEHICLE_SVGS[e.target.value] || VEHICLE_SVGS.hypercar;
+          }
+        });
+      }
+
+      // Pilot Career License Info
+      if (elements.licenseBadge) {
+        elements.licenseBadge.addEventListener('click', () => {
+          const cur = LICENSE_TIERS[state.licenseTier] || LICENSE_TIERS.C;
+          alert(`🏆 DRIVER CAREER STATUS\n\nCurrent Rank: ${cur.name}\nActive Vehicle: ${cur.carName}\n\nRequirements:\n• Class B: 45+ WPM (≥90% Acc)\n• Class A: 70+ WPM (≥94% Acc)\n• Master: 90+ WPM (≥96% Acc)`);
+        });
+      }
+
+      // Ghost Selector
+      elements.ghostSelect.addEventListener('change', (e) => {
+        state.ghostMode = e.target.value;
+        resetGame();
+      });
+
+      // Sound Toggle
+      elements.sfxToggleBtn.addEventListener('click', () => {
+        state.soundEnabled = !state.soundEnabled;
+        elements.sfxIcon.textContent = state.soundEnabled ? '🔊' : '🔇';
+      });
+
+      // Reset & Play Again
+      elements.quickResetBtn.addEventListener('click', resetGame);
+      elements.playAgainBtn.addEventListener('click', resetGame);
+
+      // Challenge Sharing
+      if (elements.challengeShareBtn) {
+        elements.challengeShareBtn.addEventListener('click', generateChallengeLink);
+      }
+      if (elements.clearChallengeBtn) {
+        elements.clearChallengeBtn.addEventListener('click', () => {
+          state.isChallenge = false;
+          state.ghostMode = 'rookie';
+          if (elements.ghostSelect) elements.ghostSelect.value = 'rookie';
+          if (elements.challengeBanner) elements.challengeBanner.classList.add('hidden');
+          window.location.hash = '';
+          resetGame();
+        });
+      }
+
+      // Train Weak Keys Action
+      if (elements.trainWeakBtn) {
+        elements.trainWeakBtn.addEventListener('click', () => {
+          elements.gameOverModal.classList.add('opacity-0', 'pointer-events-none');
+          elements.modalCard.classList.add('scale-95');
+          startWeakKeyDrill();
+        });
+      }
+
+      // Copy Telemetry
+      elements.shareResultsBtn.addEventListener('click', () => {
+        const stats = calculateStats();
+        const text = `🏎️ Typing Speed Racer (Pro Edition)\n⚡ Score: ${stats.wpm} WPM | 🎯 Accuracy: ${stats.accuracy}%\n⏱️ Consistency: ${elements.consistencyText.textContent}\n🔍 ${elements.weakKeysDisplay.textContent}`;
+        navigator.clipboard.writeText(text).then(() => {
+          elements.shareBtnText.textContent = 'Copied!';
+          setTimeout(() => { elements.shareBtnText.textContent = 'Copy Telemetry'; }, 2000);
+        });
+      });
+
+      // Mobile Space button
+      if (elements.mobileSpaceBtn) {
+        elements.mobileSpaceBtn.addEventListener('click', () => {
+          confirmWord();
+          focusConsole();
+        });
+      }
+
+      window.addEventListener('resize', () => {
+        updateCarPosition();
+        if (state.ghostMode !== 'none') {
+          updateGhostPosition((state.wordsCompleted / state.targetWordsToWin) * 100);
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
