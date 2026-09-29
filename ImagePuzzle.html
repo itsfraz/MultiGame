@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Puzzle Slider</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Image Puzzle Master | Sliding Tile Game</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -18,19 +21,27 @@
                 extend: {
                     colors: {
                         primary: '#6c5ce7',
+                        'primary-dark': '#5b4bc4',
                         secondary: '#a29bfe',
                         accent: '#fd79a8',
-                        dark: '#1e202a',
-                        surface: '#2b2e3b',
+                        neon: '#00f2fe',
+                        dark: '#0f1117',
+                        surface: '#1c1f2e',
+                        'surface-light': '#262a3d',
                         success: '#00b894',
                         warning: '#fdcb6e',
                     },
                     animation: {
-                        'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        'pulse-glow': 'pulse-glow 3s infinite',
+                        'pop-in': 'pop-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
                     },
                     keyframes: {
-                        pop: {
-                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                            '50%': { opacity: '0.7', transform: 'scale(1.04)' },
+                        },
+                        'pop-in': {
+                            '0%': { transform: 'scale(0.85)', opacity: '0' },
                             '100%': { transform: 'scale(1)', opacity: '1' },
                         }
                     }
@@ -39,192 +50,480 @@
         }
     </script>
     <style>
-        .tile {
-            transition: transform 0.2s ease-in-out;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.3);
+        /* Strict No-Scroll Viewport Rules */
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            max-height: 100dvh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden !important;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        .tile:hover {
-            z-index: 10;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5), 0 8px 12px rgba(0,0,0,0.5);
+
+        /* Responsive Board Bezel Clamping (Guaranteed Zero Scroll) */
+        #board-bezel {
+            width: min(calc(100dvh - 165px), calc(100vw - 420px), 520px);
+            height: min(calc(100dvh - 165px), calc(100vw - 420px), 520px);
+            aspect-ratio: 1 / 1;
         }
-        /* Hide scrollbar for gallery */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+
+        @media (max-width: 1023px) {
+            #board-bezel {
+                width: min(calc(100dvh - 300px), calc(100vw - 28px), 360px);
+                height: min(calc(100dvh - 300px), calc(100vw - 28px), 360px);
+            }
         }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        @media (max-height: 680px) and (min-width: 1024px) {
+            #board-bezel {
+                width: min(calc(100dvh - 140px), 380px);
+                height: min(calc(100dvh - 140px), 380px);
+            }
+        }
+
+        @media (max-height: 620px) and (max-width: 1023px) {
+            #board-bezel {
+                width: min(calc(100dvh - 240px), calc(100vw - 24px), 280px);
+                height: min(calc(100dvh - 240px), calc(100vw - 24px), 280px);
+            }
+        }
+
+        /* Puzzle Tile Hardware Acceleration */
+        .puzzle-tile {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 2.5px;
+            transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+            will-change: transform;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .tile-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 0.65rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.4);
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+        }
+
+        .puzzle-tile:hover .tile-inner {
+            box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.6), 0 8px 16px rgba(0, 0, 0, 0.6);
+            transform: scale(0.98);
+        }
+
+        /* Ambient Dynamic Glow */
+        .ambient-glow {
+            filter: blur(80px);
+            opacity: 0.28;
+            transition: background 0.8s ease-in-out;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar for miniature thumbnail trays if needed */
+        .micro-scroll::-webkit-scrollbar {
+            height: 4px;
+            width: 4px;
+        }
+        .micro-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        .micro-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
+        }
+        .micro-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+        }
+
+        /* Confetti canvas */
+        #confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 60;
         }
     </style>
 </head>
-<body class="bg-[#13151b] text-white min-h-screen flex flex-col items-center p-4 font-sans overflow-x-hidden selection:bg-primary selection:text-white">
+<body class="bg-dark text-white font-sans flex flex-col justify-between p-2 sm:p-3 md:p-4 select-none overflow-hidden relative">
 
-    <div class="w-full max-w-6xl flex flex-col items-center">
+    <!-- Ambient Dynamic Background -->
+    <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div id="ambient-circle-1" class="ambient-glow absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary animate-pulse-glow"></div>
+        <div id="ambient-circle-2" class="ambient-glow absolute -bottom-32 -right-32 w-[28rem] h-[28rem] rounded-full bg-neon animate-pulse-glow" style="animation-delay: 1.5s;"></div>
+        <div class="absolute inset-0 bg-radial-vignette opacity-80 pointer-events-none"></div>
+    </div>
+
+    <!-- Canvas for Confetti Fireworks -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Top Navigation Header -->
+    <header class="w-full max-w-7xl mx-auto flex items-center justify-between py-1 px-1 sm:px-2 flex-shrink-0 z-20">
+        <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/30">
+                <i class="fas fa-shapes text-white text-base sm:text-lg"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-lg sm:text-2xl font-black font-heading tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-pink-400 leading-none">
+                        IMAGE PUZZLE
+                    </h1>
+                    <span id="header-difficulty-badge" class="hidden sm:inline-block text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-primary/20 text-secondary border border-primary/30">
+                        3×3 Easy
+                    </span>
+                </div>
+                <p class="text-[11px] text-gray-400 hidden sm:block">Slide tiles to solve the mystery image</p>
+            </div>
+        </div>
+
+        <!-- Quick Top Actions -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+            <button id="btn-sound" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-gray-300 hover:text-white border border-white/10 flex items-center justify-center transition-all text-xs sm:text-sm" title="Toggle Sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button id="btn-help" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-gray-300 hover:text-white border border-white/10 flex items-center justify-center transition-all text-xs sm:text-sm" title="Keyboard & Controls Info">
+                <i class="fas fa-question"></i>
+            </button>
+            <a href="index.html" class="h-8 sm:h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-gray-300 hover:text-white border border-white/10 flex items-center gap-1.5 transition-all text-xs font-semibold">
+                <i class="fas fa-home"></i>
+                <span class="hidden sm:inline">Hub</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main App Arena (No-Scroll Fit Area) -->
+    <main class="w-full max-w-7xl mx-auto flex-1 min-h-0 flex flex-col lg:flex-row items-center justify-center gap-2 sm:gap-4 md:gap-6 py-1 px-1 z-10 overflow-hidden">
         
-        <!-- Header -->
-        <header class="text-center w-full mb-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="text-left">
-                <h1 class="text-3xl md:text-4xl font-black font-heading bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 drop-shadow-sm">
-                    IMAGE SLIDER
-                </h1>
-                <p class="text-gray-400 text-sm">Reconstruct the image by sliding tiles</p>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-sm font-bold border border-white/10 transition-colors flex items-center gap-2">
-                    <i class="fas fa-home"></i> Hub
-                </a>
-                <button id="sound-toggle" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-sm font-bold border border-white/10 transition-colors" title="Toggle Sound">
-                    <i class="fas fa-volume-up"></i>
-                </button>
-            </div>
-        </header>
-
-        <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Left Side Controls Panel (Compact on desktop, smart toolbar on mobile) -->
+        <section class="w-full lg:w-80 xl:w-96 flex lg:flex-col justify-between lg:justify-center gap-2 sm:gap-3 flex-shrink-0 order-2 lg:order-1 h-auto lg:h-full max-h-full">
             
-            <!-- Left Sidebar: Controls & Stats -->
-            <div class="lg:col-span-4 xl:col-span-3 w-full flex flex-col gap-4 order-2 lg:order-1">
-                
-                <!-- Stats Box -->
-                <div class="bg-surface/30 backdrop-blur-xl rounded-2xl p-5 border border-white/5 shadow-xl">
-                    <!-- Preview Toggle -->
-                    <button id="preview-btn" class="w-full py-3 mb-4 bg-white/10 hover:bg-white/20 rounded-xl font-bold text-white transition-colors border border-white/5 flex items-center justify-center gap-2 select-none active:scale-95">
-                        <i class="fas fa-eye"></i> Hold to Preview
+            <!-- Stats Dashboard Card -->
+            <div class="bg-surface/70 backdrop-blur-xl rounded-2xl p-2.5 sm:p-3.5 border border-white/10 shadow-xl flex-1 lg:flex-none">
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <!-- Timer -->
+                    <div class="bg-dark/50 rounded-xl p-1.5 sm:p-2 border border-white/5">
+                        <div class="text-[10px] text-blue-400 font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+                            <i class="fas fa-stopwatch text-[9px]"></i> Time
+                        </div>
+                        <div id="stat-time" class="text-base sm:text-xl font-black font-heading text-white tracking-wide">00:00</div>
+                    </div>
+                    <!-- Moves -->
+                    <div class="bg-dark/50 rounded-xl p-1.5 sm:p-2 border border-white/5">
+                        <div class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+                            <i class="fas fa-shoe-prints text-[9px]"></i> Moves
+                        </div>
+                        <div id="stat-moves" class="text-base sm:text-xl font-black font-heading text-white">0</div>
+                    </div>
+                    <!-- Best Record -->
+                    <div class="bg-dark/50 rounded-xl p-1.5 sm:p-2 border border-white/5">
+                        <div class="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+                            <i class="fas fa-trophy text-[9px]"></i> Best
+                        </div>
+                        <div id="stat-best" class="text-base sm:text-xl font-black font-heading text-amber-300">--:--</div>
+                    </div>
+                </div>
+
+                <!-- Action Button Matrix -->
+                <div class="grid grid-cols-4 gap-1.5 sm:gap-2 mt-2 sm:mt-3">
+                    <!-- Shuffle Button -->
+                    <button id="btn-shuffle" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl bg-primary hover:bg-primary-dark active:scale-95 text-white font-bold text-xs transition-all shadow-md shadow-primary/30 group" title="Shuffle & Start New Game">
+                        <i class="fas fa-random text-sm mb-0.5 group-hover:rotate-180 transition-transform duration-300"></i>
+                        <span class="text-[10px] leading-tight">Shuffle</span>
                     </button>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="text-center p-3 bg-black/20 rounded-xl">
-                            <i class="fas fa-stopwatch text-blue-400 mb-1"></i>
-                            <div class="text-xs text-gray-400 uppercase font-bold tracking-wider">Time</div>
-                            <div id="timer" class="text-xl font-bold text-white font-heading">00:00</div>
-                        </div>
-                        <div class="text-center p-3 bg-black/20 rounded-xl">
-                            <i class="fas fa-shoe-prints text-green-400 mb-1"></i>
-                            <div class="text-xs text-gray-400 uppercase font-bold tracking-wider">Moves</div>
-                            <div id="move-counter" class="text-xl font-bold text-white font-heading">0</div>
-                        </div>
-                    </div>
+                    <!-- Hold Preview Button -->
+                    <button id="btn-preview" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl bg-white/10 hover:bg-white/15 active:scale-95 text-gray-200 hover:text-white font-bold text-xs border border-white/10 transition-all select-none" title="Hold or Click to Preview Original">
+                        <i class="fas fa-eye text-sm mb-0.5"></i>
+                        <span class="text-[10px] leading-tight">Preview</span>
+                    </button>
+                    <!-- Numbers Hint Toggle -->
+                    <button id="btn-numbers" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl bg-white/10 hover:bg-white/15 active:scale-95 text-gray-200 hover:text-white font-bold text-xs border border-white/10 transition-all" title="Toggle Tile Numbers Hint">
+                        <i class="fas fa-list-ol text-sm mb-0.5"></i>
+                        <span class="text-[10px] leading-tight" id="label-numbers">Hints: OFF</span>
+                    </button>
+                    <!-- Custom Image Upload -->
+                    <label class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl bg-white/10 hover:bg-white/15 active:scale-95 text-gray-200 hover:text-white font-bold text-xs border border-white/10 transition-all cursor-pointer" title="Upload Custom Photo">
+                        <i class="fas fa-cloud-arrow-up text-sm mb-0.5 text-accent"></i>
+                        <span class="text-[10px] leading-tight">Upload</span>
+                        <input id="custom-image-input" type="file" accept="image/*" class="hidden">
+                    </label>
                 </div>
-
-                <!-- Difficulty -->
-                <div class="bg-surface/30 backdrop-blur-xl rounded-2xl p-5 border border-white/5 shadow-xl">
-                    <h3 class="text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">Difficulty</h3>
-                    <div class="grid grid-cols-1 gap-2">
-                        <button class="diff-btn active px-4 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 transition-all hover:scale-102 flex items-center justify-between group" data-size="3">
-                            <span>Easy (3x3)</span>
-                            <span class="opacity-100 group-[.active]:opacity-100"><i class="fas fa-check"></i></span>
-                        </button>
-                        <button class="diff-btn px-4 py-3 rounded-xl text-sm font-bold bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all hover:scale-102 flex items-center justify-between group" data-size="4">
-                            <span>Medium (4x4)</span>
-                            <span class="opacity-0 group-[.active]:opacity-100"><i class="fas fa-check"></i></span>
-                        </button>
-                        <button class="diff-btn px-4 py-3 rounded-xl text-sm font-bold bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all hover:scale-102 flex items-center justify-between group" data-size="5">
-                            <span>Hard (5x5)</span>
-                            <span class="opacity-0 group-[.active]:opacity-100"><i class="fas fa-check"></i></span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Image Selector (Small preview list) -->
-                 <div class="bg-surface/30 backdrop-blur-xl rounded-2xl p-5 border border-white/5 shadow-xl">
-                    <h3 class="text-sm font-bold text-gray-300 mb-3 uppercase tracking-wide">Select Image</h3>
-                    <div class="flex lg:grid lg:grid-cols-3 gap-2 overflow-x-auto lg:overflow-visible hide-scrollbar pb-2 lg:pb-0" id="image-gallery">
-                        <!-- Injected via JS -->
-                    </div>
-                </div>
-
-
-
             </div>
 
-            <!-- Center: Game Board -->
-            <div class="lg:col-span-8 xl:col-span-9 w-full flex flex-col items-center order-1 lg:order-2">
-                <div class="w-full max-w-[600px] relative p-1 md:p-4 bg-surface/30 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl">
+            <!-- Difficulty Segmented Bar -->
+            <div class="bg-surface/70 backdrop-blur-xl rounded-2xl p-2 sm:p-3 border border-white/10 shadow-xl flex-1 lg:flex-none">
+                <div class="flex items-center justify-between mb-1.5 hidden sm:flex">
+                    <span class="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">Difficulty Grid</span>
+                    <span class="text-[10px] text-gray-500" id="difficulty-grid-desc">9 Tiles</span>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5 p-1 bg-black/30 rounded-xl border border-white/5">
+                    <button class="diff-btn active py-1.5 px-2 rounded-lg text-xs font-black transition-all bg-primary text-white shadow-md shadow-primary/20 flex items-center justify-center gap-1.5" data-size="3">
+                        <span>3×3</span>
+                        <span class="text-[10px] font-normal opacity-80 hidden md:inline">Easy</span>
+                    </button>
+                    <button class="diff-btn py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center justify-center gap-1.5" data-size="4">
+                        <span>4×4</span>
+                        <span class="text-[10px] font-normal opacity-80 hidden md:inline">Mid</span>
+                    </button>
+                    <button class="diff-btn py-1.5 px-2 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white hover:bg-white/5 flex items-center justify-center gap-1.5" data-size="5">
+                        <span>5×5</span>
+                        <span class="text-[10px] font-normal opacity-80 hidden md:inline">Hard</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Curated Image Selector Tray -->
+            <div class="bg-surface/70 backdrop-blur-xl rounded-2xl p-2 sm:p-3 border border-white/10 shadow-xl hidden lg:block">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">Choose Picture</span>
+                    <span class="text-[10px] text-primary hover:underline cursor-pointer" id="btn-random-img">Random <i class="fas fa-sync-alt text-[9px]"></i></span>
+                </div>
+                <!-- Desktop 6-image grid -->
+                <div class="grid grid-cols-3 gap-2" id="gallery-desktop">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+
+            <!-- Mobile Compact Image Thumbnails Strip -->
+            <div class="w-full flex lg:hidden items-center gap-1.5 overflow-x-auto micro-scroll py-0.5" id="gallery-mobile">
+                <!-- Injected dynamically -->
+            </div>
+
+        </section>
+
+        <!-- Center Stage: The Puzzle Board (Strictly Dynamic Clamp Size) -->
+        <section class="flex-1 flex flex-col items-center justify-center w-full min-h-0 order-1 lg:order-2">
+            
+            <!-- Outer Frame with Glass Bezel -->
+            <div class="relative w-full flex items-center justify-center p-1 sm:p-2">
+                
+                <!-- Puzzle Board Container: 
+                     Dynamically sized using CSS clamp to guarantee NO VERTICAL OR HORIZONTAL SCROLLBARS 
+                -->
+                <div id="board-bezel" class="relative rounded-2xl sm:rounded-3xl p-2 sm:p-3.5 bg-gradient-to-b from-white/10 via-surface/80 to-surface/95 backdrop-blur-2xl border border-white/15 shadow-2xl flex items-center justify-center">
                     
-                    <!-- The Puzzle Container -->
-                    <!-- Added min-h to prevent collapse -->
-                    <div id="puzzle-container" class="relative bg-black/50 rounded-xl overflow-hidden shadow-inner cursor-pointer w-full aspect-square min-h-[300px] md:min-h-[500px]">
-                        <!-- Tiles injected here -->
+                    <!-- The Grid Playing Area -->
+                    <div id="puzzle-container" class="relative w-full h-full bg-black/60 rounded-xl sm:rounded-2xl overflow-hidden shadow-inner cursor-pointer select-none">
+                        <!-- Tiles are dynamically generated here -->
                     </div>
 
-                    <!-- Overlay for solved state -->
-                    <div id="game-overlay" class="absolute inset-0 z-20 bg-black/85 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300">
-                        <div class="text-center p-6 animate-pop">
-                            <div class="text-6xl mb-4">🎉</div>
-                            <h2 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-2 font-heading">
-                                PUZZLE SOLVED!
+                    <!-- Hold/Toggle Full Image Preview Overlay -->
+                    <div id="preview-overlay" class="absolute inset-2 sm:inset-3.5 rounded-xl sm:rounded-2xl overflow-hidden pointer-events-none opacity-0 transition-opacity duration-200 z-30 bg-black/80 flex flex-col items-center justify-center">
+                        <img id="preview-img-full" src="" alt="Full Preview" class="w-full h-full object-cover">
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent py-2 px-3 text-center text-xs font-bold uppercase tracking-wider text-white">
+                            Original Reference Image
+                        </div>
+                    </div>
+
+                    <!-- Solved Victory Celebration Modal -->
+                    <div id="victory-overlay" class="absolute inset-0 z-40 bg-black/85 backdrop-blur-md rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+                        <div class="w-full max-w-sm text-center animate-pop-in">
+                            <!-- Star Rating -->
+                            <div id="star-rating" class="flex items-center justify-center gap-2 text-2xl sm:text-3xl text-amber-400 mb-2">
+                                <i class="fas fa-star drop-shadow-md"></i>
+                                <i class="fas fa-star drop-shadow-md"></i>
+                                <i class="fas fa-star drop-shadow-md"></i>
+                            </div>
+
+                            <h2 class="text-2xl sm:text-4xl font-black font-heading text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 mb-1 leading-tight">
+                                PUZZLE MASTER!
                             </h2>
-                            <p class="text-gray-300 mb-6" id="final-stats">Time: 00:00 • Moves: 0</p>
-                            <button id="play-again-btn" class="px-8 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl font-bold text-white shadow-lg shadow-primary/30 hover:scale-105 transition-transform">
-                                Play Again
-                            </button>
+                            <p class="text-gray-300 text-xs sm:text-sm mb-4" id="victory-message">
+                                Impressive! You successfully reconstructed the image.
+                            </p>
+
+                            <!-- Score Summary Card -->
+                            <div class="bg-white/10 rounded-2xl p-3 border border-white/10 mb-4 grid grid-cols-2 gap-3 text-center">
+                                <div>
+                                    <div class="text-[10px] text-gray-400 font-bold uppercase">Time Elapsed</div>
+                                    <div id="win-time" class="text-lg sm:text-2xl font-black font-heading text-cyan-300">00:00</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-gray-400 font-bold uppercase">Total Moves</div>
+                                    <div id="win-moves" class="text-lg sm:text-2xl font-black font-heading text-emerald-400">0</div>
+                                </div>
+                            </div>
+
+                            <!-- High Score Notification -->
+                            <div id="new-record-badge" class="hidden mb-3 text-xs font-bold text-amber-300 bg-amber-400/20 py-1 px-3 rounded-full border border-amber-400/30 animate-pulse">
+                                🏆 New Personal Best Record!
+                            </div>
+
+                            <!-- Play Again Action Buttons -->
+                            <div class="flex items-center justify-center gap-2">
+                                <button id="btn-play-again" class="flex-1 py-2.5 px-4 bg-gradient-to-r from-primary to-accent hover:opacity-95 active:scale-95 rounded-xl font-black text-sm text-white shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-redo"></i> Play Again
+                                </button>
+                                <button id="btn-next-puzzle" class="py-2.5 px-3 bg-white/10 hover:bg-white/15 active:scale-95 rounded-xl font-bold text-sm text-white border border-white/10 transition-all" title="Next Image">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Full Image Overlay (Preview) -->
-                     <div id="preview-overlay" class="absolute inset-0 z-30 pointer-events-none opacity-0 transition-opacity duration-200 p-1 md:p-4 rounded-3xl flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm">
-                        <div class="w-full h-full rounded-xl overflow-hidden relative shadow-2xl">
-                             <img id="preview-image-full" src="" class="w-full h-full object-cover" alt="Preview">
-                             <div class="absolute inset-x-0 bottom-0 bg-black/70 backdrop-blur-md p-3 text-center text-white font-bold tracking-wide uppercase text-sm border-t border-white/10">Original Image</div>
-                        </div>
-                    </div>
+
                 </div>
+
             </div>
 
+            <!-- Keyboard & Gesture Quick Tip (Subtle footer pill) -->
+            <div class="mt-1 flex items-center gap-2 text-[10px] sm:text-xs text-gray-400 font-medium bg-white/5 py-1 px-3 rounded-full border border-white/5">
+                <span><i class="fas fa-keyboard text-secondary mr-1"></i> Arrow Keys / WASD</span>
+                <span class="text-gray-600">•</span>
+                <span><i class="fas fa-hand-pointer text-accent mr-1"></i> Click / Tap or Swipe</span>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Help & Instructions Modal -->
+    <div id="help-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-surface border border-white/10 rounded-2xl max-w-md w-full p-5 shadow-2xl relative">
+            <button id="btn-close-help" class="absolute top-4 right-4 w-7 h-7 rounded-lg bg-white/10 text-gray-400 hover:text-white flex items-center justify-center">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+            <div class="flex items-center gap-2.5 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-primary/20 text-secondary flex items-center justify-center">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3 class="text-lg font-black font-heading text-white">How To Play</h3>
+            </div>
+            <ul class="text-xs text-gray-300 space-y-2 mb-4">
+                <li class="flex items-start gap-2">
+                    <i class="fas fa-check-circle text-success mt-0.5"></i>
+                    <span><strong>Goal:</strong> Reconstruct the scrambled image by sliding tiles into the open slot.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fas fa-check-circle text-success mt-0.5"></i>
+                    <span><strong>Multi-Tile Slide:</strong> Click any tile in the same row or column as the gap to slide the whole line at once!</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fas fa-check-circle text-success mt-0.5"></i>
+                    <span><strong>Keyboard:</strong> Use <kbd class="px-1 py-0.5 bg-black/40 rounded border border-white/20 text-[10px]">Arrow Keys</kbd> or <kbd class="px-1 py-0.5 bg-black/40 rounded border border-white/20 text-[10px]">W A S D</kbd> to slide adjacent tiles.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fas fa-check-circle text-success mt-0.5"></i>
+                    <span><strong>Number Hints:</strong> Press <strong>Hints</strong> to show numbered badges (1, 2, 3...) on tile corners.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fas fa-check-circle text-success mt-0.5"></i>
+                    <span><strong>Custom Photos:</strong> Click <strong>Upload</strong> to solve your own pictures or wallpapers!</span>
+                </li>
+            </ul>
+            <button id="btn-dismiss-help" class="w-full py-2 rounded-xl bg-primary hover:bg-primary-dark font-bold text-xs text-white transition-all">
+                Got it, Let's Play!
+            </button>
         </div>
     </div>
 
-    <!-- Background decoration -->
-    <div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10">
-        <div class="absolute top-[10%] right-[20%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]"></div>
-        <div class="absolute bottom-[10%] left-[10%] w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px]"></div>
-    </div>
-
+    <!-- Application Logic & Sound Engine -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Configuration
-            const images = [
-                'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Mountains
-                'https://images.unsplash.com/photo-1546527868-ccb7ee7dfa6a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Puppy
-                'https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // City
-                'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Pizza
-                'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Space
+            // Curated Image Presets (High-performance reliable photography)
+            const PRESET_IMAGES = [
+                {
+                    name: 'Alpine Vista',
+                    url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+                    color: '#3b82f6'
+                },
+                {
+                    name: 'Cyber City',
+                    url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80',
+                    color: '#8b5cf6'
+                },
+                {
+                    name: 'Golden Puppy',
+                    url: 'https://images.unsplash.com/photo-1546527868-ccb7ee7dfa6a?auto=format&fit=crop&w=800&q=80',
+                    color: '#f59e0b'
+                },
+                {
+                    name: 'Deep Cosmos',
+                    url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
+                    color: '#06b6d4'
+                },
+                {
+                    name: 'Neon Cyberpunk',
+                    url: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80',
+                    color: '#ec4899'
+                },
+                {
+                    name: 'Forest Waterfall',
+                    url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=800&q=80',
+                    color: '#10b981'
+                }
             ];
 
-            let state = {
-                gridSize: 3, // 3x3
-                currentImage: images[0],
-                tiles: [], // {index: 0, currentPos: 0}
-                emptyPos: 8, // Last position index (gridSize*gridSize - 1)
+            // Core Game State
+            const state = {
+                gridSize: 3, // 3x3 default
+                currentImage: PRESET_IMAGES[0].url,
+                currentColor: PRESET_IMAGES[0].color,
+                tiles: [], // { id, originalPos, currentPos, element }
+                emptyPos: 8,
                 moves: 0,
                 time: 0,
                 timerInterval: null,
                 isPlaying: false,
                 isSolved: false,
-                soundEnabled: true
+                soundEnabled: true,
+                showNumbers: false,
+                isShuffling: false,
+                isHoldingPreview: false
             };
 
-            // DOM Elements
+            // DOM References
             const puzzleContainer = document.getElementById('puzzle-container');
-            const timerEl = document.getElementById('timer');
-            const movesEl = document.getElementById('move-counter');
-            const gameOverlay = document.getElementById('game-overlay');
-            const finalStatsEl = document.getElementById('final-stats');
-            const diffButtons = document.querySelectorAll('.diff-btn');
-            const playAgainBtn = document.getElementById('play-again-btn');
-            const imageGallery = document.getElementById('image-gallery');
-            const previewBtn = document.getElementById('preview-btn');
+            const statTime = document.getElementById('stat-time');
+            const statMoves = document.getElementById('stat-moves');
+            const statBest = document.getElementById('stat-best');
+            const btnShuffle = document.getElementById('btn-shuffle');
+            const btnPreview = document.getElementById('btn-preview');
+            const btnNumbers = document.getElementById('btn-numbers');
+            const labelNumbers = document.getElementById('label-numbers');
+            const btnSound = document.getElementById('btn-sound');
+            const btnHelp = document.getElementById('btn-help');
+            const helpModal = document.getElementById('help-modal');
+            const btnCloseHelp = document.getElementById('btn-close-help');
+            const btnDismissHelp = document.getElementById('btn-dismiss-help');
             const previewOverlay = document.getElementById('preview-overlay');
-            const previewImageFull = document.getElementById('preview-image-full');
-            const soundToggle = document.getElementById('sound-toggle');
+            const previewImgFull = document.getElementById('preview-img-full');
+            const victoryOverlay = document.getElementById('victory-overlay');
+            const winTime = document.getElementById('win-time');
+            const winMoves = document.getElementById('win-moves');
+            const btnPlayAgain = document.getElementById('btn-play-again');
+            const btnNextPuzzle = document.getElementById('btn-next-puzzle');
+            const newRecordBadge = document.getElementById('new-record-badge');
+            const diffButtons = document.querySelectorAll('.diff-btn');
+            const galleryDesktop = document.getElementById('gallery-desktop');
+            const galleryMobile = document.getElementById('gallery-mobile');
+            const customImageInput = document.getElementById('custom-image-input');
+            const headerDiffBadge = document.getElementById('header-difficulty-badge');
+            const difficultyGridDesc = document.getElementById('difficulty-grid-desc');
+            const btnRandomImg = document.getElementById('btn-random-img');
+            const ambient1 = document.getElementById('ambient-circle-1');
+            const ambient2 = document.getElementById('ambient-circle-2');
 
-            // Audio Context
-            let audioCtx;
-            
+            // --- Synthesized Web Audio Engine ---
+            let audioCtx = null;
+
             function initAudio() {
                 if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContextClass) {
+                        audioCtx = new AudioContextClass();
+                    }
                 }
-                if (audioCtx.state === 'suspended') {
+                if (audioCtx && audioCtx.state === 'suspended') {
                     audioCtx.resume();
                 }
             }
@@ -232,242 +531,518 @@
             function playSound(type) {
                 if (!state.soundEnabled) return;
                 initAudio();
+                if (!audioCtx) return;
 
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
                 const now = audioCtx.currentTime;
 
                 if (type === 'slide') {
-                    // Quick warm thud
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(200, now);
-                    osc.frequency.linearRampToValueAtTime(100, now + 0.1);
-                    gain.gain.setValueAtTime(0.1, now);
-                    gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                    // Crisp organic tile slide click
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(260, now);
+                    osc.frequency.exponentialRampToValueAtTime(140, now + 0.08);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
                     osc.start(now);
-                    osc.stop(now + 0.1);
+                    osc.stop(now + 0.08);
+                } else if (type === 'invalid') {
+                    // Soft dull bump for invalid move
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(90, now);
+                    osc.frequency.exponentialRampToValueAtTime(45, now + 0.07);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+                    osc.start(now);
+                    osc.stop(now + 0.07);
+                } else if (type === 'shuffle') {
+                    // Whoosh sound during scramble
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.exponentialRampToValueAtTime(360, now + 0.15);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
                 } else if (type === 'win') {
-                    // Victory chime
-                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-                        const o = audioCtx.createOscillator();
-                        const g = audioCtx.createGain();
-                        o.connect(g);
-                        g.connect(audioCtx.destination);
-                        o.type = 'triangle';
-                        o.frequency.value = freq;
-                        g.gain.setValueAtTime(0.05, now + i * 0.15);
-                        g.gain.linearRampToValueAtTime(0, now + i * 0.15 + 1.0);
-                        o.start(now + i * 0.15);
-                        o.stop(now + i * 0.15 + 1.0);
+                    // Triumphant victory fanfare arpeggio
+                    const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+                    notes.forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.11);
+                        gain.gain.setValueAtTime(0.15, now + idx * 0.11);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.11 + 0.6);
+                        osc.start(now + idx * 0.11);
+                        osc.stop(now + idx * 0.11 + 0.6);
                     });
                 }
             }
 
-            // Initialize Gallery
-            images.forEach((src, idx) => {
-                const thumb = document.createElement('div');
-                thumb.className = `w-full aspect-square bg-cover bg-center rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${idx === 0 ? 'border-primary opacity-100 ring-2 ring-primary/50' : 'border-transparent opacity-60 hover:opacity-100'}`;
-                thumb.style.backgroundImage = `url('${src}')`;
-                thumb.onclick = () => selectImage(src, thumb);
-                imageGallery.appendChild(thumb);
-            });
-
-            function selectImage(src, thumbEl) {
-                state.currentImage = src;
-                // Update active state in UI
-                Array.from(imageGallery.children).forEach(c => {
-                    c.className = 'w-full aspect-square bg-cover bg-center rounded-lg overflow-hidden cursor-pointer border-2 border-transparent opacity-60 hover:opacity-100 transition-all';
-                });
-                thumbEl.className = 'w-full aspect-square bg-cover bg-center rounded-lg overflow-hidden cursor-pointer border-2 border-primary opacity-100 ring-2 ring-primary/50 transition-all';
-                restartGame();
+            // --- High Score / Personal Best Management ---
+            function getBestRecordKey() {
+                return `puzzle_best_${state.gridSize}`;
             }
 
-            // Logic: Create Tile Grid
-            function createTiles() {
+            function loadBestRecord() {
+                try {
+                    const saved = localStorage.getItem(getBestRecordKey());
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        statBest.textContent = `${formatTime(data.time)} / ${data.moves}m`;
+                        return data;
+                    }
+                } catch(e) {}
+                statBest.textContent = '--:--';
+                return null;
+            }
+
+            function saveBestRecord(time, moves) {
+                const key = getBestRecordKey();
+                const current = loadBestRecord();
+                let isNewBest = false;
+
+                if (!current || time < current.time || (time === current.time && moves < current.moves)) {
+                    isNewBest = true;
+                    try {
+                        localStorage.setItem(key, JSON.stringify({ time, moves }));
+                    } catch(e) {}
+                    loadBestRecord();
+                }
+                return isNewBest;
+            }
+
+            // --- Ambient Color Theme Sync ---
+            function updateAmbientGlow(color) {
+                if (ambient1 && color) ambient1.style.background = color;
+            }
+
+            // --- Render Thumbnail Galleries ---
+            function renderGalleries() {
+                galleryDesktop.innerHTML = '';
+                galleryMobile.innerHTML = '';
+
+                PRESET_IMAGES.forEach((item, idx) => {
+                    // Desktop Thumbnail Card
+                    const deskThumb = document.createElement('div');
+                    const isActive = state.currentImage === item.url;
+                    deskThumb.className = `group relative aspect-video rounded-xl overflow-hidden cursor-pointer border-2 transition-all duration-200 ${
+                        isActive ? 'border-primary ring-2 ring-primary/40 scale-102' : 'border-white/10 opacity-70 hover:opacity-100 hover:border-white/30'
+                    }`;
+                    deskThumb.innerHTML = `
+                        <img src="${item.url}" alt="${item.name}" class="w-full h-full object-cover">
+                        <div class="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-xs py-0.5 px-1 text-[9px] font-bold text-center text-white truncate">
+                            ${item.name}
+                        </div>
+                    `;
+                    deskThumb.onclick = () => selectImage(item.url, item.color);
+                    galleryDesktop.appendChild(deskThumb);
+
+                    // Mobile Thumbnail Pill
+                    const mobThumb = document.createElement('div');
+                    mobThumb.className = `flex-shrink-0 w-12 h-10 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
+                        isActive ? 'border-primary ring-2 ring-primary/40 scale-105' : 'border-white/10 opacity-70'
+                    }`;
+                    mobThumb.innerHTML = `<img src="${item.url}" alt="${item.name}" class="w-full h-full object-cover">`;
+                    mobThumb.onclick = () => selectImage(item.url, item.color);
+                    galleryMobile.appendChild(mobThumb);
+                });
+            }
+
+            function selectImage(url, color) {
+                state.currentImage = url;
+                if (color) {
+                    state.currentColor = color;
+                    updateAmbientGlow(color);
+                }
+                previewImgFull.src = url;
+                renderGalleries();
+                initBoard();
+            }
+
+            // --- Puzzle Grid Generation & Tile Setup ---
+            function initBoard() {
+                stopTimer();
+                victoryOverlay.classList.add('hidden', 'opacity-0');
+                victoryOverlay.classList.remove('flex', 'opacity-100');
+                previewImgFull.src = state.currentImage;
+
                 puzzleContainer.innerHTML = '';
                 state.tiles = [];
-                const totalTiles = state.gridSize * state.gridSize;
-                const tileSizePct = 100 / state.gridSize;
+                const size = state.gridSize;
+                const total = size * size;
+                state.emptyPos = total - 1; // bottom-right corner default blank
 
-                // Create tiles 0 to N-2. N-1 is empty.
-                for (let i = 0; i < totalTiles; i++) {
-                    if (i === totalTiles - 1) {
-                         // Empty tile logic
-                         state.emptyPos = i;
-                         state.tiles.push({ index: null, currentPos: i }); // Empty
-                         continue;
+                const tileSizePct = 100 / size;
+
+                for (let i = 0; i < total; i++) {
+                    if (i === total - 1) {
+                        // Blank slot
+                        state.tiles.push({
+                            id: null,
+                            originalPos: i,
+                            currentPos: i,
+                            element: null
+                        });
+                        continue;
                     }
 
                     const tile = document.createElement('div');
                     tile.id = `tile-${i}`;
-                    tile.className = 'tile absolute cursor-pointer bg-surface overflow-hidden rounded-lg border border-white/10';
-                    tile.style.width = `calc(${tileSizePct}% - 2px)`; // Margins included
-                    tile.style.height = `calc(${tileSizePct}% - 2px)`;
-                    
-                    // Positioning
-                    // Use CSS vars or inline styles dynamically
-                    tile.style.top = `${Math.floor(i / state.gridSize) * tileSizePct}%`;
-                    tile.style.left = `${(i % state.gridSize) * tileSizePct}%`;
-                    tile.style.margin = '1px'; // Physical gap
-                    
-                    // Background Image Logic
-                    const row = Math.floor(i / state.gridSize);
-                    const col = i % state.gridSize;
-                    
-                    tile.style.backgroundImage = `url('${state.currentImage}')`;
-                    tile.style.backgroundSize = `${state.gridSize * 100}%`;
-                    tile.style.backgroundPosition = `${(col / (state.gridSize - 1)) * 100}% ${(row / (state.gridSize - 1)) * 100}%`;
+                    tile.className = 'puzzle-tile select-none';
+                    tile.style.width = `${tileSizePct}%`;
+                    tile.style.height = `${tileSizePct}%`;
 
-                    // Interaction
-                    tile.onclick = () => handleTileClick(i);
+                    // Inner card for image background, gap padding & aesthetics
+                    const inner = document.createElement('div');
+                    inner.className = 'tile-inner';
 
-                    // Store internal state
-                    state.tiles.push({ index: i, currentPos: i, element: tile });
+                    // Background Slice Calculation
+                    const origRow = Math.floor(i / size);
+                    const origCol = i % size;
+                    inner.style.backgroundImage = `url('${state.currentImage}')`;
+                    inner.style.backgroundSize = `${size * 100}% ${size * 100}%`;
+                    inner.style.backgroundPosition = `${(origCol / (size - 1)) * 100}% ${(origRow / (size - 1)) * 100}%`;
+
+                    // Corner Number Badge
+                    const badge = document.createElement('span');
+                    badge.className = `tile-badge absolute top-1 left-1.5 min-w-[18px] h-[18px] px-1 bg-black/75 backdrop-blur-sm rounded-md text-[10px] font-black text-amber-300 border border-white/20 flex items-center justify-center transition-opacity duration-200 pointer-events-none ${
+                        state.showNumbers ? 'opacity-100' : 'opacity-0'
+                    }`;
+                    badge.textContent = i + 1;
+                    inner.appendChild(badge);
+                    tile.appendChild(inner);
+
+                    // Initial coordinate transform
+                    positionTileElement(tile, i, true);
+
+                    // Tile Click Handler (Supports multi-tile line sliding!)
+                    tile.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        handleTileClick(i);
+                    });
+
+                    state.tiles.push({
+                        id: i,
+                        originalPos: i,
+                        currentPos: i,
+                        element: tile
+                    });
+
                     puzzleContainer.appendChild(tile);
                 }
 
-                // Shuffle
-                setTimeout(shuffleBoard, 100); // Slight delay for rendering
-            }
-
-            function shuffleBoard() {
-                // To ensure solvability, we simulate valid random moves from the solved state
-                let moves = 0;
-                const totalMoves = state.gridSize * 25; // Good randomness
-                const maxIndex = state.gridSize * state.gridSize - 1;
-                
-                let lastMove = -1;
-
-                while (moves < totalMoves) {
-                    const neighbors = getNeighbors(state.emptyPos);
-                    // Filter out returning to last move to encourage entropy
-                    const validMoves = neighbors.filter(pos => pos !== lastMove);
-                    
-                    // Fallback if cornered (rare/impossible in 2+ neighbors logic, but safecheck)
-                    const moveOptions = validMoves.length > 0 ? validMoves : neighbors;
-                    const randomMove = moveOptions[Math.floor(Math.random() * moveOptions.length)];
-                    
-                    // Find which tile is at this position
-                    const tileObj = state.tiles.find(t => t.currentPos === randomMove);
-                    
-                    if (tileObj) {
-                        // Swap logic (without animation for shuffle)
-                        swapPositions(tileObj, true);
-                        lastMove = state.emptyPos; 
-                        moves++;
-                    } else {
-                        console.error('Tile Not Found', randomMove);
-                        break;
-                    }
-                }
-
+                // Reset Counters
                 state.moves = 0;
                 state.time = 0;
                 state.isPlaying = false;
                 state.isSolved = false;
-                movesEl.textContent = '0';
-                timerEl.textContent = '00:00';
-                gameOverlay.classList.remove('opacity-100', 'flex');
-                gameOverlay.classList.add('hidden', 'opacity-0');
+                statMoves.textContent = '0';
+                statTime.textContent = '00:00';
+                loadBestRecord();
+
+                // Automatically shuffle the new game
+                setTimeout(shufflePuzzle, 150);
             }
 
-            function getNeighbors(pos) {
+            // Positions a tile using CSS translate percentage for 60fps GPU acceleration
+            function positionTileElement(el, pos, instant = false) {
                 const size = state.gridSize;
                 const row = Math.floor(pos / size);
                 const col = pos % size;
-                const neighbors = [];
+                const xPct = col * 100;
+                const yPct = row * 100;
 
-                if (row > 0) neighbors.push(pos - size); // Up
-                if (row < size - 1) neighbors.push(pos + size); // Down
-                if (col > 0) neighbors.push(pos - 1); // Left
-                if (col < size - 1) neighbors.push(pos + 1); // Right
-
-                return neighbors;
+                if (instant) {
+                    el.style.transition = 'none';
+                    el.style.transform = `translate3d(${xPct}%, ${yPct}%, 0)`;
+                    el.offsetHeight; // Force reflow
+                    el.style.transition = 'transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                } else {
+                    el.style.transform = `translate3d(${xPct}%, ${yPct}%, 0)`;
+                }
             }
 
-            function handleTileClick(originalIndex) {
-                 initAudio(); // Ensure context is ready
-                 if (state.isSolved) return;
+            // --- Multi-Tile Line Sliding Logic ---
+            // If the user clicks a tile in the same row or column as the blank (even 2 or 3 steps away),
+            // all tiles between them slide towards the empty position!
+            function handleTileClick(tileId) {
+                if (state.isSolved || state.isShuffling) return;
+                initAudio();
 
-                 const tileObj = state.tiles.find(t => t.index === originalIndex);
-                 const currentPos = tileObj.currentPos;
-                 const neighbors = getNeighbors(state.emptyPos);
+                const clickedTile = state.tiles.find(t => t.id === tileId);
+                if (!clickedTile) return;
 
-                 if (neighbors.includes(currentPos)) {
-                     // Valid move
-                     if (!state.isPlaying) startTimer();
-                     swapPositions(tileObj);
-                     playSound('slide');
-                     state.moves++;
-                     movesEl.textContent = state.moves;
+                const clickedPos = clickedTile.currentPos;
+                const emptyPos = state.emptyPos;
+                const size = state.gridSize;
 
-                     checkWin();
-                 }
+                const clickedRow = Math.floor(clickedPos / size);
+                const clickedCol = clickedPos % size;
+                const emptyRow = Math.floor(emptyPos / size);
+                const emptyCol = emptyPos % size;
+
+                let tilesToMove = [];
+
+                if (clickedRow === emptyRow) {
+                    // Horizontal line slide
+                    const step = clickedCol < emptyCol ? 1 : -1;
+                    for (let col = emptyCol - step; col !== clickedCol - step; col -= step) {
+                        const pos = clickedRow * size + col;
+                        const tile = state.tiles.find(t => t.currentPos === pos);
+                        if (tile) tilesToMove.push(tile);
+                    }
+                } else if (clickedCol === emptyCol) {
+                    // Vertical line slide
+                    const step = clickedRow < emptyRow ? 1 : -1;
+                    for (let row = emptyRow - step; row !== clickedRow - step; row -= step) {
+                        const pos = row * size + clickedCol;
+                        const tile = state.tiles.find(t => t.currentPos === pos);
+                        if (tile) tilesToMove.push(tile);
+                    }
+                } else {
+                    // Invalid move
+                    playSound('invalid');
+                    return;
+                }
+
+                // If valid line move found, slide all tiles sequentially into the void
+                if (tilesToMove.length > 0) {
+                    if (!state.isPlaying) startTimer();
+
+                    tilesToMove.forEach(tile => {
+                        const oldPos = tile.currentPos;
+                        const newPos = state.emptyPos;
+                        tile.currentPos = newPos;
+                        state.emptyPos = oldPos;
+                        positionTileElement(tile.element, newPos, false);
+                    });
+
+                    playSound('slide');
+                    state.moves++;
+                    statMoves.textContent = state.moves;
+
+                    checkVictory();
+                }
             }
 
-            function swapPositions(tileObj, instant = false) {
-                const tileSizePct = 100 / state.gridSize;
-                const oldPos = tileObj.currentPos;
-                const newPos = state.emptyPos;
+            // Direct keyboard single-tile move
+            function moveDirection(direction) {
+                if (state.isSolved || state.isShuffling) return;
+                const size = state.gridSize;
+                const emptyPos = state.emptyPos;
+                const emptyRow = Math.floor(emptyPos / size);
+                const emptyCol = emptyPos % size;
 
-                 // Update internal state
-                tileObj.currentPos = newPos;
-                state.emptyPos = oldPos;
-                
-                // Update UI
-                const newRow = Math.floor(newPos / state.gridSize);
-                const newCol = newPos % state.gridSize;
+                let targetPos = -1;
 
-                if (tileObj.element) {
-                    // Update style
-                    // Force transform instead of top/left for smoother 60fps? 
-                    // No, Top/Left + transition is easier for this simpler grid logic without absolute transform calculations.
-                    // But we must match createTiles logic.
-                    
-                    if (instant) {
-                        tileObj.element.style.transition = 'none';
-                        tileObj.element.style.top = `${newRow * tileSizePct}%`;
-                        tileObj.element.style.left = `${newCol * tileSizePct}%`;
-                        // Force reflow
-                         tileObj.element.offsetHeight; 
-                        tileObj.element.style.transition = 'top 0.2s ease-in-out, left 0.2s ease-in-out';
-                    } else {
-                        tileObj.element.style.transition = 'top 0.2s ease-in-out, left 0.2s ease-in-out';
-                        tileObj.element.style.top = `${newRow * tileSizePct}%`;
-                        tileObj.element.style.left = `${newCol * tileSizePct}%`;
+                // When user presses UP, tile BELOW the blank moves UP into blank
+                if (direction === 'up' && emptyRow < size - 1) {
+                    targetPos = emptyPos + size;
+                } else if (direction === 'down' && emptyRow > 0) {
+                    targetPos = emptyPos - size;
+                } else if (direction === 'left' && emptyCol < size - 1) {
+                    targetPos = emptyPos + 1;
+                } else if (direction === 'right' && emptyCol > 0) {
+                    targetPos = emptyPos - 1;
+                }
+
+                if (targetPos !== -1) {
+                    const tile = state.tiles.find(t => t.currentPos === targetPos);
+                    if (tile) {
+                        handleTileClick(tile.id);
                     }
                 }
             }
 
-            function checkWin() {
-                const correctCount = state.tiles.filter(t => t.index !== null).filter(t => t.index === t.currentPos).length;
-                if (correctCount === (state.gridSize * state.gridSize - 1)) {
-                    gameWon();
+            // --- Solvable Shuffle Algorithm ---
+            // Simulates valid random moves from solved position, strictly forbidding immediate reverses
+            function shufflePuzzle() {
+                state.isShuffling = true;
+                stopTimer();
+                state.isPlaying = false;
+                state.isSolved = false;
+                state.moves = 0;
+                state.time = 0;
+                statMoves.textContent = '0';
+                statTime.textContent = '00:00';
+
+                const size = state.gridSize;
+                const shuffleSteps = size * 35; // 3x3: 105 moves, 4x4: 140 moves
+                let previousPos = -1;
+
+                playSound('shuffle');
+
+                for (let i = 0; i < shuffleSteps; i++) {
+                    const neighbors = getValidNeighbors(state.emptyPos, size);
+                    // Filter out previous position to prevent ping-pong oscillation
+                    const validOptions = neighbors.filter(pos => pos !== previousPos);
+                    const chosenPos = validOptions.length > 0 
+                        ? validOptions[Math.floor(Math.random() * validOptions.length)]
+                        : neighbors[Math.floor(Math.random() * neighbors.length)];
+
+                    const tile = state.tiles.find(t => t.currentPos === chosenPos);
+                    if (tile) {
+                        previousPos = state.emptyPos;
+                        tile.currentPos = state.emptyPos;
+                        state.emptyPos = chosenPos;
+                        positionTileElement(tile.element, tile.currentPos, true);
+                    }
+                }
+
+                state.isShuffling = false;
+            }
+
+            function getValidNeighbors(pos, size) {
+                const row = Math.floor(pos / size);
+                const col = pos % size;
+                const neighbors = [];
+                if (row > 0) neighbors.push(pos - size);
+                if (row < size - 1) neighbors.push(pos + size);
+                if (col > 0) neighbors.push(pos - 1);
+                if (col < size - 1) neighbors.push(pos + 1);
+                return neighbors;
+            }
+
+            // --- Victory & Celebration Logic ---
+            function checkVictory() {
+                const total = state.gridSize * state.gridSize;
+                let correctCount = 0;
+
+                for (const tile of state.tiles) {
+                    if (tile.id !== null && tile.id === tile.currentPos) {
+                        correctCount++;
+                    }
+                }
+
+                if (correctCount === total - 1) {
+                    triggerWin();
                 }
             }
 
-            function gameWon() {
+            function triggerWin() {
                 state.isSolved = true;
                 stopTimer();
-                setTimeout(() => playSound('win'), 300); // Slight delay for satisfaction
-                
-                // Show completion overlay
-                finalStatsEl.innerHTML = `<span class="text-white font-bold">${formatTime(state.time)}</span> <span class="mx-2">|</span> <span class="text-white font-bold">${state.moves} Moves</span>`;
-                gameOverlay.classList.remove('hidden', 'opacity-0');
-                gameOverlay.classList.add('flex', 'opacity-100');
+                playSound('win');
+
+                // Determine Star Rating (1 to 3 stars)
+                const baseMoves = state.gridSize * state.gridSize * 4;
+                const starRatingEl = document.getElementById('star-rating');
+                let stars = 3;
+                if (state.moves > baseMoves * 2 || state.time > 120) stars = 1;
+                else if (state.moves > baseMoves || state.time > 60) stars = 2;
+
+                starRatingEl.innerHTML = '';
+                for (let i = 0; i < 3; i++) {
+                    const starIcon = document.createElement('i');
+                    starIcon.className = `fas fa-star ${i < stars ? 'text-amber-400' : 'text-gray-600'} drop-shadow-md`;
+                    starRatingEl.appendChild(starIcon);
+                }
+
+                winTime.textContent = formatTime(state.time);
+                winMoves.textContent = state.moves;
+
+                const isNewBest = saveBestRecord(state.time, state.moves);
+                if (isNewBest) {
+                    newRecordBadge.classList.remove('hidden');
+                } else {
+                    newRecordBadge.classList.add('hidden');
+                }
+
+                victoryOverlay.classList.remove('hidden');
+                setTimeout(() => {
+                    victoryOverlay.classList.add('flex', 'opacity-100');
+                    victoryOverlay.classList.remove('opacity-0');
+                    launchConfetti();
+                }, 100);
             }
 
-            // Timer Logic
+            // --- Lightweight Dependency-Free Confetti Engine ---
+            const confettiCanvas = document.getElementById('confetti-canvas');
+            const ctx = confettiCanvas.getContext('2d');
+            let confettiParticles = [];
+            let confettiAnimationId = null;
+
+            function resizeConfetti() {
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeConfetti);
+            resizeConfetti();
+
+            function launchConfetti() {
+                confettiParticles = [];
+                const colors = ['#6c5ce7', '#00b894', '#fdcb6e', '#fd79a8', '#00f2fe', '#ffffff'];
+                for (let i = 0; i < 90; i++) {
+                    confettiParticles.push({
+                        x: confettiCanvas.width / 2 + (Math.random() - 0.5) * 200,
+                        y: confettiCanvas.height / 2 + (Math.random() - 0.5) * 100,
+                        r: Math.random() * 6 + 3,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        vx: (Math.random() - 0.5) * 14,
+                        vy: (Math.random() - 1.2) * 15,
+                        gravity: 0.35,
+                        opacity: 1,
+                        tilt: Math.random() * 10,
+                        tiltSpeed: Math.random() * 0.1 + 0.05
+                    });
+                }
+
+                if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+                animateConfetti();
+            }
+
+            function animateConfetti() {
+                ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                confettiParticles.forEach((p, idx) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.opacity -= 0.007;
+                    p.tilt += p.tiltSpeed;
+
+                    if (p.opacity > 0) {
+                        ctx.beginPath();
+                        ctx.save();
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = Math.max(0, p.opacity);
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.tilt);
+                        ctx.fillRect(-p.r, -p.r, p.r * 2, p.r * 1.5);
+                        ctx.restore();
+                    }
+                });
+
+                confettiParticles = confettiParticles.filter(p => p.opacity > 0 && p.y < confettiCanvas.height + 50);
+
+                if (confettiParticles.length > 0) {
+                    confettiAnimationId = requestAnimationFrame(animateConfetti);
+                } else {
+                    ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                }
+            }
+
+            // --- Timer Routine ---
             function startTimer() {
                 if (state.isPlaying) return;
                 state.isPlaying = true;
                 clearInterval(state.timerInterval);
                 state.timerInterval = setInterval(() => {
                     state.time++;
-                    timerEl.textContent = formatTime(state.time);
+                    statTime.textContent = formatTime(state.time);
                 }, 1000);
             }
 
@@ -482,65 +1057,183 @@
                 return `${m}:${s}`;
             }
 
-            // Controls logic
-            function restartGame() {
-                stopTimer();
-                createTiles();
-            }
+            // --- Event Bindings ---
 
-            // Difficulty buttons
+            // Shuffle Button
+            btnShuffle.addEventListener('click', () => {
+                shufflePuzzle();
+            });
+
+            // Toggle Numbers Hint
+            btnNumbers.addEventListener('click', () => {
+                state.showNumbers = !state.showNumbers;
+                labelNumbers.textContent = state.showNumbers ? 'Hints: ON' : 'Hints: OFF';
+                btnNumbers.classList.toggle('bg-primary/40', state.showNumbers);
+                btnNumbers.classList.toggle('border-primary', state.showNumbers);
+
+                document.querySelectorAll('.tile-badge').forEach(b => {
+                    b.classList.toggle('opacity-100', state.showNumbers);
+                    b.classList.toggle('opacity-0', !state.showNumbers);
+                });
+            });
+
+            // Preview Hold & Click Events
+            const startPreview = (e) => {
+                if (e.cancelable) e.preventDefault();
+                state.isHoldingPreview = true;
+                previewOverlay.classList.remove('opacity-0');
+                previewOverlay.classList.add('opacity-100');
+            };
+
+            const endPreview = () => {
+                state.isHoldingPreview = false;
+                previewOverlay.classList.remove('opacity-100');
+                previewOverlay.classList.add('opacity-0');
+            };
+
+            btnPreview.addEventListener('mousedown', startPreview);
+            btnPreview.addEventListener('touchstart', startPreview, { passive: false });
+            window.addEventListener('mouseup', endPreview);
+            window.addEventListener('touchend', endPreview);
+
+            // Difficulty Buttons
             diffButtons.forEach(btn => {
-                btn.onclick = () => {
+                btn.addEventListener('click', () => {
                     const size = parseInt(btn.dataset.size);
-                    if (size !== state.gridSize) {
-                        // Update UI Active State
-                        diffButtons.forEach(b => {
-                            b.classList.remove('active', 'bg-primary', 'text-white', 'shadow-lg');
-                            b.classList.add('bg-white/5', 'text-gray-400');
-                            b.querySelector('span:last-child').classList.remove('opacity-100');
-                            b.querySelector('span:last-child').classList.add('opacity-0');
-                        });
-                        btn.classList.add('active', 'bg-primary', 'text-white', 'shadow-lg');
-                        btn.classList.remove('bg-white/5', 'text-gray-400');
-                        btn.querySelector('span:last-child').classList.add('opacity-100');
-                        btn.querySelector('span:last-child').classList.remove('opacity-0');
-                        
-                        state.gridSize = size;
-                        restartGame();
-                    }
+                    if (size === state.gridSize) return;
+
+                    diffButtons.forEach(b => {
+                        b.classList.remove('active', 'bg-primary', 'text-white', 'shadow-md');
+                        b.classList.add('text-gray-400', 'hover:bg-white/5');
+                    });
+                    btn.classList.add('active', 'bg-primary', 'text-white', 'shadow-md');
+                    btn.classList.remove('text-gray-400', 'hover:bg-white/5');
+
+                    state.gridSize = size;
+                    headerDiffBadge.textContent = size === 3 ? '3×3 Easy' : size === 4 ? '4×4 Mid' : '5×5 Hard';
+                    difficultyGridDesc.textContent = `${size * size} Tiles`;
+
+                    initBoard();
+                });
+            });
+
+            // Custom Image Upload Handler
+            customImageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const dataUrl = event.target.result;
+                    // Add to presets as first custom item
+                    const customItem = {
+                        name: file.name.substring(0, 10) || 'Custom',
+                        url: dataUrl,
+                        color: '#fd79a8'
+                    };
+                    PRESET_IMAGES.unshift(customItem);
+                    selectImage(dataUrl, '#fd79a8');
                 };
+                reader.readAsDataURL(file);
             });
 
-            playAgainBtn.onclick = restartGame;
-            
-            // Preview
-            const events = ['mousedown', 'touchstart'];
-            const endEvents = ['mouseup', 'mouseleave', 'touchend'];
-
-            events.forEach(evt => {
-                previewBtn.addEventListener(evt, (e) => {
-                    if(e.cancelable) e.preventDefault();
-                    previewImageFull.src = state.currentImage;
-                    previewOverlay.classList.remove('opacity-0');
-                });
+            // Random Image Selector
+            btnRandomImg.addEventListener('click', () => {
+                const filtered = PRESET_IMAGES.filter(img => img.url !== state.currentImage);
+                const randomChoice = filtered[Math.floor(Math.random() * filtered.length)];
+                selectImage(randomChoice.url, randomChoice.color);
             });
-            endEvents.forEach(evt => {
-                 previewBtn.addEventListener(evt, () => {
-                    previewOverlay.classList.add('opacity-0');
-                });
+
+            // Play Again / Replay Buttons
+            btnPlayAgain.addEventListener('click', () => {
+                victoryOverlay.classList.add('hidden', 'opacity-0');
+                victoryOverlay.classList.remove('flex', 'opacity-100');
+                initBoard();
+            });
+
+            btnNextPuzzle.addEventListener('click', () => {
+                const currentIndex = PRESET_IMAGES.findIndex(img => img.url === state.currentImage);
+                const nextIndex = (currentIndex + 1) % PRESET_IMAGES.length;
+                victoryOverlay.classList.add('hidden', 'opacity-0');
+                victoryOverlay.classList.remove('flex', 'opacity-100');
+                selectImage(PRESET_IMAGES[nextIndex].url, PRESET_IMAGES[nextIndex].color);
             });
 
             // Sound Toggle
-            soundToggle.onclick = () => {
+            btnSound.addEventListener('click', () => {
                 state.soundEnabled = !state.soundEnabled;
-                soundToggle.innerHTML = state.soundEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
-                soundToggle.classList.toggle('text-red-400', !state.soundEnabled);
-                // Initialize audio on first user click just in case
+                btnSound.innerHTML = state.soundEnabled 
+                    ? '<i class="fas fa-volume-up"></i>' 
+                    : '<i class="fas fa-volume-mute text-red-400"></i>';
                 initAudio();
-            };
+            });
 
-            // Init
-            createTiles();
+            // Help Modal Open/Close
+            btnHelp.addEventListener('click', () => {
+                helpModal.classList.remove('hidden');
+                setTimeout(() => helpModal.classList.remove('opacity-0'), 10);
+            });
+            const closeHelp = () => {
+                helpModal.classList.add('opacity-0');
+                setTimeout(() => helpModal.classList.add('hidden'), 200);
+            };
+            btnCloseHelp.addEventListener('click', closeHelp);
+            btnDismissHelp.addEventListener('click', closeHelp);
+            helpModal.addEventListener('click', (e) => {
+                if (e.target === helpModal) closeHelp();
+            });
+
+            // Keyboard Controls (Arrow Keys and WASD)
+            window.addEventListener('keydown', (e) => {
+                const key = e.key.toLowerCase();
+                if (['arrowup', 'w'].includes(key)) {
+                    e.preventDefault();
+                    moveDirection('up');
+                } else if (['arrowdown', 's'].includes(key)) {
+                    e.preventDefault();
+                    moveDirection('down');
+                } else if (['arrowleft', 'a'].includes(key)) {
+                    e.preventDefault();
+                    moveDirection('left');
+                } else if (['arrowright', 'd'].includes(key)) {
+                    e.preventDefault();
+                    moveDirection('right');
+                } else if (key === 'p') {
+                    // Preview toggle on 'P'
+                    previewOverlay.classList.toggle('opacity-0');
+                } else if (key === 'h') {
+                    btnNumbers.click();
+                }
+            });
+
+            // Mobile Touch Swipe Gesture Controls
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            puzzleContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            puzzleContainer.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].screenX;
+                const touchEndY = e.changedTouches[0].screenY;
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+                const threshold = 35; // minimum swipe distance
+
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (diffX > threshold) moveDirection('right');
+                    else if (diffX < -threshold) moveDirection('left');
+                } else {
+                    if (diffY > threshold) moveDirection('down');
+                    else if (diffY < -threshold) moveDirection('up');
+                }
+            }, { passive: true });
+
+            // Initialize galleries and first game
+            renderGalleries();
+            initBoard();
         });
     </script>
 </body>
